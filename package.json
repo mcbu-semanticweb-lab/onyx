@@ -1,0 +1,21 @@
+{
+  "name": "OntoVG",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.20.0",
+    "cytoscape": "^3.1.1",
+    "cytoscape-cola": "^1.6.0",
+    "material-ui": "^0.18.1",
+    "meteor-node-stubs": "~0.2.4",
+    "prop-types": "latest",
+    "react": "^15.5.4",
+    "react-addons-pure-render-mixin": "^15.5.2",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.5",
+    "react-tap-event-plugin": "^2.0.1",
+    "redux": "^3.6.0"
+  }
+}
