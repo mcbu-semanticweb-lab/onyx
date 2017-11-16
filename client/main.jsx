@@ -1,14 +1,59 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import  ReactDOM  from 'react-dom';
-import {createStore} from "redux";
-import AllReducers from '../imports/reducers/Selected_Id_Reducer';
+import { render } from 'react-dom';
+
+import LoginPage from '../imports/components/login-page';
+
+import { createStore,compose,combineReducers,applyMiddleware } from "redux";
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import App from '../imports/ui/App';
+import RootReducer from '../imports/redux/reducers/root-reducer';
+
+import { routerForBrowser } from 'redux-little-router';
+
+import HomePage from "../imports/components/app";
+
+import { initializeCurrentLocation } from 'redux-little-router';
+import Dashboard from "../imports/components/dashboard";
+
+const routes = {
+    '/': {
+        title: 'Home',
+    },
+    '/login': {
+        title: 'Login-page',
+        basename:'login'
+    },
+    '/dashboard': {
+        title: 'Dashboard',
+    },
+    '/visualized': {
+        title: 'Visualized',
+    },
+};
 
 
-export const store = createStore(AllReducers,window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const {reducer, middleware, enhancer} = routerForBrowser({routes});
+
+const store = createStore(
+    combineReducers({ router: reducer, RootReducer }),
+    {}
+    ,
+    compose(enhancer, applyMiddleware(middleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+);
+
+// ...after creating your store
+const initialLocation = store.getState().router;
+if (initialLocation) {
+    store.dispatch(initializeCurrentLocation(initialLocation));
+}
+
+//const store = createStore(RootReducer,window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 Meteor.startup(() => {
-    ReactDOM.render((<Provider store={store}><App /></Provider>),document.getElementById('render-target'));
+    render(<Provider store={store}>
+        <HomePage/>
+    </Provider>, document.getElementById('app'));
 });
+

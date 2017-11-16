@@ -1,21 +1,36 @@
 {
-  "name": "OntoVG",
+  "name": "Deneme",
   "private": true,
   "scripts": {
     "start": "meteor run"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",
-    "cytoscape": "^3.1.1",
-    "cytoscape-cola": "^1.6.0",
-    "material-ui": "^0.18.1",
+    "bcrypt": "^1.0.3",
+    "cytoscape": "^3.2.4",
+    "cytoscape-cola": "^2.0.0",
+    "fibers": "^2.0.0",
     "meteor-node-stubs": "~0.2.4",
-    "prop-types": "latest",
-    "react": "^15.5.4",
-    "react-addons-pure-render-mixin": "^15.5.2",
-    "react-dom": "^15.5.4",
-    "react-redux": "^5.0.5",
-    "react-tap-event-plugin": "^2.0.1",
-    "redux": "^3.6.0"
+    "n3": "^0.11.2",
+    "react": "^16.0.0",
+    "react-addons-pure-render-mixin": "^15.6.2",
+    "react-dom": "^16.0.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "redux-little-router": "^14.2.3",
+    "redux-thunk": "^2.2.0",
+    "semantic-ui-react": "^0.75.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.1"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          "last 2 versions"
+        ]
+      }
+    }
   }
 }

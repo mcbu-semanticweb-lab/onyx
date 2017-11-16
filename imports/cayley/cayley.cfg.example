@@ -1,5 +1,0 @@
-{
-"database": "boltdb",
-"db_path": "/tmp/cayley_test",
-"read_only": false
-}
