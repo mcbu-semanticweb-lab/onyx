@@ -7,6 +7,7 @@ let store = $rdf.graph();
 
 Meteor.methods({
     parse_and_send_to_cayley : function (url,contentType) {
+        console.log(store.statements);
         let future = new Future;
         console.log(url,contentType);
         HTTP.get(url,[],function(err,res){
@@ -76,6 +77,7 @@ Meteor.methods({
                 });
             future.return("removed all triples")
             });
+        store.removeStatements(store.statements);
         return future.wait();
     },
 
