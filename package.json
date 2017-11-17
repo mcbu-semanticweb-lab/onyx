@@ -5,15 +5,15 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "babel-runtime": "^6.20.0",
+    "babel-runtime": "^6.26.0",
     "bcrypt": "^1.0.3",
     "core-js": "^2.5.1",
     "cytoscape": "^3.2.4",
     "cytoscape-cola": "^2.0.0",
     "fibers": "^2.0.0",
     "meteor-node-stubs": "~0.2.4",
-    "n3": "^0.11.2",
     "prop-types": "^15.6.0",
+    "rdflib": "^0.16.3",
     "react": "^16.0.0",
     "react-addons-pure-render-mixin": "^15.6.2",
     "react-dom": "^16.0.0",

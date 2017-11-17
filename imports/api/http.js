@@ -1,22 +1,24 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http'
 
-let N3 = require('n3');
-let parser = N3.Parser();
 let Future = Npm.require( 'fibers/future' );
+let $rdf = require('rdflib');
+let store = $rdf.graph();
 
 Meteor.methods({
-    parse_and_send_to_cayley : function (url) {
+    parse_and_send_to_cayley : function (url,contentType) {
         let future = new Future;
+        console.log(url,contentType);
         HTTP.get(url,[],function(err,res){
                 if(res){
-                    let x = parser.parse(res.content);
+                    $rdf.parse(res.content,store,url,contentType);
+                    let x = store.statements;
                     x.forEach(function (res) {
                         HTTP.post('http://localhost:64210/api/v1/write',{
                             content:JSON.stringify([{
-                                "subject": res.subject,
-                                "predicate": res.predicate,
-                                "object": res.object
+                                "subject": res.subject.value,
+                                "predicate": res.predicate.value,
+                                "object": res.object.value
                             }])
                         });
                     });

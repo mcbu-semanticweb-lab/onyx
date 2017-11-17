@@ -3,11 +3,10 @@ import cytoscape from 'cytoscape';
 import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import OPTIONS from '../../cytoscape/colajs-options';
 import { Random } from 'meteor/random';
-import { Button, Grid, Menu} from 'semantic-ui-react';
+import { Grid, Menu} from 'semantic-ui-react';
 import Dashboard from "../dashboard";
 
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { select,draw }   from '../../redux/actions/actioncreators';
 
 class CytoscapeRenderer extends Component {
@@ -83,7 +82,7 @@ class CytoscapeRenderer extends Component {
                 <Grid.Row>
                     <Grid.Column width={16}>
                         <Menu>
-                            <Menu.Item name='Remove&BackDashboard'  onClick={this.Remove} />
+                            <Menu.Item name='Remove Nodes and BackDashboard'  onClick={this.Remove} />
                         </Menu>
                     </Grid.Column>
                 </Grid.Row>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Grid, Form, Menu } from 'semantic-ui-react';
+import { Dropdown, Grid, Form, Menu } from 'semantic-ui-react';
 import CytoscapeCanvas from "./cytoscapejs/canvas";
 import CytoscapeInfo from "./cytoscapejs/info";
 
@@ -9,16 +9,31 @@ import { connect } from 'react-redux';
 import  { draw } from '../redux/actions/actioncreators';
 
 
+const stateOptions = [
+    {
+        key : 'rdf',
+        value : 'application/rdf+xml',
+        text : 'application/rdf+xml'
+    },
+    {
+        key: 'ttl',
+        value : 'text/turtle',
+        text : 'text/turtle'
+    }
+];
+
 class Dashboard extends Component {
 
     constructor(props) {
         super(props);
         this.state={
             url : null,
+            type : null
         };
         this.SetURI = this.SetURI.bind(this);
         this.Send = this.Send.bind(this);
         this.LogOut = this.LogOut.bind(this);
+        this.SetType = this.SetType.bind(this);
     }
 
     componentDidMount(){
@@ -48,10 +63,15 @@ class Dashboard extends Component {
         this.setState({url : event.target.value})
     }
 
+    SetType(event,data){
+        this.setState({type : data.value})
+    }
+
     Send(){
         url = this.state.url;
+        type = this.state.type;
         self = this;
-        Meteor.call('parse_and_send_to_cayley',url,function (err,res) {
+        Meteor.call('parse_and_send_to_cayley',url,type ,function (err,res) {
             if(res){
                 console.log(res);
                 self.props.draw(true)
@@ -89,6 +109,7 @@ class Dashboard extends Component {
                         <Form onSubmit={this.Send}>
                             <Form.Field>
                                 <Form.Input type="text" placeholder='Ontology URI' name='ontolgy_uri' onChange={this.SetURI} />
+                                <Dropdown placeholder='Data Type' selection options={stateOptions} onChange={this.SetType}/><br/><br/>
                                 <Form.Button type="submit"> Visualize the Ontology </Form.Button>
                             </Form.Field>
                         </Form>
