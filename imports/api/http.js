@@ -5,9 +5,11 @@ let Future = Npm.require( 'fibers/future' );
 let $rdf = require('rdflib');
 let store = $rdf.graph();
 
+
+console.log(store);
+
 Meteor.methods({
     parse_and_send_to_cayley : function (url,contentType) {
-        console.log(store.statements);
         let future = new Future;
         console.log(url,contentType);
         HTTP.get(url,[],function(err,res){
@@ -34,7 +36,7 @@ Meteor.methods({
 
     get_triples : function () {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gremlin',
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
                 content : 'g.V().Tag("subject").Out(null, "predicate").Tag("object").All()'
             });
@@ -43,7 +45,7 @@ Meteor.methods({
 
     get_domains_for_visualize : function () {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gremlin',
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
                 content : 'g.V().Tag("subject").Out("http://www.w3.org/2000/01/rdf-schema#domain", "predicate").Tag("object").All()'
             });
@@ -52,7 +54,7 @@ Meteor.methods({
 
     get_ranges_for_visualize : function () {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gremlin',
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
                 content : 'g.V().Tag("subject").Out("http://www.w3.org/2000/01/rdf-schema#range", "predicate").Tag("object").All()'
             });
@@ -61,7 +63,7 @@ Meteor.methods({
 
     remove_triples : function () {
         let future = new Future;
-        HTTP.post('http://localhost:64210/api/v1/query/gremlin',
+        HTTP.post('http://localhost:64210/api/v1/query/gizmo',
             {
                 content : 'g.V().Tag("subject").Out(null, "predicate").Tag("object").All()'
             } , function (err,res) {
@@ -77,23 +79,24 @@ Meteor.methods({
                 });
             future.return("removed all triples")
             });
-        store.removeStatements(store.statements);
+        store.removeStatements(store.statements); //TODO store silme işlemi yavaş kalıyor
         return future.wait();
     },
 
     count_triples : function () {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gremlin',
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content : 'g.V().Out(null).Count().All()'
+                content : 'var n = g.V().Count();\n' +
+                'g.Emit(n);'
             });
-        return(JSON.parse(result.content).result[0].id);
+        return(JSON.parse(result.content).result[0]);
     },
     
     find_attributes : function (id) {
         let triples = [];
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gremlin',
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
                 content : 'g.V("'+id+'").Tag("subject").Out(null, "predicate").Tag("object").All()'
             });

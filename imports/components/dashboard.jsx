@@ -39,7 +39,7 @@ class Dashboard extends Component {
     componentDidMount(){
         let self=this;
         Meteor.call('count_triples',function (err,res) {
-            console.log(res+" triples");
+            console.log(res);
             if(res!==0){
                 self.props.draw(true);
             }
@@ -77,6 +77,12 @@ class Dashboard extends Component {
                 self.props.draw(true)
             }
         });
+        Meteor.call('class_utilization',function (err,res) {
+            if(res)
+                console.log('Class Utilization  '+res);
+            else
+                console.log(err);
+        })
     }
 
     render() {
