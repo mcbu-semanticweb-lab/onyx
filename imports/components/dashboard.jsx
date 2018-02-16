@@ -77,9 +77,33 @@ class Dashboard extends Component {
                 self.props.draw(true)
             }
         });
+        Meteor.call('class_number',function (err,res) {
+            if(res)
+                console.log('Class Number is  '+res);
+            else
+                console.log(err);
+        });
         Meteor.call('class_utilization',function (err,res) {
             if(res)
                 console.log('Class Utilization  '+res);
+            else
+                console.log(err);
+        });
+        Meteor.call('instance_number',function (err,res) {
+            if(res)
+                console.log('Total number of instances   '+res);
+            else
+                console.log(err);
+        });
+        Meteor.call('property_number',function (err,res) {
+            if(res)
+                console.log('Total number of properties   '+res);
+            else
+                console.log(err);
+        });
+        Meteor.call('get_triples',function (err,res) {
+            if(res)
+                console.log('Here is triples \n '+res);
             else
                 console.log(err);
         })

@@ -32,9 +32,9 @@ class CytoscapeRenderer extends Component {
         Meteor.call('get_domains_for_visualize',function (err,res) {
             res.forEach(function(triple){
                 cy.add([
-                    { group: "nodes", data: { id: triple.subject , label : triple.subject}},
+                    { group: "nodes", data: {id: triple.subject, label: triple.subject} },
                     { group: "nodes", data: { id: triple.object , label: triple.object} },
-                    { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "domain" } }
+                    { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "domain" }}
                 ]);
             });
         });
@@ -43,7 +43,7 @@ class CytoscapeRenderer extends Component {
             res.forEach(function(triple){
                 cy.add([
                     { group: "nodes", data: { id: triple.subject , label : triple.subject}},
-                    { group: "nodes", data: { id: triple.object , label: triple.object} },
+                    { group: "nodes", data: { id: triple.object , label: triple.object}},
                     { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "range" } }
                 ]);
             });
@@ -118,5 +118,29 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps,mapDispatchToProps)(CytoscapeRenderer);
 
 
+/*
+cy.add([
+                    { group: "nodes", data: {id: triple.subject, label: triple.subject} },
+                    { group: "nodes", data: { id: triple.object , label: triple.object} },
+                    { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "domain" },
+                        style: {
+                            'width': '8',
+                        }}
+                ]);
 
+
+                                cy.add([
+                    { group: "nodes", data: { id: triple.subject , label : triple.subject},
+                        style: {
+                            'width': '150px',
+                            'height': '150px'
+                        }},
+                    { group: "nodes", data: { id: triple.object , label: triple.object} ,
+                        style: {
+                            'width': '150px',
+                            'height': '150px'
+                        }},
+                    { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "range" } }
+                ]);
+ */
 

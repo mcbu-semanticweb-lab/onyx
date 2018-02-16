@@ -5,9 +5,6 @@ let Future = Npm.require( 'fibers/future' );
 let $rdf = require('rdflib');
 let store = $rdf.graph();
 
-
-console.log(store);
-
 Meteor.methods({
     parse_and_send_to_cayley : function (url,contentType) {
         let future = new Future;
@@ -38,7 +35,7 @@ Meteor.methods({
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content : 'g.V().Tag("subject").Out(null, "predicate").Tag("object").All()'
+                content : 'g.V().Tag("subject").Out(null,"predicate").Tag("object").All()'
             });
         return(JSON.parse(result.content).result);
     },
@@ -79,7 +76,7 @@ Meteor.methods({
                 });
             future.return("removed all triples")
             });
-        store.removeStatements(store.statements); //TODO store silme işlemi yavaş kalıyor
+        store.removeStatements(store.statements); //TODO: store silme işlemi yavaş kalıyor, store kullanmadan parse edilmeli
         return future.wait();
     },
 
@@ -87,9 +84,10 @@ Meteor.methods({
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content : 'var n = g.V().Count();\n' +
+                content : 'var n = g.V().Out().Count();\n' +
                 'g.Emit(n);'
             });
+        console.log(store.statements);
         return(JSON.parse(result.content).result[0]);
     },
     
@@ -100,7 +98,7 @@ Meteor.methods({
             {
                 content : 'g.V("'+id+'").Tag("subject").Out(null, "predicate").Tag("object").All()'
             });
-        atts = JSON.parse(result.content).result;
+        let atts = JSON.parse(result.content).result;
         if(atts===null)
             return null;
         atts.forEach(function (res) {
