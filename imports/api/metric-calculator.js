@@ -59,6 +59,20 @@ Meteor.methods({
         return(JSON.parse(result.content).result[0]);
     },
 
+    class_name : function () {
+        let sync = Meteor.wrapAsync(HTTP.post);
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+            {
+                content :'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
+                'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
+                '\n' +
+                'var m = class1.Union(class2).Unique().All()\n' +
+                '\n' +
+                'g.Emit(m)'
+            });
+        return(JSON.parse(result.content).result);
+    },
+
     property_number : function (class_name) {
         if(class_name === undefined){
             let sync = Meteor.wrapAsync(HTTP.post);
@@ -129,7 +143,7 @@ Meteor.methods({
             let sync = Meteor.wrapAsync(HTTP.post);
             let result = sync('http://localhost:64210/api/v1/query/gizmo',
                 {
-                    content : 'var m = g.V('+class_name+').Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()\n' +
+                    content : 'var m = g.V().Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Is("'+class_name+'").Count()\n' +
                     '\n' +
                     'g.Emit(m);'
                 });

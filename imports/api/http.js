@@ -1,35 +1,44 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http'
+import { ontology_data} from "./data";
 
 let Future = Npm.require( 'fibers/future' );
-let $rdf = require('rdflib');
-let store = $rdf.graph();
+
+var N3 = require('n3');
+var parser = N3.Parser();
 
 Meteor.methods({
-    parse_and_send_to_cayley : function (url,contentType) {
+    parse_and_send_to_cayley : function (url) {
         let future = new Future;
-        console.log(url,contentType);
-        HTTP.get(url,[],function(err,res){
-                if(res){
-                    $rdf.parse(res.content,store,url,contentType);
-                    let x = store.statements;
-                    x.forEach(function (res) {
-                        HTTP.post('http://localhost:64210/api/v1/write',{
-                            content:JSON.stringify([{
-                                "subject": res.subject.value,
-                                "predicate": res.predicate.value,
-                                "object": res.object.value
-                            }])
-                        });
+        console.log("parse basladi");
+        Meteor.call('rdf_translator',url,function (err,res) {
+            if(res){
+                let x = parser.parse(res);
+                x.forEach(function (triple) {
+                    HTTP.post('http://localhost:64210/api/v1/write',{
+                        content:JSON.stringify([{
+                            "subject": triple.subject,
+                            "predicate": triple.predicate,
+                            "object": triple.object
+                        }])
                     });
-                    future.return("ready to visualize")
-                }
-                else{
-                    //    console.log(err);
-                }
-            });
+                });
+                future.return("triples sended to cayley");
+            }
+        });
         return future.wait();
     },
+
+    get_base : function () {
+        let sync = Meteor.wrapAsync(HTTP.post);
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+            {
+                content : 'g.V().Tag("base").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Is("http://www.w3.org/2002/07/owl#Ontology").All()'
+            });
+        return(JSON.parse(result.content).result[0].base);
+    },
+
+
 
     get_triples : function () {
         let sync = Meteor.wrapAsync(HTTP.post);
@@ -60,6 +69,7 @@ Meteor.methods({
 
     remove_triples : function () {
         let future = new Future;
+        ontology_data.remove({});
         HTTP.post('http://localhost:64210/api/v1/query/gizmo',
             {
                 content : 'g.V().Tag("subject").Out(null, "predicate").Tag("object").All()'
@@ -76,7 +86,6 @@ Meteor.methods({
                 });
             future.return("removed all triples")
             });
-        store.removeStatements(store.statements); //TODO: store silme işlemi yavaş kalıyor, store kullanmadan parse edilmeli
         return future.wait();
     },
 
@@ -87,7 +96,6 @@ Meteor.methods({
                 content : 'var n = g.V().Out().Count();\n' +
                 'g.Emit(n);'
             });
-        console.log(store.statements);
         return(JSON.parse(result.content).result[0]);
     },
     
@@ -113,7 +121,16 @@ Meteor.methods({
             }
         });
         return(triples);
-    }
+    },
+
+    get_triples_by_type : function () {
+        let sync = Meteor.wrapAsync(HTTP.post);
+        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+            {
+                content : 'g.V().Tag("subject").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate").Tag("object").All()'
+            });
+        return(JSON.parse(result.content).result);
+    },
 });
 
 
