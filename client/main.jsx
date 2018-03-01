@@ -2,10 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { render } from 'react-dom';
 
-import LoginPage from '../imports/components/login-page';
-
 import { createStore,compose,combineReducers,applyMiddleware } from "redux";
-import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import RootReducer from '../imports/redux/reducers/root-reducer';
 
