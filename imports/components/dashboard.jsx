@@ -88,7 +88,6 @@ class Dashboard extends Component {
             if(res)
                 console.log(res)
         });
-
     }
 
     render() {
@@ -96,11 +95,16 @@ class Dashboard extends Component {
             return(
                 <Grid>
                     <Grid.Row>
-                        <Grid.Column width={12}>
+                        <Grid.Column width={12}> {/* TODO: canvas 100% olacak */ }
                             <CytoscapeCanvas/>
                         </Grid.Column>
                         <Grid.Column width={4}>
                             <CytoscapeInfo/>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column width={16} className={'pitfall'}>
+                            Pitfall Çıktıları
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>

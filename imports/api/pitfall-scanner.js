@@ -1,6 +1,9 @@
 import {Meteor} from "meteor/meteor";
 import {HTTP} from "meteor/http";
 
+var N3 = require('n3');
+var parser = N3.Parser();
+
 Meteor.methods({
         pitfall_scanner : function (uri) {
             let sync = Meteor.wrapAsync(HTTP.post);

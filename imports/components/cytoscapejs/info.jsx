@@ -1,83 +1,122 @@
-import React, { Component} from 'react';
-import { Card, Accordion, Icon} from 'semantic-ui-react';
-import { connect } from 'react-redux';
+import React, {Component} from 'react';
+import {Card, Accordion, Icon} from 'semantic-ui-react';
+import {connect} from 'react-redux';
 
-import { Random } from 'meteor/random'
+import {Random} from 'meteor/random'
 
 class CytoscapeInfo extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            triples : null,
-            activeIndex : 0
+            triples: null,
+            activeIndex: 0,
+            class_number: null,
+            class_utilization: null,
+            instance_number: null,
+            property_number: null,
         };
         this.handleClick = this.handleClick.bind(this);
+
     }
 
-    componentWillReceiveProps(nextProps){
-        self= this;
-        Meteor.call('find_attributes',nextProps.SelectedNode,function (err,res) {
-            if(err)
+    componentDidMount(){
+
+        let self=this;
+
+        Meteor.call('class_number',function (err,res) {
+            if(res)
+                self.setState({class_number: res});
+            else
+                console.log(err);
+        });
+
+        Meteor.call('class_utilization',function (err,res) {
+            if(res)
+                self.setState({class_utilization: res});
+            else
+                console.log(err);
+        });
+
+        Meteor.call('instance_number',function (err,res) {
+            if(res)
+                self.setState({instance_number: res});
+            else
+                console.log(err);
+        });
+
+        Meteor.call('property_number',function (err,res) {
+            if(res)
+                self.setState({property_number: res});
+            else
+                console.log(err);
+        });
+    }
+
+
+    componentWillReceiveProps(nextProps) {
+        self = this;
+        Meteor.call('find_attributes', nextProps.SelectedNode, function (err, res) {
+            if (err)
                 console.log(err);
             else
-                self.setState({triples : res})
-        })
+                self.setState({triples: res})
+        });
     }
 
     handleClick = (e, titleProps) => {
-        const { index } = titleProps;
-        const { activeIndex } = this.state.activeIndex;
+        const {index} = titleProps;
+        const {activeIndex} = this.state.activeIndex;
         const newIndex = activeIndex === index ? -1 : index;
 
-        this.setState({ activeIndex: newIndex })
+        this.setState({activeIndex: newIndex})
     };
 
-    render(){
-        const activeIndex  = this.state.activeIndex;
-        if(this.state.triples===null){
-            return(
-                <Card>
-                    <Card.Content>
-                        <Card.Header>
-                            Predicates
-                        </Card.Header>
-                    </Card.Content>
-                </Card>
-            );
+    render() {
+        let content;
+        const activeIndex = this.state.activeIndex;
+        if (this.state.triples !== null) {
+            content = this.state.triples.map((data, index) => {
+                return (
+                    <Accordion styled key={Random.id()}>
+                        <Accordion.Title active={activeIndex === index} index={index} onClick={this.handleClick}>
+                            <Icon name='dropdown'/>
+                            {data.predicate}
+                        </Accordion.Title>
+                        <Accordion.Content active={activeIndex === index}>
+                            <p>
+                                {data.object}
+                            </p>
+                        </Accordion.Content>
+                    </Accordion>);
+            })
         }
-        else{
-            return(<Card>
-                    <Card.Content>
-                        <Card.Header>
-                            Predicates - {this.state.triples[0].subject}
-                        </Card.Header>
-                    </Card.Content>
-                        {this.state.triples.map((data,index) => {
-                              return(
-                                  <Accordion styled key={Random.id()}>
-                                  <Accordion.Title active={activeIndex === index} index={index} onClick={this.handleClick}>
-                                      <Icon name='dropdown' />
-                                      {data.predicate}
-                                  </Accordion.Title>
-                                  <Accordion.Content active={activeIndex === index}>
-                                      <p>
-                                          {data.object}
-                                      </p>
-                                  </Accordion.Content>
-                              </Accordion>);
-                        })
-                        }
-                </Card>
-            );
-        }
+        return (
+            <Card>
+                <Card.Content>
+                    <Card.Header>
+                        Ontology Metrics
+                    </Card.Header><br/>
+                    {console.log(this.state.class_number,this.state.class_utilization,this.state.instance_number,this.state.property_number )}
+                    Class Number is { this.state.class_number } <br/><br/>
+                    Class Utilization is { this.state.class_utilization } <br/><br/>
+                    Instance number is { this.state.instance_number } <br/><br/>
+                    Property number is { this.state.property_number }
+                    <Card.Header><br/><br/><br/>
+                        Node Info
+                    </Card.Header>
+
+                    { content }
+                </Card.Content>
+            </Card>
+        );
     }
 }
 
 const mapStateToProps = state => {
-  return {
-    SelectedNode: state.RootReducer.select
-  }
+    return {
+        SelectedNode: state.RootReducer.select
+    }
 };
 
 export default connect(mapStateToProps)(CytoscapeInfo);
