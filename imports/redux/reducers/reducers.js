@@ -1,4 +1,4 @@
-export const select = (state = {}, action) => {
+export const selectedNode = (state = null, action) => {
     switch (action.type) {
         case 'SELECTED':
             return action.id;
@@ -11,6 +11,25 @@ export const draw = (state = false, action) => {
     switch (action.type) {
         case 'CANVAS':
             return action.boole;
+        default:
+            return state;
+    }
+};
+
+export const canvasAnimations = (state = {}, action) => {
+    switch (action.type) {
+        case 'ShowNeighborhood':
+            return {
+                animation : action.boole,
+                type : action.animation
+            };
+
+        case 'ResetCanvas':
+            return{
+                animation: action.boole,
+                type: action.animation
+            };
+
         default:
             return state;
     }

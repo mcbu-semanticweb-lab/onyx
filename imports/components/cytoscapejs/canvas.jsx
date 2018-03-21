@@ -3,13 +3,14 @@ import cytoscape from 'cytoscape';
 import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import OPTIONS from '../../cytoscape/colajs-options';
 import { Random } from 'meteor/random';
-import { Grid, Menu} from 'semantic-ui-react';
+import { Grid} from 'semantic-ui-react';
 import Dashboard from "../dashboard";
 
 import { connect } from 'react-redux';
-import { select,draw }   from '../../redux/actions/actioncreators';
+import {select, draw, showNeighborhood,} from '../../redux/actions/actioncreators';
 
 import { ontology_data } from '../../api/data';
+import {showNeighborhoods,resetCanvas} from "../../cytoscape/functions";
 
 class CytoscapeRenderer extends Component {
 
@@ -19,7 +20,6 @@ class CytoscapeRenderer extends Component {
             cy : null,
             draw : true
         };
-        this.Remove = this.Remove.bind(this);
         this.setnode = this.setnode.bind(this);
     }
 
@@ -28,14 +28,15 @@ class CytoscapeRenderer extends Component {
         let cy = cytoscape({
             container: document.getElementById('cy'),
             style: DEF_VISUAL_STYLE,
+            minZoom: 0.3,
+            maxZoom: 1.7,
+            wheelSensitivity: 1,
         });
         let cycola = require('cytoscape-cola');
         cycola( cytoscape );
-
         Meteor.call('get_triples_by_type',function (err,res) {
             res.forEach(function(triple){
                 if(triple.object.slice(triple.object.lastIndexOf('/')+1).includes('Class')){
-
                     let size = ontology_data.findOne({ class_name : triple.subject}).instance_number;
 
                     cy.add([
@@ -92,12 +93,42 @@ class CytoscapeRenderer extends Component {
 
     }
 
-    componentDidUpdate(){
-        cy = this.state.cy;
-        let layout = cy.layout(OPTIONS);
-        layout.run();
-        self = this;
+    componentDidUpdate(prevProps,prevState){
+        if(prevState.cy===null){
+            cy = this.state.cy;
+            let layout = cy.layout(OPTIONS);
+            layout.run();
+        }
         this.setnode();
+    }
+
+    componentWillReceiveProps(nextProps){
+        cy = this.state.cy;
+        if(nextProps.selectedNode&&nextProps.canvasAnimation.animation)
+            showNeighborhoods(nextProps.selectedNode,cy);
+        else if(nextProps.canvasAnimation.animation===false)
+            resetCanvas(cy);
+        /*
+        if(nextProps.neighborhood===true)
+            showNeighborhoods(cy)
+
+        /*
+        cy.filter('.selected').forEach(function (node) {
+            node.removeClass('selected');
+        });
+        if(nextProps.selected_node===undefined)
+            return 0;
+        else if(nextProps.selected_node.length===undefined){
+            console.log("elif");
+            cy.getElementById(nextProps.selected_node["@value"]).addClass("selected")
+        }
+        else{
+            nextProps.selected_node.forEach(function (node) {
+                console.log("else");
+                cy.getElementById(node["@value"]).addClass("selected")
+            });
+        }
+        */
     }
 
     setnode(){
@@ -107,26 +138,11 @@ class CytoscapeRenderer extends Component {
         });
     }
 
-    Remove(){
-        self = this;
-        Meteor.call('remove_triples',function (err,res) {
-            if(res){
-                console.log(res);
-                self.props.draw(false)
-            }
-        });
-    }
+
 
     render() {
         if(this.props.canvas===true){
             return (<Grid>
-                <Grid.Row>
-                    <Grid.Column width={16}>
-                        <Menu>
-                            <Menu.Item name='Remove Nodes and BackDashboard'  onClick={this.Remove} />
-                        </Menu>
-                    </Grid.Column>
-                </Grid.Row>
                 <Grid.Row>
                     <Grid.Column>
                         <div id="cy"/>
@@ -146,13 +162,18 @@ const mapDispatchToProps = dispatch => {
         },
         draw : function (boole) {
             return(dispatch(draw(boole)))
+        },
+        showNeighborhoods: function (boole) {
+            return dispatch(showNeighborhood(boole))
         }
     }
 };
 
 const mapStateToProps = state => {
     return {
-        canvas: state.RootReducer.draw
+        canvas: state.RootReducer.draw,
+        selectedNode : state.RootReducer.selectedNode,
+        canvasAnimation : state.RootReducer.canvasAnimations
     }
 };
 

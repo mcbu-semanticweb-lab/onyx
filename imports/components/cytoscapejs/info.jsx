@@ -15,6 +15,7 @@ class CytoscapeInfo extends Component {
             class_utilization: null,
             instance_number: null,
             property_number: null,
+            pitfall_res:null
         };
         this.handleClick = this.handleClick.bind(this);
 
@@ -92,7 +93,7 @@ class CytoscapeInfo extends Component {
             })
         }
         return (
-            <Card>
+            <Card fluid>
                 <Card.Content>
                     <Card.Header>
                         Ontology Metrics

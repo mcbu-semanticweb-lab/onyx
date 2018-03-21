@@ -9,7 +9,7 @@ export default {
     boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
 
     // positioning options
-    randomize: true, // use random node positions at beginning of layout
+    randomize: false, // use random node positions at beginning of layout
     avoidOverlap: true, // if true, prevents overlap of node bounding boxes
     handleDisconnected: true, // if true, avoids disconnected components from overlapping
     nodeSpacing: function( node ){ return 50; }, // extra spacing around nodes

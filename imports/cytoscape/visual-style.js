@@ -57,6 +57,15 @@ export const DEF_VISUAL_STYLE = [
     },
 
     {
+        selector: '.selected',
+        style: {
+            'border-width' : '25px',
+            'border-style' : 'solid',
+            'border-color' : 'red'
+        }
+    },
+
+    {
         selector: 'edge[group="domain"]',
         style: {
             'target-arrow-color': 'blue',
