@@ -7,10 +7,10 @@ import { Grid} from 'semantic-ui-react';
 import Dashboard from "../dashboard";
 
 import { connect } from 'react-redux';
-import {select, draw, showNeighborhood,} from '../../redux/actions/actioncreators';
+import {select, draw, showNeighborhood} from '../../redux/actions/actioncreators';
 
 import { ontology_data } from '../../api/data';
-import {showNeighborhoods,resetCanvas} from "../../cytoscape/functions";
+import {showNeighborhoods, resetCanvas, showPitfalls, selectNode, unselectNode} from "../../cytoscape/functions";
 
 class CytoscapeRenderer extends Component {
 
@@ -34,6 +34,17 @@ class CytoscapeRenderer extends Component {
         });
         let cycola = require('cytoscape-cola');
         cycola( cytoscape );
+
+        cy.on('mouseover', 'node', function(event){
+            event.target.addClass("hover");
+        });
+
+
+        cy.on('mouseout', 'node', function(event){
+            event.target.removeClass("hover");
+        });
+
+
         Meteor.call('get_triples_by_type',function (err,res) {
             res.forEach(function(triple){
                 if(triple.object.slice(triple.object.lastIndexOf('/')+1).includes('Class')){
@@ -91,7 +102,7 @@ class CytoscapeRenderer extends Component {
             self.setState({cy:cy})
         });
 
-    }
+    }  //TODO: ekleme işlemi dışarıda yapılabilir
 
     componentDidUpdate(prevProps,prevState){
         if(prevState.cy===null){
@@ -104,31 +115,22 @@ class CytoscapeRenderer extends Component {
 
     componentWillReceiveProps(nextProps){
         cy = this.state.cy;
-        if(nextProps.selectedNode&&nextProps.canvasAnimation.animation)
-            showNeighborhoods(nextProps.selectedNode,cy);
-        else if(nextProps.canvasAnimation.animation===false)
-            resetCanvas(cy);
-        /*
-        if(nextProps.neighborhood===true)
-            showNeighborhoods(cy)
+        if(this.props.selectedNode===nextProps.selectedNode)
+            unselectNode(cy,this.props.selectedNode);
+        else if(nextProps.selectedNode)
+            selectNode(cy,nextProps.selectedNode);
 
-        /*
-        cy.filter('.selected').forEach(function (node) {
-            node.removeClass('selected');
-        });
-        if(nextProps.selected_node===undefined)
-            return 0;
-        else if(nextProps.selected_node.length===undefined){
-            console.log("elif");
-            cy.getElementById(nextProps.selected_node["@value"]).addClass("selected")
-        }
-        else{
-            nextProps.selected_node.forEach(function (node) {
-                console.log("else");
-                cy.getElementById(node["@value"]).addClass("selected")
-            });
-        }
-        */
+
+        if(nextProps.canvasAnimation.animation===false)
+            resetCanvas(cy);
+        //else if(this.props.canvasAnimation.animation&&nextProps.canvasAnimation.animation)
+          //  resetCanvas(cy);
+        else if(nextProps.canvasAnimation.type==="ShowPitfalls")
+            showPitfalls(cy,nextProps.pitfall_affected_elements);
+        else if(nextProps.canvasAnimation.type==="ShowNeighborhood")
+            showNeighborhoods(nextProps.selectedNode,cy);
+
+
     }
 
     setnode(){
@@ -173,7 +175,8 @@ const mapStateToProps = state => {
     return {
         canvas: state.RootReducer.draw,
         selectedNode : state.RootReducer.selectedNode,
-        canvasAnimation : state.RootReducer.canvasAnimations
+        canvasAnimation : state.RootReducer.canvasAnimations,
+        pitfall_affected_elements : state.RootReducer.canvasAnimations.affected_elements
     }
 };
 

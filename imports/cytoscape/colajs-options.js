@@ -4,7 +4,7 @@ export default {
     refresh: 0.1, // number of ticks per frame; higher is faster but more jerky
     maxSimulationTime: 4000, // max length in ms to run the layout
     ungrabifyWhileSimulating: false, // so you can't drag nodes during layout
-    fit: true, // on every layout reposition of nodes, fit the viewport
+    fit: false, // on every layout reposition of nodes, fit the viewport
     padding: 30, // padding around the simulation
     boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
 
@@ -28,6 +28,10 @@ export default {
     allConstIter: undefined, // initial layout iterations with all constraints including non-overlap
 
     // infinite layout options
-    infinite: false, // overrides all other options for a forces-all-the-time mode
+    infinite: true, // overrides all other options for a forces-all-the-time mode
+
+    ready: function () {
+        return "gokhan";
+    }
 
 };

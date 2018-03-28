@@ -57,15 +57,6 @@ export const DEF_VISUAL_STYLE = [
     },
 
     {
-        selector: '.selected',
-        style: {
-            'border-width' : '25px',
-            'border-style' : 'solid',
-            'border-color' : 'red'
-        }
-    },
-
-    {
         selector: 'edge[group="domain"]',
         style: {
             'target-arrow-color': 'blue',
@@ -76,6 +67,32 @@ export const DEF_VISUAL_STYLE = [
         selector: 'edge[group="range"]',
         style: {
             'target-arrow-color': 'red',
+        }
+    },
+    {
+        selector: '.hover',
+        style: {
+            'border-width' : '25px',
+            'border-style' : 'solid',
+            'border-color' : 'red'
+        }
+    },
+
+    {
+        selector: '.select',
+        style: {
+            'border-width' : '25px',
+            'border-style' : 'solid',
+            'border-color' : 'black'
+        }
+    },
+
+    {
+        selector: '.pitfall',
+        style: {
+            'border-width' : '25px',
+            'border-style' : 'solid',
+            'border-color' : 'orange'
         }
     }
 

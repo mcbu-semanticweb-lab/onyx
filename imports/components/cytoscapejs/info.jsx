@@ -57,7 +57,7 @@ class CytoscapeInfo extends Component {
 
     componentWillReceiveProps(nextProps) {
         self = this;
-        Meteor.call('find_attributes', nextProps.SelectedNode, function (err, res) {
+        Meteor.call('find_attributes', nextProps.selectedNode, function (err, res) {
             if (err)
                 console.log(err);
             else
@@ -104,7 +104,7 @@ class CytoscapeInfo extends Component {
                     Instance number is { this.state.instance_number } <br/><br/>
                     Property number is { this.state.property_number }
                     <Card.Header><br/><br/><br/>
-                        Node Info
+                        Node Info{this.props.selectedNode}
                     </Card.Header>
 
                     { content }
@@ -116,7 +116,7 @@ class CytoscapeInfo extends Component {
 
 const mapStateToProps = state => {
     return {
-        SelectedNode: state.RootReducer.select
+        selectedNode: state.RootReducer.selectedNode
     }
 };
 

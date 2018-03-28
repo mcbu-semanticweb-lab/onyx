@@ -6,9 +6,7 @@ import CytoscapeInfo from "./cytoscapejs/info";
 import {push} from 'redux-little-router';
 
 import {connect} from 'react-redux';
-import {draw,showNeighborhood,resetCanvas} from '../redux/actions/actioncreators';
-
-import response from '../api/oops-test-response';
+import {draw,showNeighborhood,resetCanvas,pitfall} from '../redux/actions/actioncreators';
 
 import {Button, Accordion, Icon} from 'semantic-ui-react';
 import {Random} from 'meteor/random'
@@ -43,17 +41,6 @@ class Dashboard extends Component {
                 self.props.draw(true);
             }
         });
-
-        let x;
-        Meteor.call('rdf_translator', null, response, function (err, res) {
-            if (res) {
-                x = JSON.parse(res);
-                self.setState({pitfall_res: x["@graph"]});
-                console.log(x["@graph"]);
-            }
-            else
-                console.log(err);
-        });
     }
 
     LogOut(event) {
@@ -73,9 +60,9 @@ class Dashboard extends Component {
         this.setState({url: event.target.value})
     }
 
-    setAffectedElement(event,data) { //TODO: Tüm state ler redux a geçecek
-        console.log(data);
-        this.setState({selectedNode: data})
+    setAffectedElement(event,data) {
+        if(data)
+            this.props.pitfall_set(data);
     }
 
     Send() {
@@ -114,13 +101,23 @@ class Dashboard extends Component {
             else
                 console.log(err);
         });
-        /*
-                Meteor.call('pitfall_scanner',url,function (err,res) {
-                    if(res)
-                        console.log(res)
-                });
 
-        */
+        Meteor.call('pitfall_scanner',url,function (err,res) {
+            if(res){
+                let x;
+                Meteor.call('rdf_translator', null, res, function (err, res) {
+                    if (res) {
+                        x = JSON.parse(res);
+                        self.setState({pitfall_res: x["@graph"]});
+                        console.log(x["@graph"]);
+                    }
+                    else
+                        console.log(err);
+                });
+            }
+        });
+
+
 
     }
 
@@ -157,9 +154,11 @@ class Dashboard extends Component {
     render() {
         let content;
         const activeIndex = this.state.activeIndex;
+        console.log(this.state.pitfall_res);
         if (this.state.pitfall_res !== null) {
             content = this.state.pitfall_res.map((data, index) => {
-                if(data["@type"]==="oops:pitfall"){
+                if(data["@type"]==="oops:pitfall"&&data["oops:hasAffectedElement"]&&data["oops:hasAffectedElement"].length!==undefined){
+                   console.log(data);
                     return (
                         <Accordion styled fluid key={Random.id()} >
                             <Accordion.Title active={activeIndex === index} index={index} onClick={this.handleClick}>
@@ -170,6 +169,12 @@ class Dashboard extends Component {
                                 <p>
                                     {data["oops:hasDescription"]} <Button type={"submit"} onClick={(e) => this.setAffectedElement(e, data["oops:hasAffectedElement"])}> Göster </Button>
                                 </p>
+                                <br/>
+                                {
+                                    data["oops:hasAffectedElement"].map((data,index) => {
+                                        return (<div key={index}><br/>{data["@value"]}</div>);
+                                })
+                                }
                             </Accordion.Content>
                         </Accordion>);
                 }
@@ -187,8 +192,8 @@ class Dashboard extends Component {
                                 <Icon link name='angle left' size='big' />
                             </Menu.Item>
                         </Menu>
-                        <Grid.Column width={16}> {/* TODO: canvas 100% olacak */}
-                            <CytoscapeCanvas selected_node={this.state.selectedNode}/>
+                        <Grid.Column width={16}>
+                            <CytoscapeCanvas/>
                         </Grid.Column>
                         <Sidebar
                             as={Menu}
@@ -248,6 +253,9 @@ const mapDispatchToProps = dispatch => {
         },
         resetCanvas: function (boole) {
             return dispatch(resetCanvas(boole))
+        },
+        pitfall_set: function (eles) {
+            return dispatch(pitfall(eles))
         }
     };
 };

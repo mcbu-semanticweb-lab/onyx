@@ -30,6 +30,12 @@ export const canvasAnimations = (state = {}, action) => {
                 type: action.animation
             };
 
+        case 'ShowPitfall':
+            return{
+                animation: action.boole,
+                type:action.animation,
+                affected_elements: action.affected_elements
+            };
         default:
             return state;
     }
