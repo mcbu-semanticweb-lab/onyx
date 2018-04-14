@@ -115,13 +115,14 @@ class CytoscapeRenderer extends Component {
 
     componentWillReceiveProps(nextProps){
         cy = this.state.cy;
-        if(this.props.selectedNode===nextProps.selectedNode)
+        if(this.props.selectedNode!==nextProps.selectedNode){
             unselectNode(cy,this.props.selectedNode);
-        else if(nextProps.selectedNode)
             selectNode(cy,nextProps.selectedNode);
-
-
-        if(nextProps.canvasAnimation.animation===false)
+        }
+        if(this.props.canvasAnimation.type===nextProps.canvasAnimation.type){
+            console.log("states are equal");
+        }
+        else if(nextProps.canvasAnimation.type==="ResetCanvas") //reset sonrası select
             resetCanvas(cy);
         //else if(this.props.canvasAnimation.animation&&nextProps.canvasAnimation.animation)
           //  resetCanvas(cy);

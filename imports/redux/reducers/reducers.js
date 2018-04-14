@@ -16,7 +16,7 @@ export const draw = (state = false, action) => {
     }
 };
 
-export const canvasAnimations = (state = {}, action) => {
+export const canvasAnimations = (state = false, action) => {
     switch (action.type) {
         case 'ShowNeighborhood':
             return {

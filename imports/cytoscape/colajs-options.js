@@ -30,8 +30,4 @@ export default {
     // infinite layout options
     infinite: true, // overrides all other options for a forces-all-the-time mode
 
-    ready: function () {
-        return "gokhan";
-    }
-
 };
