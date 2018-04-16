@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
-import {Grid, Form, Menu,Sidebar} from 'semantic-ui-react';
+import {Grid, Form, Menu,Sidebar, Search} from 'semantic-ui-react';
 import CytoscapeCanvas from "./cytoscapejs/canvas";
 import CytoscapeInfo from "./cytoscapejs/info";
 
 import {push} from 'redux-little-router';
 
 import {connect} from 'react-redux';
-import {draw,showNeighborhood,resetCanvas,pitfall} from '../redux/actions/actioncreators';
+import {draw,showNeighborhood,resetCanvas,pitfall,search} from '../redux/actions/actioncreators';
 
 import {Button, Accordion, Icon} from 'semantic-ui-react';
-import {Random} from 'meteor/random'
+import {Random} from 'meteor/random';
 
 class Dashboard extends Component {
 
@@ -31,6 +31,7 @@ class Dashboard extends Component {
         this.Remove = this.Remove.bind(this);
         this.ShowNeighborhood = this.ShowNeighborhood.bind(this);
         this.ResetCanvas = this.ResetCanvas.bind(this);
+        this.searchSubmit = this.searchSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -150,6 +151,11 @@ class Dashboard extends Component {
         this.props.resetCanvas(true);
     }
 
+    searchSubmit(event){
+        if(event.target.value.length!==0)
+            this.props.search(event.target.value);
+    }
+
 
     render() {
         let content;
@@ -188,6 +194,9 @@ class Dashboard extends Component {
                             <Menu.Item name='Remove Nodes and BackDashboard'  position='left' onClick={this.Remove} />
                             <Menu.Item name='Show Neighborhood'  position='left' onClick={this.ShowNeighborhood} />
                             <Menu.Item name='Reset Canvas'  position='left' onClick={this.ResetCanvas} />
+                            <Search
+                                onClick={this.searchSubmit}
+                            />
                             <Menu.Item position='right' onClick={this.toggleVisibility}>
                                 <Icon link name='angle left' size='big' />
                             </Menu.Item>
@@ -226,7 +235,7 @@ class Dashboard extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column width={6}>
-                            <Form onSubmit={this.Send}>
+                            <Form onClick={this.Send}>
                                 <Form.Field>
                                     <Form.Input type="text" placeholder='Ontology URI' name='ontolgy_uri'
                                                 onChange={this.SetURI}/>
@@ -256,6 +265,9 @@ const mapDispatchToProps = dispatch => {
         },
         pitfall_set: function (eles) {
             return dispatch(pitfall(eles))
+        },
+        search: function (label) {
+            return dispatch(search(label))
         }
     };
 };

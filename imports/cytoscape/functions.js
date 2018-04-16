@@ -47,6 +47,13 @@ export function selectNode(cy,id){
     cy.getElementById(id).addClass("select")
 }
 
+export function search(cy,string){
+    console.log(string);
+    eles = cy.filter('[label = "'+string+'"]');
+    console.log(eles);
+    eles.addClass("select");
+}
+
 
 export function unselectNode(cy,id){
     console.log("unselect");

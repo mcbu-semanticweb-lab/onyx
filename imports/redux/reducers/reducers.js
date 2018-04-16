@@ -36,6 +36,14 @@ export const canvasAnimations = (state = false, action) => {
                 type:action.animation,
                 affected_elements: action.affected_elements
             };
+
+        case 'Search':
+            return{
+                animation: action.boole,
+                type:action.animation,
+                label : action.label
+            };
+
         default:
             return state;
     }

@@ -10,7 +10,14 @@ import { connect } from 'react-redux';
 import {select, draw, showNeighborhood} from '../../redux/actions/actioncreators';
 
 import { ontology_data } from '../../api/data';
-import {showNeighborhoods, resetCanvas, showPitfalls, selectNode, unselectNode} from "../../cytoscape/functions";
+import {
+    showNeighborhoods,
+    resetCanvas,
+    showPitfalls,
+    selectNode,
+    unselectNode,
+    search
+} from "../../cytoscape/functions";
 
 class CytoscapeRenderer extends Component {
 
@@ -130,8 +137,8 @@ class CytoscapeRenderer extends Component {
             showPitfalls(cy,nextProps.pitfall_affected_elements);
         else if(nextProps.canvasAnimation.type==="ShowNeighborhood")
             showNeighborhoods(nextProps.selectedNode,cy);
-
-
+        else if(nextProps.canvasAnimation.type==="Search")
+            search(cy,nextProps.canvasAnimation.label);
     }
 
     setnode(){
@@ -177,7 +184,7 @@ const mapStateToProps = state => {
         canvas: state.RootReducer.draw,
         selectedNode : state.RootReducer.selectedNode,
         canvasAnimation : state.RootReducer.canvasAnimations,
-        pitfall_affected_elements : state.RootReducer.canvasAnimations.affected_elements
+        pitfall_affected_elements : state.RootReducer.canvasAnimations.affected_elements,
     }
 };
 

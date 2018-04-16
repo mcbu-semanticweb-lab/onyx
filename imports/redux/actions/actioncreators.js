@@ -36,3 +36,12 @@ export const pitfall = function (affected_elements) {
         affected_elements : affected_elements,
     }
 };
+
+export const search = function (label) {
+    return{
+        type: "Search",
+        boole : true,
+        animation : "Search",
+        label : label
+    }
+};
