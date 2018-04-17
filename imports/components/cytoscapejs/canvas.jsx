@@ -1,7 +1,6 @@
 import React, { Component} from 'react';
 import cytoscape from 'cytoscape';
 import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
-import OPTIONS from '../../cytoscape/colajs-options';
 import { Random } from 'meteor/random';
 import { Grid} from 'semantic-ui-react';
 import Dashboard from "../dashboard";
@@ -9,14 +8,14 @@ import Dashboard from "../dashboard";
 import { connect } from 'react-redux';
 import {select, draw, showNeighborhood} from '../../redux/actions/actioncreators';
 
-import { ontology_data } from '../../api/data';
 import {
     showNeighborhoods,
     resetCanvas,
     showPitfalls,
     selectNode,
     unselectNode,
-    search
+    search,
+    add
 } from "../../cytoscape/functions";
 
 class CytoscapeRenderer extends Component {
@@ -27,7 +26,6 @@ class CytoscapeRenderer extends Component {
             cy : null,
             draw : true
         };
-        this.setnode = this.setnode.bind(this);
     }
 
     componentDidMount() {
@@ -51,73 +49,12 @@ class CytoscapeRenderer extends Component {
             event.target.removeClass("hover");
         });
 
-
-        Meteor.call('get_triples_by_type',function (err,res) {
-            res.forEach(function(triple){
-                if(triple.object.slice(triple.object.lastIndexOf('/')+1).includes('Class')){
-                    let size = ontology_data.findOne({ class_name : triple.subject}).instance_number;
-
-                    cy.add([
-                        { group: "nodes", data: { id: triple.subject , label : triple.subject.slice(triple.subject.lastIndexOf('/')+1).split('#').reverse()[0], group: "class"} ,  style: {
-                                height: (size+1)*40,
-                                width: (size+1)*40,
-                            }},
-                    ]);
-
-                }
-
-                else {
-
-                    cy.add([
-                        { group: "nodes", data: { id: triple.subject , label : triple.subject.slice(triple.subject.lastIndexOf('/')+1).split('#').reverse()[0], group: "other"  }},
-                    ]);
-                }
-
-            });
+        cy.on('tap', 'node', function(event){
+            self.props.select(event.target.id());
         });
 
-        Meteor.call('get_domains_for_visualize',function (err,res) {
-            res.forEach(function(triple){
-                if(triple.object.includes('#')){
-                    cy.add([
-                        { group: "nodes", data: {id: triple.object, label: triple.object.slice(triple.object.lastIndexOf('#')),group: "literal"}},
-                        { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "domain" }}
-                    ]);
-                }
-                else{
-                cy.add([
-                    { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "domain" }}
-                ]);
-                }
-            });
-        });
-
-        Meteor.call('get_ranges_for_visualize',function (err,res) {
-            res.forEach(function(triple){
-                if(triple.object.includes('#')){
-                    cy.add([
-                        { group: "nodes", data: {id: triple.object, label: triple.object.slice(triple.object.lastIndexOf('#')),group: "literal"}},
-                        { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "range" } }
-                    ]);
-                    }
-                else{
-                cy.add([
-                    { group: "edges", data: { id: Random.id(), source: triple.subject, target: triple.object, group: "range" } }
-                ]);
-                }
-            });
-            self.setState({cy:cy})
-        });
-
-    }  //TODO: ekleme işlemi dışarıda yapılabilir
-
-    componentDidUpdate(prevProps,prevState){
-        if(prevState.cy===null){
-            cy = this.state.cy;
-            let layout = cy.layout(OPTIONS);
-            layout.run();
-        }
-        this.setnode();
+        cy = add(cy);
+        this.setState({cy:cy});
     }
 
     componentWillReceiveProps(nextProps){
@@ -141,12 +78,6 @@ class CytoscapeRenderer extends Component {
             search(cy,nextProps.canvasAnimation.label);
     }
 
-    setnode(){
-        let self = this;
-        cy.on('tap', 'node', function(event){
-            self.props.select(event.target.id());
-        });
-    }
 
 
 
