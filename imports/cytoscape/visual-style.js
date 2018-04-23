@@ -4,9 +4,7 @@ export const DEF_VISUAL_STYLE = [
         style: {
             'label' : 'data(label)',
             'text-valign': 'center',
-            'text-outline-width': 2,
             'background-color': '#999',
-            'text-outline-color': 'white',
         }
     },
 
@@ -14,35 +12,37 @@ export const DEF_VISUAL_STYLE = [
         selector: 'node[group="class"]',
         style: {
             'shape' : 'ellipse',
-            'label' : 'data(label)',
+            'background-color' : '#acf',
             'text-valign': 'center',
-            'text-outline-width': 4,
-            'background-color': '#999',
-            'text-outline-color': 'white',
+            'border-style' : 'double',
+            'border-color' : 'black',
+            'border-width' : '6',
+            'width' : '160',
+            'height' : '160'
         }
     },
 
     {
-        selector: 'node[group="literal"]',
+        selector: 'node[group="object_property"]',
         style: {
             'shape' : 'rectangle',
-            'label' : 'data(label)',
-            'text-valign': 'center',
-            'text-outline-width': 4,
-            'background-color': '#999',
-            'text-outline-color': 'white',
+            'background-color' : '#acf',
+            'color': 'black',
+            'width' : '130%',
+            'font-size' : '9',
+            'padding' : '50%',
         }
     },
 
     {
-        selector: 'node[group="other"]',
+        selector: 'node[group="datatype_property"]',
         style: {
-            'shape' : 'triangle',
-            'label' : 'data(label)',
-            'text-valign': 'center',
-            'text-outline-width': 4,
-            'background-color': '#999',
-            'text-outline-color': 'white',
+            'shape' : 'rectangle',
+            'background-color' : '#9c6',
+            'color': 'black',
+            'width' : '130%',
+            'font-size' : '9',
+            'padding' : '50%',
         }
     },
 
@@ -51,39 +51,36 @@ export const DEF_VISUAL_STYLE = [
         style: {
             'line-color': '#ccc',
             'curve-style': 'bezier',
-            'target-arrow-color': 'orange',
-            'target-arrow-shape': 'triangle'
         }
     },
 
     {
         selector: 'edge[group="domain"]',
         style: {
-            'target-arrow-color': 'blue',
+
         }
     },
 
     {
         selector: 'edge[group="range"]',
         style: {
+            'target-arrow-shape': 'triangle',
             'target-arrow-color': 'red',
         }
     },
     {
         selector: '.hover',
         style: {
-            'border-width' : '25px',
-            'border-style' : 'solid',
-            'border-color' : 'red'
+            'background-color' : '#ff0000',
         }
     },
 
     {
         selector: '.select',
         style: {
-            'border-width' : '25px',
-            'border-style' : 'solid',
-            'border-color' : 'black'
+            'border-style' : 'double',
+            'border-color' : '#ff0000',
+            'border-width' : '6',
         }
     },
 

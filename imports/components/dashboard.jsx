@@ -69,7 +69,7 @@ class Dashboard extends Component {
     Send() {
         url = this.state.url;
         self = this;
-        Meteor.call('parse_and_send_to_cayley', url, function (err, res) {
+        Meteor.call('parse_and_send_to_cayley', "http://xmlns.com/foaf/spec/index.rdf", function (err, res) {
             if (res) {
                 console.log(res);
                 self.props.draw(true)

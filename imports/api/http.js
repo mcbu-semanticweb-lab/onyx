@@ -10,7 +10,7 @@ var parser = N3.Parser();
 Meteor.methods({
     parse_and_send_to_cayley : function (url) {
         let future = new Future;
-        Meteor.call('rdf_translator',url,function (err,res) {
+        Meteor.call('rdf_translator',url,function (err,res) { //TODO: Parametre geçmiyor
             if(res){
                 let x = parser.parse(res);
                 console.log("rdf translate completed");
@@ -27,20 +27,11 @@ Meteor.methods({
                 });
                 future.return("triples parsed and sended to cayley");
             }
+            else{
+                console.log(err);
+            }
         });
         return future.wait();
-    },
-
-    get_base : function () {
-        let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v2/query/gizmo',
-            {
-                params : {
-                  "lang" : "gizmo"
-                },
-                content : 'g.V().Tag("base").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Is("http://www.w3.org/2002/07/owl#Ontology").All()'
-            });
-        return(JSON.parse(result.content).result[0].base);
     },
 
 
@@ -57,29 +48,6 @@ Meteor.methods({
         return(JSON.parse(result.content).result);
     },
 
-    get_domains_for_visualize : function () {
-        let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v2/query',
-            {
-                params : {
-                    "lang" : "gizmo"
-                },
-                content : 'g.V().Tag("subject").Out("http://www.w3.org/2000/01/rdf-schema#domain", "predicate").Tag("object").All()'
-            });
-        return(JSON.parse(result.content).result);
-    },
-
-    get_ranges_for_visualize : function () {
-        let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v2/query',
-            {
-                params : {
-                    "lang" : "gizmo"
-                },
-                content : 'g.V().Tag("subject").Out("http://www.w3.org/2000/01/rdf-schema#range", "predicate").Tag("object").All()'
-            });
-        return(JSON.parse(result.content).result);
-    },
 
     remove_triples : function () {
         let future = new Future;
@@ -148,18 +116,29 @@ Meteor.methods({
         return(triples);
     },
 
-    get_triples_by_type : function () {
+
+    get_subjects_and_their_predicates : function () {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v2/query',
             {
                 params : {
                     "lang" : "gizmo"
                 },
-                content : 'g.V().Tag("subject").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate").Tag("object").All()'
+                content : 'g.V().In().Unique().ForEach( function(d) {\n' +
+                '\n' +
+                '    d.predicates = g.V(d.id).Out(null,"predicate").Tag("object").TagArray()\n' +
+                '\n' +
+                '    g.Emit(d)\n' +
+                '\n' +
+                '})'
             });
         return(JSON.parse(result.content).result);
     },
 });
+
+
+
+
 
 
 

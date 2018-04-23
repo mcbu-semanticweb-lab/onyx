@@ -10,15 +10,15 @@ export default {
 
     // positioning options
     randomize: false, // use random node positions at beginning of layout
-    avoidOverlap: true, // if true, prevents overlap of node bounding boxes
+    avoidOverlap: false, // if true, prevents overlap of node bounding boxes
     handleDisconnected: true, // if true, avoids disconnected components from overlapping
-    nodeSpacing: function( node ){ return 50; }, // extra spacing around nodes
+    nodeSpacing: 200, // extra spacing around nodes
     flow: undefined, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
     alignment: undefined, // relative alignment constraints on nodes, e.g. function( node ){ return { x: 0, y: 1 } }
 
     // different methods of specifying edge length
     // each can be a constant numerical value or a function like `function( edge ){ return 2; }`
-    edgeLength: undefined, // sets edge length directly in simulation
+    edgeLength: 200, // sets edge length directly in simulation
     edgeSymDiffLength: undefined, // symmetric diff edge length in simulation
     edgeJaccardLength: undefined, // jaccard edge length in simulation
 
