@@ -32,26 +32,6 @@ class CytoscapeRenderer extends Component {
         let self = this;
         let cy = cytoscape({
             container: document.getElementById('cy'),
-            elements: [
-                {
-                    group: "nodes",
-                    data: {
-                        id: "http://www.w3.org/2002/07/owl#Thing",
-                        label: "Thing",
-                    },
-                    style: {
-                        'shape' : 'ellipse',
-                        'background-color' : '#fff',
-                        'text-valign': 'center',
-                        'border-style' : 'dashed',
-                        'border-color' : 'black',
-                        'border-width' : '1',
-                        'height': '120',
-                        'width': '120'
-                    }
-                },
-
-            ],
             style: DEF_VISUAL_STYLE,
             minZoom: 0.1,
             maxZoom: 1.7,

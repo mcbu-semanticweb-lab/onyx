@@ -12,7 +12,7 @@ export default {
     randomize: false, // use random node positions at beginning of layout
     avoidOverlap: false, // if true, prevents overlap of node bounding boxes
     handleDisconnected: true, // if true, avoids disconnected components from overlapping
-    nodeSpacing: 200, // extra spacing around nodes
+    nodeSpacing: 400, // extra spacing around nodes
     flow: undefined, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
     alignment: undefined, // relative alignment constraints on nodes, e.g. function( node ){ return { x: 0, y: 1 } }
 

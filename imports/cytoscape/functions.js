@@ -132,7 +132,7 @@ export function add(cy) {
 
 
                 })
-            });
+            }); //Node Adding
 
             res.forEach(function (object) {
 
@@ -171,15 +171,15 @@ export function add(cy) {
 
 
                         }
-                    else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
 
-         /*                   thing_id = Random.id();
+                        else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
+                            range = "thing_".concat(object.predicates.find(find_range).object);
 
                             cy.add([
                                 {
                                     group: "nodes",
                                     data: {
-                                        id: thing_id,
+                                        id: range,
                                         label: "Thing",
                                     },
                                     style: {
@@ -195,12 +195,13 @@ export function add(cy) {
                                 },
                                 {
                                     group: "edges",
-                                    data: {id: Random.id(), source: thing_id, target: object.id, group: "domain"}
+                                    data: {id: Random.id(), source: range, target: object.id, group: "domain"}
                                 }
-                            ]);*/
+                            ]);
 
 
                         }
+
                         else {
                             cy.add([
                                 {
@@ -244,15 +245,15 @@ export function add(cy) {
 
 
                         }
-                        else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
 
-                           /* thing_id = Random.id();
+                        else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
+                            domain = object.predicates.find(find_domain).object.concat('_thing');
 
                             cy.add([
                                 {
                                     group: "nodes",
                                     data: {
-                                        id: thing_id,
+                                        id: domain,
                                         label: "Thing",
                                     },
                                     style: {
@@ -268,12 +269,13 @@ export function add(cy) {
                                 },
                                 {
                                     group: "edges",
-                                    data: {id: Random.id(), source: object.id, target: thing_id, group: "range"}
+                                    data: {id: Random.id(), source: object.id, target: domain, group: "range"}
                                 }
-                            ]);*/
+                            ]);
 
 
                         }
+
                         else {
                             cy.add([
                                 {
@@ -284,11 +286,33 @@ export function add(cy) {
                         }
                     }
 
+                    else if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#subClassOf") {
+                        if (triple.id === "http://www.w3.org/2002/07/owl#Thing") {
+                            //pass
+                        }
+                        else {
+                            cy.add([
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                        group: "object_property"
+                                    }
+                                },
+                                {
+                                    group: "edges",
+                                    data: {id: Random.id(), source: object.id, target: triple.id, group: "subclass"}
+                                }
+                            ]);
+                        }
+                    }
+
                     else {
                         // pass
                     }
                 })
-            });
+            }); //Edge Adding
 
         }
         let layout = cy.layout(OPTIONS);
@@ -397,3 +421,12 @@ Meteor.call('get_ranges_for_visualize', function (err, res) {
     layout.run();
 });
 return cy;*/
+
+
+function find_domain(obj) {
+    return obj.predicate === "http://www.w3.org/2000/01/rdf-schema#domain";
+}
+
+function find_range(obj) {
+    return obj.predicate === "http://www.w3.org/2000/01/rdf-schema#range";
+}

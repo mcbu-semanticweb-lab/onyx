@@ -68,6 +68,17 @@ export const DEF_VISUAL_STYLE = [
             'target-arrow-color': 'red',
         }
     },
+
+    {
+        selector: 'edge[group="subclass"]',
+        style: {
+            'label': 'Subclass of',
+            'line-style' : 'dashed',
+            'target-arrow-shape': 'triangle',
+            'target-arrow-color': 'black',
+        }
+    },
+
     {
         selector: '.hover',
         style: {
