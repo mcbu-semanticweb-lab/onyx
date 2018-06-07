@@ -45,3 +45,12 @@ export const search = function (label) {
         label : label
     }
 };
+
+export const showrestriction = function (label) {
+    return{
+        type: "ShowRestriction",
+        boole : true,
+        animation : "ShowRestriction",
+        label : label
+    }
+};

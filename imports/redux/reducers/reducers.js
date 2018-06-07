@@ -24,6 +24,13 @@ export const canvasAnimations = (state = false, action) => {
                 type : action.animation
             };
 
+
+        case 'ShowRestriction':
+            return {
+                animation : action.boole,
+                type : action.animation
+            };
+
         case 'ResetCanvas':
             return{
                 animation: action.boole,

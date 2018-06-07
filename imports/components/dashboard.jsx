@@ -6,10 +6,12 @@ import CytoscapeInfo from "./cytoscapejs/info";
 import {push} from 'redux-little-router';
 
 import {connect} from 'react-redux';
-import {draw,showNeighborhood,resetCanvas,pitfall,search} from '../redux/actions/actioncreators';
+import {draw,showNeighborhood,resetCanvas,pitfall,search,showrestriction} from '../redux/actions/actioncreators';
 
 import {Button, Accordion, Icon} from 'semantic-ui-react';
 import {Random} from 'meteor/random';
+
+import response from '../api/oops-test-response'
 
 class Dashboard extends Component {
 
@@ -32,6 +34,8 @@ class Dashboard extends Component {
         this.ShowNeighborhood = this.ShowNeighborhood.bind(this);
         this.ResetCanvas = this.ResetCanvas.bind(this);
         this.searchSubmit = this.searchSubmit.bind(this);
+        this.ShowRestriction = this.ShowRestriction.bind(this);
+
     }
 
     componentDidMount() {
@@ -41,6 +45,26 @@ class Dashboard extends Component {
             if (res !== 0) {
                 self.props.draw(true);
             }
+        });
+
+
+        Meteor.call('get_individual_num', function (err, res) {
+            if (res)
+                console.log(res);
+            else
+                console.log(err);
+        });
+
+
+        let x;
+        Meteor.call('rdf_translator', null, response, function (err, res) {
+            if (res) {
+                x = JSON.parse(res);
+                self.setState({pitfall_res: x["@graph"]});
+                console.log(x["@graph"]);
+            }
+            else
+                console.log(err);
         });
     }
 
@@ -69,7 +93,7 @@ class Dashboard extends Component {
     Send() {
         url = this.state.url;
         self = this;
-        Meteor.call('parse_and_send_to_cayley', "http://xmlns.com/foaf/spec/index.rdf", function (err, res) {
+        Meteor.call('parse_and_send_to_cayley', url, function (err, res) {
             if (res) {
                 console.log(res);
                 self.props.draw(true)
@@ -103,20 +127,14 @@ class Dashboard extends Component {
                 console.log(err);
         });
 
-        Meteor.call('pitfall_scanner',url,function (err,res) {
-            if(res){
-                let x;
-                Meteor.call('rdf_translator', null, res, function (err, res) {
-                    if (res) {
-                        x = JSON.parse(res);
-                        self.setState({pitfall_res: x["@graph"]});
-                        console.log(x["@graph"]);
-                    }
-                    else
-                        console.log(err);
-                });
-            }
-        });
+        // Meteor.call('pitfall_scanner',url,function (err,res) {
+        //     if(res){
+
+        //     }
+        // });
+
+
+        //
 
 
 
@@ -151,6 +169,11 @@ class Dashboard extends Component {
         this.props.resetCanvas(true);
     }
 
+    ShowRestriction(){
+        this.props.showrestriction(true);
+    }
+
+
     searchSubmit(event){
         if(event.target.value.length!==0)
             this.props.search(event.target.value);
@@ -161,7 +184,7 @@ class Dashboard extends Component {
         let content;
         const activeIndex = this.state.activeIndex;
         console.log(this.state.pitfall_res);
-        if (this.state.pitfall_res !== null) {
+        if (this.state.pitfall_res !== null && this.state.pitfall_res !== undefined) {
             content = this.state.pitfall_res.map((data, index) => {
                 if(data["@type"]==="oops:pitfall"&&data["oops:hasAffectedElement"]&&data["oops:hasAffectedElement"].length!==undefined){
                    console.log(data);
@@ -173,7 +196,7 @@ class Dashboard extends Component {
                             </Accordion.Title>
                             <Accordion.Content active={activeIndex === index}>
                                 <p>
-                                    {data["oops:hasDescription"]} <Button type={"submit"} onClick={(e) => this.setAffectedElement(e, data["oops:hasAffectedElement"])}> Göster </Button>
+                                    {data["oops:hasDescription"]} <Button type={"submit"} onClick={(e) => this.setAffectedElement(e, data["oops:hasAffectedElement"])}> Show </Button>
                                 </p>
                                 <br/>
                                 {
@@ -194,6 +217,7 @@ class Dashboard extends Component {
                             <Menu.Item name='Remove Nodes and BackDashboard'  position='left' onClick={this.Remove} />
                             <Menu.Item name='Show Neighborhood'  position='left' onClick={this.ShowNeighborhood} />
                             <Menu.Item name='Reset Canvas'  position='left' onClick={this.ResetCanvas} />
+                            <Menu.Item name='Show Restriction'  position='left' onClick={this.ShowRestriction} />
                             <Search
                                 onClick={this.searchSubmit}
                             />
@@ -235,7 +259,7 @@ class Dashboard extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column width={6}>
-                            <Form onClick={this.Send}>
+                            <Form onSubmit={this.Send}>
                                 <Form.Field>
                                     <Form.Input type="text" placeholder='Ontology URI' name='ontolgy_uri'
                                                 onChange={this.SetURI}/>
@@ -268,6 +292,9 @@ const mapDispatchToProps = dispatch => {
         },
         search: function (label) {
             return dispatch(search(label))
+        },
+        showrestriction: function (eles) {
+            return dispatch(showrestriction(eles))
         }
     };
 };

@@ -6,6 +6,7 @@ Meteor.methods({
         if (data === undefined) {
             let sync = Meteor.wrapAsync(HTTP.post);
             let result = sync('http://rdf-translator.appspot.com/convert/detect/nt/' + uri);
+            console.log(result.content);
             return (result.content);
         }
         else {

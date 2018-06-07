@@ -15,8 +15,9 @@ import {
     selectNode,
     unselectNode,
     search,
-    add
+    add, showRestrictions
 } from "../../cytoscape/functions";
+import OPTIONS from "../../cytoscape/colajs-options";
 
 class CytoscapeRenderer extends Component {
 
@@ -33,7 +34,7 @@ class CytoscapeRenderer extends Component {
         let cy = cytoscape({
             container: document.getElementById('cy'),
             style: DEF_VISUAL_STYLE,
-            minZoom: 0.1,
+            minZoom: 3.1,
             maxZoom: 1.7,
             wheelSensitivity: 1,
         });
@@ -49,7 +50,7 @@ class CytoscapeRenderer extends Component {
             event.target.removeClass("hover");
         });
 
-        cy.on('tap', 'node', function(event){
+        cy.on('tap', function(event){
             self.props.select(event.target.id());
         });
 
@@ -74,6 +75,8 @@ class CytoscapeRenderer extends Component {
             showPitfalls(cy,nextProps.pitfall_affected_elements);
         else if(nextProps.canvasAnimation.type==="ShowNeighborhood")
             showNeighborhoods(nextProps.selectedNode,cy);
+        else if(nextProps.canvasAnimation.type==="ShowRestriction")
+            showRestrictions(nextProps.selectedNode,cy);
         else if(nextProps.canvasAnimation.type==="Search")
             search(cy,nextProps.canvasAnimation.label);
     }

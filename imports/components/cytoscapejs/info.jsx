@@ -8,7 +8,7 @@ class CytoscapeInfo extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
+        this.state = { //TODO : state ler redux a aktarılacak
             triples: null,
             activeIndex: 0,
             class_number: null,

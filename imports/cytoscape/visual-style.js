@@ -12,13 +12,28 @@ export const DEF_VISUAL_STYLE = [
         selector: 'node[group="class"]',
         style: {
             'shape' : 'ellipse',
-            'background-color' : '#acf',
+            'background-color' : '#f7d708',
             'text-valign': 'center',
             'border-style' : 'double',
             'border-color' : 'black',
             'border-width' : '6',
             'width' : '160',
             'height' : '160'
+        }
+    },
+
+
+    {
+        selector: 'node[group="restriction"]',
+        style: {
+            'shape' : 'ellipse',
+            'background-color' : '#a7a7a7',
+            'text-valign': 'center',
+            'border-style' : 'double',
+            'border-color' : 'black',
+            'border-width' : '6',
+            'width' : '50',
+            'height' : '50'
         }
     },
 
@@ -98,9 +113,9 @@ export const DEF_VISUAL_STYLE = [
     {
         selector: '.pitfall',
         style: {
-            'border-width' : '25px',
+            'border-width' : '10px',
             'border-style' : 'solid',
-            'border-color' : 'orange'
+            'border-color' : 'red'
         }
     }
 
