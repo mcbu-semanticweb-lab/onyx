@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 import { createContainer } from 'meteor/react-meteor-data';
 
-import LoginPage from './login-page';
-import Dashboard from "./dashboard";
+import LoginPage from './LoginPage/LoginPageContainer';
+import IndexPageContainer from "./IndexPage/IndexPageContainer";
+import AppPageContainer from "./AppPage/AppPageContainer";
 
 import { connect } from 'react-redux';
 
@@ -20,7 +21,8 @@ class HomePage extends Component {
                 <div>
                     <Fragment forRoute='/'><LoginPage /></Fragment>
                     <Fragment forRoute='/login'><LoginPage /></Fragment>
-                    <Fragment forRoute='/dashboard'><Dashboard /></Fragment>
+                    <Fragment forRoute='/IndexPage'><IndexPageContainer/></Fragment>
+                    <Fragment forRoute='/AppPage'><AppPageContainer/></Fragment>
                 </div>
             </Fragment>
         );

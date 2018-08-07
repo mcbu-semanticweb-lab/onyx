@@ -2,14 +2,14 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base'
 import { Button, Form } from 'semantic-ui-react';
 import React , { Component } from 'react';
-import { Tab, Menu, Grid } from 'semantic-ui-react';
+import { Tab, Grid } from 'semantic-ui-react';
 
 import { connect } from 'react-redux';
 
 import { push } from 'redux-little-router';
 
 
-class LoginPage extends Component {
+class LoginPageContainer extends Component {
 
     self = this;
 
@@ -36,8 +36,8 @@ class LoginPage extends Component {
 
     Register(event){
         event.preventDefault();
-        email = this.state.email;
-        pass = this.state.pass;
+        let email = this.state.email;
+        let pass = this.state.pass;
         console.log(email,pass);
         Accounts.createUser({
             email : email,
@@ -54,15 +54,15 @@ class LoginPage extends Component {
 
     Login(event){
         event.preventDefault();
-        email = this.state.email;
-        pass = this.state.pass;
+        let email = this.state.email;
+        let pass = this.state.pass;
         self = this;
         Meteor.loginWithPassword(email,pass,function (err) {
             if(err)
                 console.log(err.message);
             else{
                 console.log("Succesfully Logged In");
-                self.props.redirect('/dashboard');
+                self.props.redirect('/IndexPage');
             }
         });
     }
@@ -113,5 +113,5 @@ const mapDispatchToProps = dispatch => {
 };
 
 
-export default connect(null,mapDispatchToProps)(LoginPage);
+export default connect(null,mapDispatchToProps)(LoginPageContainer);
 
