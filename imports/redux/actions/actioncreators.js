@@ -54,3 +54,11 @@ export const showrestriction = function (label) {
         label : label
     }
 };
+
+export const isLoggedIn = function (boole) {
+    return{
+        type: "Login",
+        boole : boole
+    }
+};
+

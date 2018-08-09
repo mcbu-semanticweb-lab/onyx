@@ -16,6 +16,15 @@ export const draw = (state = false, action) => {
     }
 };
 
+export const userLoggedIn = function(state = false , action) {
+    switch (action.type) {
+        case 'Login':
+            return action.boole;
+        default:
+            return state;
+    }
+}
+
 export const canvasAnimations = (state = false, action) => {
     switch (action.type) {
         case 'ShowNeighborhood':

@@ -10,6 +10,7 @@ import {Random} from 'meteor/random';
 import AppPageContainer from "../AppPage/AppPageContainer";
 import UriUpload from "./UriUpload";
 import FileUpload from "./FileUpload";
+import {isLoggedIn} from "../../redux/actions/actioncreators";
 
 
 class IndexPageContainer extends Component {
@@ -37,6 +38,7 @@ class IndexPageContainer extends Component {
             else {
                 console.log("Successfully Logged Out");
                 self.props.redirect('/');
+                self.props.isLoggedIn(false);
             }
         });
     }
@@ -63,6 +65,9 @@ const mapDispatchToProps = dispatch => {
         redirect: function (href) {
             return dispatch(push(href))
         },
+        isLoggedIn: function (boole) {
+            return dispatch(isLoggedIn(boole))
+        }
     };
 };
 

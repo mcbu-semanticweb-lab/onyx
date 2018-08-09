@@ -72,12 +72,9 @@ class AppPageContainer extends Component{
             this.props.search(event.target.value);
     }
 
-    setAffectedElement(event,data) {
-        if(data)
-            this.props.pitfall_set(data);
+    toggleVisibility(){
+        this.setState({ sidebar_visible: !this.state.sidebar_visible});
     }
-
-    toggleVisibility = () => this.setState({ sidebar_visible: !this.state.sidebar_visible});
 
 
 
