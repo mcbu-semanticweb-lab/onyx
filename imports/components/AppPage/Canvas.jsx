@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
+import undoRedo from 'cytoscape-undo-redo';
+import navigator from 'cytoscape-navigator';
 import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import {Random} from 'meteor/random';
-import {Grid,Loader} from 'semantic-ui-react';
+import {Grid,Loader,Container} from 'semantic-ui-react';
 
 import {connect} from 'react-redux';
 import {select, draw, showNeighborhood} from '../../redux/actions/actioncreators';
@@ -15,7 +17,8 @@ import {
     selectNode,
     unselectNode,
     search,
-    showRestrictions, add2
+    showRestrictions, add2,
+    undo
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 
@@ -28,7 +31,8 @@ class CytoscapeRenderer extends Component {
             cy: null,
             draw: true,
             png : null,
-            loading : true
+            loading : true,
+            ur : null
         };
     }
 
@@ -39,6 +43,8 @@ class CytoscapeRenderer extends Component {
             if (res.length !== 0) {
 
                 cytoscape.use(cola);
+                undoRedo( cytoscape );
+                navigator( cytoscape);
 
                 let cy = cytoscape({
                     container: document.getElementById('cy'),
@@ -48,6 +54,32 @@ class CytoscapeRenderer extends Component {
                     wheelSensitivity: 1,
                     //hideEdgesOnViewport : true
                 });
+
+                navigator( cytoscape ); // register extension
+
+                var defaults = {
+                    container: document.getElementById('nav') // can be a HTML or jQuery element or jQuery selector
+                    , viewLiveFramerate: 0 // set false to update graph pan only on drag end; set 0 to do it instantly; set a number (frames per second) to update not more than N times per second
+                    , thumbnailEventFramerate: 30 // max thumbnail's updates per second triggered by graph updates
+                    , thumbnailLiveFramerate: false // max thumbnail's updates per second. Set false to disable
+                    , dblClickDelay: 200 // milliseconds
+                    , removeCustomContainer: true // destroy the container specified by user on plugin destroy
+                    , rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
+                };
+
+                cy.navigator( defaults ); // get navigator instance, nav
+
+                var options = {
+                    isDebug: false, // Debug mode for console messages
+                    actions: {},// actions to be added
+                    undoableDrag: true, // Whether dragging nodes are undoable can be a function as well
+                    stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
+                    ready: function () { // callback when undo-redo is ready
+
+                    }
+                }
+
+                var ur = cy.undoRedo(options); // Can also be set whenever wanted.
 
                 cy.on('mouseover', 'node', function(event){
                     event.target.addClass("hover");
@@ -67,7 +99,10 @@ class CytoscapeRenderer extends Component {
                         self.setState({loading: false})
                 });
 
-                self.setState({cy: cy});
+                self.setState({
+                    cy: cy,
+                    ur: ur
+                });
 
             }
         });
@@ -76,11 +111,14 @@ class CytoscapeRenderer extends Component {
 
     componentWillReceiveProps(nextProps) {
         let cy = this.state.cy;
+        let ur = this.state.ur;
         if (this.props.selectedNode !== nextProps.selectedNode) {
             unselectNode(cy, this.props.selectedNode);
             selectNode(cy, nextProps.selectedNode);
         }
-        if (this.props.canvasAnimation.type === nextProps.canvasAnimation.type) {
+        if (nextProps.canvasAnimation.type === "Undo")
+            undo(cy,ur);
+        else if (this.props.canvasAnimation.type === nextProps.canvasAnimation.type) {
             console.log("states are equal");
         }
         else if (nextProps.canvasAnimation.type === "ResetCanvas") //reset sonrası select
@@ -105,6 +143,7 @@ class CytoscapeRenderer extends Component {
                     <Grid.Column>
                         <div id="cy">
                             <Loader active = {this.state.loading} />
+                            <div id="nav"></div>
                         </div>
                     </Grid.Column>
                 </Grid.Row>

@@ -10,7 +10,8 @@ import {
     resetCanvas,
     search,
     showNeighborhood,
-    showrestriction
+    showrestriction,
+    undo
 } from "../../redux/actions/actioncreators";
 import {push} from "redux-little-router";
 
@@ -29,6 +30,7 @@ class AppPageContainer extends Component{
         this.ResetCanvas= this.ResetCanvas.bind(this);
         this.ShowRestriction= this.ShowRestriction.bind(this);
         this.searchSubmit= this.searchSubmit.bind(this);
+        this.Undo= this.Undo.bind(this);
 
 
     }
@@ -76,7 +78,9 @@ class AppPageContainer extends Component{
         this.setState({ sidebar_visible: !this.state.sidebar_visible});
     }
 
-
+    Undo(){
+        this.props.undo(true);
+    }
 
 
     render(){
@@ -88,6 +92,7 @@ class AppPageContainer extends Component{
                         <Menu.Item name='Show Neighborhood'  position='left' onClick={this.ShowNeighborhood} />
                         <Menu.Item name='Reset Canvas'  position='left' onClick={this.ResetCanvas} />
                         <Menu.Item name='Show Restriction'  position='left' onClick={this.ShowRestriction} />
+                        <Menu.Item name='Undo'  position='left' onClick={this.Undo} />
                         <Search
                             onClick={this.searchSubmit}
                         />
@@ -143,6 +148,9 @@ const mapDispatchToProps = dispatch => {
         },
         showrestriction: function (eles) {
             return dispatch(showrestriction(eles))
+        },
+        undo: function (eles) {
+            return dispatch(undo(eles))
         }
     };
 };

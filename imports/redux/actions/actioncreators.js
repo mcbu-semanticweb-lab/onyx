@@ -55,10 +55,21 @@ export const showrestriction = function (label) {
     }
 };
 
+export const undo = function (label) {
+    return{
+        type: "Undo",
+        boole : true,
+        animation : "Undo",
+        label : label
+    }
+};
+
 export const isLoggedIn = function (boole) {
     return{
         type: "Login",
         boole : boole
     }
 };
+
+
 

@@ -60,6 +60,13 @@ export const canvasAnimations = (state = false, action) => {
                 label : action.label
             };
 
+        case 'Undo':
+            return{
+                animation: action.boole,
+                type:action.animation,
+                label : action.label
+            };
+
         default:
             return state;
     }
