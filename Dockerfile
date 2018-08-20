@@ -1,5 +1,5 @@
 FROM ubuntu:18.10
-RUN apt-get update && apt-get install -y curl && apt-get install -y git && apt-get install -y locales
+RUN apt-get update && apt-get install -y curl git locales
 RUN locale-gen en_US.UTF-8
 RUN useradd -m ontoboy
 USER ontoboy
