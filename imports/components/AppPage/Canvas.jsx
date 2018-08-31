@@ -49,7 +49,7 @@ class CytoscapeRenderer extends Component {
                 panzoom( cytoscape );
 
                 let cy = cytoscape({
-                    container: document.getElementById('cy'),
+                    container: document.getElementsByClassName('canvas'),
                     //layout:OPTIONS,
                     elements: res,
                     style: DEF_VISUAL_STYLE,
@@ -169,12 +169,9 @@ class CytoscapeRenderer extends Component {
             return (<Grid>
                 <Loader/>
                 <Grid.Row>
-                    <Grid.Column>
-                        <div id="cy">
+                    <Grid.Column className="canvas">
                             <Loader active = {this.state.loading} />
                             <div id="nav">
-
-                            </div>
                         </div>
                     </Grid.Column>
                 </Grid.Row>

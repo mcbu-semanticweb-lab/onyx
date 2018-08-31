@@ -13,8 +13,8 @@ body{
     height: 100%;
 }
 
-#cy {
-    height: 100vh;
+.canvas {
+    height: 90vh;
     background: #ecf0f1;
 }
 
@@ -24,7 +24,9 @@ body{
 
 .card{
     height: 80vh;
-}#nav{
+}
+
+#nav{
     position: fixed;
     border: 1px solid #000;
     background: #fff;
