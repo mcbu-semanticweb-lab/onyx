@@ -9,7 +9,7 @@ import {Random} from 'meteor/random';
 import {Grid,Loader,Card,Transition} from 'semantic-ui-react';
 
 import {connect} from 'react-redux';
-import {select, draw, showNeighborhood} from '../../redux/actions/actioncreators';
+import {select, draw, showNeighborhood,addhistory} from '../../redux/actions/actioncreators';
 
 import {
     showNeighborhoods,
@@ -122,6 +122,19 @@ class CytoscapeRenderer extends Component {
                 cy.on('tap', function(event){
                     self.props.select(event.target.id());
                 });
+
+                cy.on("afterUndo", function (event, actionName, args) {
+                    let str = "Undo " + args.nodes[0].data().label + "  " + actionName;
+                    self.props.addHistory(str);
+                });
+                cy.on("afterRedo", function (event, actionName, args) {
+                    let str = "Redo " + args.nodes[0].data().label + "  " + actionName;
+                    self.props.addHistory(str);
+                });
+                cy.on("afterDo", function (event, actionName, args) {
+                    let str = "Do " + args.nodes[0].data().label + "  " + actionName;
+                    self.props.addHistory(str);
+                });
                 
                 cy.ready(function (event) {
                     if(event)
@@ -145,8 +158,9 @@ class CytoscapeRenderer extends Component {
             unselectNode(cy, this.props.selectedNode);
             selectNode(cy, nextProps.selectedNode);
         }
-        if (nextProps.canvasAnimation.type === "Undo")
+        if (nextProps.canvasAnimation.type === "Undo"){
             ur.undo();
+        }
         else  if (nextProps.canvasAnimation.type === "Redo")
         {
             console.log("redo");
@@ -196,6 +210,9 @@ const mapDispatchToProps = dispatch => {
         },
         showNeighborhoods: function (boole) {
             return dispatch(showNeighborhood(boole))
+        },
+        addHistory: function (event) {
+            return dispatch(addhistory(event))
         }
     }
 };

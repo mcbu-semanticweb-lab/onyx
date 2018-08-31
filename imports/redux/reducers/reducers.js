@@ -95,3 +95,15 @@ export const canvasProperties = (state = initial_ui_state, action) => {
             return state;
     }
 };
+
+
+export const History = (state = [] , action) => {
+    switch (action.type) {
+        case 'addHistory':
+            state.push(action.event);
+            console.log(state);
+            return state;
+        default:
+            return state;
+    }
+};

@@ -99,6 +99,14 @@ export const showsidebar = function () {
     }
 };
 
+// Canvas history
+
+export const addhistory = function (event) {
+    return{
+        type: "addHistory",
+        event : event
+    }
+};
 
 
 

@@ -835,6 +835,8 @@ export function add2(callback){
 }
 
 
+
+
 /*  Meteor.call('get_triples_by_type', function (err, res) {
     res.forEach(function (triple) {
         if (triple.object.slice(triple.object.lastIndexOf('/') + 1).includes('Class')) {
