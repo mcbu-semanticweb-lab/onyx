@@ -1,5 +1,6 @@
 import OPTIONS from "./colajs-options";
 import {Random} from 'meteor/random';
+import tippy from 'tippy.js';
 
 var list = [];
 
@@ -1034,3 +1035,21 @@ cy.animation({
         eles: eles
     }
 }).play();*/
+
+
+export function MakeTippy(node, text){
+    console.log(node,text);
+    return tippy( node.popperRef(), {
+        html: (function(){
+            var div = document.createElement('div');
+            div.innerHTML = text;
+            return div;
+        })(),
+        trigger: 'manual',
+        arrow: false,
+        placement: 'bottom',
+        hideOnClick: false,
+        multiple: false,
+        sticky: true
+    } ).tooltips[0];
+};

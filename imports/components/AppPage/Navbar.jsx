@@ -10,7 +10,8 @@ import {
     undo,
     shownavigator,
     showsidebar,
-    redo
+    redo,
+    popup
 } from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 
@@ -67,6 +68,7 @@ export class Navbar extends Component {
                 <Menu.Item name='Redo' position='left' onClick={this.props.redo}/>
                 <Menu.Item name='Pitfall' position='left'> <Pitfall/> </Menu.Item>
                 <Menu.Item name='Navigator' position='left' onClick={this.props.showNavigator}/>
+                <Menu.Item name='Pop-up' position='left' onClick={this.props.pop_up}/>
                 <Search
                     onClick={this.searchSubmit}
                 />
@@ -110,7 +112,9 @@ const mapDispatchToProps = dispatch => {
         showSidebar: function () {
             return dispatch(showsidebar())
         },
-
+        pop_up: function () {
+            return dispatch(popup())
+        },
     };
 };
 

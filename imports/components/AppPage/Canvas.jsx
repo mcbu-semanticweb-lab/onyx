@@ -4,10 +4,10 @@ import cola from 'cytoscape-cola';
 import undoRedo from 'cytoscape-undo-redo';
 import navigator from 'cytoscape-navigator';
 import panzoom from 'cytoscape-panzoom';
+import popper from 'cytoscape-popper';
 import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import {Random} from 'meteor/random';
 import {Grid,Loader,Card,Transition} from 'semantic-ui-react';
-
 import {connect} from 'react-redux';
 import {select, draw, showNeighborhood,addhistory} from '../../redux/actions/actioncreators';
 
@@ -19,6 +19,7 @@ import {
     unselectNode,
     search,
     showRestrictions, add2,
+    MakeTippy
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 
@@ -44,6 +45,7 @@ class CytoscapeRenderer extends Component {
             if (res.length !== 0) {
 
                 cytoscape.use(cola);
+                cytoscape.use( popper );
                 undoRedo( cytoscape );
                 navigator( cytoscape);
                 panzoom( cytoscape );
@@ -110,6 +112,8 @@ class CytoscapeRenderer extends Component {
 
                 cy.panzoom( defaults );
 
+
+
                 cy.on('mouseover', 'node', function(event){
                     event.target.addClass("hover");
                 });
@@ -166,6 +170,16 @@ class CytoscapeRenderer extends Component {
             console.log("redo");
             ur.redo();
         }
+        else  if (nextProps.canvasAnimation.type === "Pop-up")
+        {
+            console.log(nextProps.selectedNode);
+            let node = cy.getElementById(nextProps.selectedNode);
+            let tip = MakeTippy(node,nextProps.selectedNode);
+            tip.show();
+            Meteor.setTimeout(function() {
+                tip.hide();
+            }, 1500);
+        }
         else if (this.props.canvasAnimation.type === nextProps.canvasAnimation.type) {
             console.log("states are equal");
         }
@@ -190,9 +204,10 @@ class CytoscapeRenderer extends Component {
                 <Loader/>
                 <Grid.Row>
                     <Grid.Column id="canvas">
+                        <Grid.Row className="cy-panzoom" />
                             <Loader active = {this.state.loading} />
                             <Transition visible={this.props.canvasProperties.navigator} animation='scale' duration={500}>
-                                <div id="nav"> </div>
+                                <Card id="nav"> </Card>
                             </Transition>
                     </Grid.Column>
                 </Grid.Row>

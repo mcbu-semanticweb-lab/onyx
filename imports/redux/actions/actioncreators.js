@@ -85,6 +85,15 @@ export const redo = function () {
     }
 };
 
+export const popup = function () {
+    return{
+        type: "Pop-up",
+        boole : true,
+        animation : "Pop-up",
+    }
+};
+
+
 //UI animations
 
 export const shownavigator = function () {
