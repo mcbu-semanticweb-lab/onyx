@@ -8,7 +8,9 @@ import {
     showNeighborhood,
     showrestriction,
     undo,
-    shownavigator, showsidebar
+    shownavigator,
+    showsidebar,
+    redo
 } from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 
@@ -17,13 +19,11 @@ export class Navbar extends Component {
 
     constructor(props) {
         super(props);
-
         this.Remove = this.Remove.bind(this);
         this.ShowNeighborhood = this.ShowNeighborhood.bind(this);
         this.ResetCanvas = this.ResetCanvas.bind(this);
         this.ShowRestriction = this.ShowRestriction.bind(this);
         this.searchSubmit = this.searchSubmit.bind(this);
-        this.Undo = this.Undo.bind(this);
     }
 
 
@@ -55,10 +55,6 @@ export class Navbar extends Component {
             this.props.search(event.target.value);
     }
 
-    Undo() {
-        this.props.undo(true);
-    }
-
 
     render() {
         return (
@@ -67,7 +63,8 @@ export class Navbar extends Component {
                 <Menu.Item name='Show Neighborhood' position='left' onClick={this.ShowNeighborhood}/>
                 <Menu.Item name='Reset Canvas' position='left' onClick={this.ResetCanvas}/>
                 <Menu.Item name='Show Restriction' position='left' onClick={this.ShowRestriction}/>
-                <Menu.Item name='Undo' position='left' onClick={this.Undo}/>
+                <Menu.Item name='Undo' position='left' onClick={this.props.undo}/>
+                <Menu.Item name='Redo' position='left' onClick={this.props.redo}/>
                 <Menu.Item name='Pitfall' position='left'> <Pitfall/> </Menu.Item>
                 <Menu.Item name='Navigator' position='left' onClick={this.props.showNavigator}/>
                 <Search
@@ -103,6 +100,9 @@ const mapDispatchToProps = dispatch => {
         },
         undo: function (eles) {
             return dispatch(undo(eles))
+        },
+        redo: function (eles) {
+            return dispatch(redo(eles))
         },
         showNavigator: function () {
             return dispatch(shownavigator())

@@ -834,10 +834,6 @@ export function add2(callback){
     });
 }
 
-export function  undo(cy,ur) {
-    ur.undo();
-}
-
 
 /*  Meteor.call('get_triples_by_type', function (err, res) {
     res.forEach(function (triple) {

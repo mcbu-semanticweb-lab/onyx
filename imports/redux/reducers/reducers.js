@@ -56,15 +56,19 @@ export const canvasAnimations = (state = false, action) => {
         case 'Search':
             return{
                 animation: action.boole,
-                type:action.animation,
-                label : action.label
+                type: action.animation,
             };
 
         case 'Undo':
             return{
                 animation: action.boole,
-                type:action.animation,
-                label : action.label
+                type: action.animation,
+            };
+
+        case 'Redo':
+            return{
+                animation: action.boole,
+                type: action.animation,
             };
 
         default:

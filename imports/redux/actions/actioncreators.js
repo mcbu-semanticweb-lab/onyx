@@ -1,3 +1,14 @@
+//User login control
+export const isLoggedIn = function (boole) {
+    return{
+        type: "Login",
+        boole : boole
+    }
+};
+
+
+//Node select
+
 export const select = function(id) {
     return {
         type : "SELECTED",
@@ -5,12 +16,17 @@ export const select = function(id) {
     }
 };
 
+//Should canvas draw
+
 export const draw = function (boole) {
     return{
         type: "CANVAS",
         boole : boole
     }
 };
+
+
+//Canvas animations
 
 export const showNeighborhood = function (boole) {
     return{
@@ -37,23 +53,39 @@ export const pitfall = function (affected_elements) {
     }
 };
 
-export const search = function (label) {
+export const search = function () {
     return{
         type: "Search",
         boole : true,
         animation : "Search",
-        label : label
     }
 };
 
-export const showrestriction = function (label) {
+export const showrestriction = function () {
     return{
         type: "ShowRestriction",
         boole : true,
         animation : "ShowRestriction",
-        label : label
     }
 };
+
+export const undo = function () {
+    return{
+        type: "Undo",
+        boole : true,
+        animation : "Undo",
+    }
+};
+
+export const redo = function () {
+    return{
+        type: "Redo",
+        boole : true,
+        animation : "Redo",
+    }
+};
+
+//UI animations
 
 export const shownavigator = function () {
     return{
@@ -67,21 +99,7 @@ export const showsidebar = function () {
     }
 };
 
-export const undo = function (label) {
-    return{
-        type: "Undo",
-        boole : true,
-        animation : "Undo",
-        label : label
-    }
-};
 
-export const isLoggedIn = function (boole) {
-    return{
-        type: "Login",
-        boole : boole
-    }
-};
 
 
 

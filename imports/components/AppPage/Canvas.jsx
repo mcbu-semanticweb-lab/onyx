@@ -19,8 +19,6 @@ import {
     unselectNode,
     search,
     showRestrictions, add2,
-    undo,
-
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 
@@ -143,13 +141,17 @@ class CytoscapeRenderer extends Component {
     componentWillReceiveProps(nextProps) {
         let cy = this.state.cy;
         let ur = this.state.ur;
-        console.log(nextProps);
         if (this.props.selectedNode !== nextProps.selectedNode) {
             unselectNode(cy, this.props.selectedNode);
             selectNode(cy, nextProps.selectedNode);
         }
         if (nextProps.canvasAnimation.type === "Undo")
-            undo(cy,ur);
+            ur.undo();
+        else  if (nextProps.canvasAnimation.type === "Redo")
+        {
+            console.log("redo");
+            ur.redo();
+        }
         else if (this.props.canvasAnimation.type === nextProps.canvasAnimation.type) {
             console.log("states are equal");
         }
