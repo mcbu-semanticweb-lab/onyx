@@ -74,7 +74,7 @@ export const canvasAnimations = (state = false, action) => {
 
 let initial_ui_state = {
     sidebar : false,
-    navigator : false
+    navigator : true
 };
 
 

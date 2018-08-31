@@ -176,7 +176,7 @@ class CytoscapeRenderer extends Component {
                     <Grid.Column id="canvas">
                             <Loader active = {this.state.loading} />
                             <Transition visible={this.props.canvasProperties.navigator} animation='scale' duration={500}>
-                                <Card id="nav"> </Card>
+                                <div id="nav"> </div>
                             </Transition>
                     </Grid.Column>
                 </Grid.Row>
