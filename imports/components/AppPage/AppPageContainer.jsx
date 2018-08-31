@@ -3,17 +3,17 @@ import {Grid, Menu,Sidebar, Icon} from 'semantic-ui-react';
 import CytoscapeCanvas from "./Canvas";
 import CytoscapeInfo from "./Info";
 import Navbar from "./Navbar";
+import { showsidebar } from "../../redux/actions/actioncreators";
+import {connect} from "react-redux";
 
 
-export default class AppPageContainer extends Component{
+class AppPageContainer extends Component{
 
     constructor(props){
         super(props);
         this.state = {
             sidebar_visible:false,
         };
-
-        this.toggleVisibility = this.toggleVisibility.bind(this);
     }
 
     componentDidMount(){
@@ -24,12 +24,6 @@ export default class AppPageContainer extends Component{
                 console.log(err);
         });
     }
-
-
-    toggleVisibility(){
-        this.setState({ sidebar_visible: !this.state.sidebar_visible});
-    }
-
 
     render(){
         return (
@@ -44,10 +38,10 @@ export default class AppPageContainer extends Component{
                         animation='overlay'
                         width='wide'
                         direction='right'
-                        visible={this.state.sidebar_visible}
+                        visible={this.props.canvasProperties.sidebar}
                         vertical
                     >
-                        <Icon bordered link name='remove' size='big' className='sidebar-icon' onClick={this.toggleVisibility}/><br/><br/><br/><br/><br/>
+                        <Icon bordered link name='remove' size='big' className='sidebar-icon' onClick={this.props.showSidebar}/><br/><br/><br/><br/><br/>
                         <CytoscapeInfo/>
                     </Sidebar>
                 </Grid.Row>
@@ -55,3 +49,21 @@ export default class AppPageContainer extends Component{
         )
     }
 }
+
+
+const mapStateToProps = state => {
+    return {
+        canvasProperties: state.RootReducer.canvasProperties,
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        showSidebar: function () {
+            return dispatch(showsidebar())
+        },
+
+    };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(AppPageContainer);

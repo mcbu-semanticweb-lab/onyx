@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Menu,Search,Icon } from 'semantic-ui-react'
+import { Menu,Search,Icon,Transition } from 'semantic-ui-react'
 import Pitfall from "./Pitfall";
 import {
     draw,
@@ -7,73 +7,74 @@ import {
     search,
     showNeighborhood,
     showrestriction,
-    undo
+    undo,
+    shownavigator, showsidebar
 } from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 
 
-export class Navbar extends Component{
+export class Navbar extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        this.Remove= this.Remove.bind(this);
-        this.ShowNeighborhood= this.ShowNeighborhood.bind(this);
-        this.ResetCanvas= this.ResetCanvas.bind(this);
-        this.ShowRestriction= this.ShowRestriction.bind(this);
-        this.searchSubmit= this.searchSubmit.bind(this);
-        this.Undo= this.Undo.bind(this);
+        this.Remove = this.Remove.bind(this);
+        this.ShowNeighborhood = this.ShowNeighborhood.bind(this);
+        this.ResetCanvas = this.ResetCanvas.bind(this);
+        this.ShowRestriction = this.ShowRestriction.bind(this);
+        this.searchSubmit = this.searchSubmit.bind(this);
+        this.Undo = this.Undo.bind(this);
     }
 
 
-
-    Remove(){
+    Remove() {
         self = this;
-        Meteor.call('remove_triples',function (err,res) {
-            if(res){
+        Meteor.call('remove_triples', function (err, res) {
+            if (res) {
                 console.log(res);
                 self.props.draw(false)
             }
         });
     }
 
-    ShowNeighborhood(){
+    ShowNeighborhood() {
         this.props.showNeighborhoods(true);
     }
 
-    ResetCanvas(){
+    ResetCanvas() {
         this.props.resetCanvas(true);
     }
 
-    ShowRestriction(){
+    ShowRestriction() {
         this.props.showrestriction(true);
     }
 
 
-    searchSubmit(event){
-        if(event.target.value.length!==0)
+    searchSubmit(event) {
+        if (event.target.value.length !== 0)
             this.props.search(event.target.value);
     }
 
-    Undo(){
+    Undo() {
         this.props.undo(true);
     }
 
 
-    render(){
-        return(
+    render() {
+        return (
             <Menu attached='top' size="small" className="navbar2">
-                <Menu.Item name='Remove Nodes and BackDashboard'  position='left' onClick={this.Remove} />
-                <Menu.Item name='Show Neighborhood'  position='left' onClick={this.ShowNeighborhood} />
-                <Menu.Item name='Reset Canvas'  position='left' onClick={this.ResetCanvas} />
-                <Menu.Item name='Show Restriction'  position='left' onClick={this.ShowRestriction} />
-                <Menu.Item name='Undo'  position='left' onClick={this.Undo} />
-                <Menu.Item name='Pitfall'  position='left' >  <Pitfall/> </Menu.Item>
+                <Menu.Item name='Remove Nodes and BackDashboard' position='left' onClick={this.Remove}/>
+                <Menu.Item name='Show Neighborhood' position='left' onClick={this.ShowNeighborhood}/>
+                <Menu.Item name='Reset Canvas' position='left' onClick={this.ResetCanvas}/>
+                <Menu.Item name='Show Restriction' position='left' onClick={this.ShowRestriction}/>
+                <Menu.Item name='Undo' position='left' onClick={this.Undo}/>
+                <Menu.Item name='Pitfall' position='left'> <Pitfall/> </Menu.Item>
+                <Menu.Item name='Navigator' position='left' onClick={this.props.showNavigator}/>
                 <Search
                     onClick={this.searchSubmit}
                 />
-                <Menu.Item position='right' onClick={this.toggleVisibility}>
-                    <Icon link name='angle left' size='big' />
+                <Menu.Item position='right' onClick={this.props.showSidebar}>
+                    <Icon link name='angle left' size='big'/>
                 </Menu.Item>
             </Menu>
         );
@@ -102,9 +103,16 @@ const mapDispatchToProps = dispatch => {
         },
         undo: function (eles) {
             return dispatch(undo(eles))
-        }
+        },
+        showNavigator: function () {
+            return dispatch(shownavigator())
+        },
+        showSidebar: function () {
+            return dispatch(showsidebar())
+        },
+
     };
 };
 
 
-export default connect(null, mapDispatchToProps)(Navbar);
+export default connect( null,mapDispatchToProps)(Navbar);

@@ -23,7 +23,7 @@ export const userLoggedIn = function(state = false , action) {
         default:
             return state;
     }
-}
+};
 
 export const canvasAnimations = (state = false, action) => {
     switch (action.type) {
@@ -72,3 +72,22 @@ export const canvasAnimations = (state = false, action) => {
     }
 };
 
+let initial_ui_state = {
+    sidebar : false,
+    navigator : false
+};
+
+
+export const canvasProperties = (state = initial_ui_state, action) => {
+    switch (action.type) {
+        case 'showNavigator':
+            state.navigator = !state.navigator;
+            return ( {...state }  );
+        case 'showSidebar':
+            state.sidebar = !state.sidebar;
+            console.log("sidebar");
+            return ( {...state }  );
+        default:
+            return state;
+    }
+};

@@ -6,7 +6,7 @@ import navigator from 'cytoscape-navigator';
 import panzoom from 'cytoscape-panzoom';
 import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import {Random} from 'meteor/random';
-import {Grid,Loader,Container} from 'semantic-ui-react';
+import {Grid,Loader,Card,Transition} from 'semantic-ui-react';
 
 import {connect} from 'react-redux';
 import {select, draw, showNeighborhood} from '../../redux/actions/actioncreators';
@@ -19,7 +19,8 @@ import {
     unselectNode,
     search,
     showRestrictions, add2,
-    undo
+    undo,
+
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 
@@ -33,7 +34,8 @@ class CytoscapeRenderer extends Component {
             draw: true,
             png : null,
             loading : true,
-            ur : null
+            ur : null,
+            navigator_visible: false
         };
     }
 
@@ -49,7 +51,7 @@ class CytoscapeRenderer extends Component {
                 panzoom( cytoscape );
 
                 let cy = cytoscape({
-                    container: document.getElementsByClassName('canvas'),
+                    container: document.getElementById('canvas'),
                     //layout:OPTIONS,
                     elements: res,
                     style: DEF_VISUAL_STYLE,
@@ -141,6 +143,7 @@ class CytoscapeRenderer extends Component {
     componentWillReceiveProps(nextProps) {
         let cy = this.state.cy;
         let ur = this.state.ur;
+        console.log(nextProps);
         if (this.props.selectedNode !== nextProps.selectedNode) {
             unselectNode(cy, this.props.selectedNode);
             selectNode(cy, nextProps.selectedNode);
@@ -166,13 +169,15 @@ class CytoscapeRenderer extends Component {
 
 
     render() {
+            console.log(this.props.canvasProperties);
             return (<Grid>
                 <Loader/>
                 <Grid.Row>
-                    <Grid.Column className="canvas">
+                    <Grid.Column id="canvas">
                             <Loader active = {this.state.loading} />
-                            <div id="nav">
-                        </div>
+                            <Transition visible={this.props.canvasProperties.navigator} animation='scale' duration={500}>
+                                <Card id="nav"> </Card>
+                            </Transition>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>);
@@ -198,6 +203,7 @@ const mapStateToProps = state => {
         canvas: state.RootReducer.draw,
         selectedNode: state.RootReducer.selectedNode,
         canvasAnimation: state.RootReducer.canvasAnimations,
+        canvasProperties: state.RootReducer.canvasProperties,
         pitfall_affected_elements: state.RootReducer.canvasAnimations.affected_elements,
     }
 };

@@ -55,6 +55,18 @@ export const showrestriction = function (label) {
     }
 };
 
+export const shownavigator = function () {
+    return{
+        type: "showNavigator"
+    }
+};
+
+export const showsidebar = function () {
+    return{
+        type: "showSidebar"
+    }
+};
+
 export const undo = function (label) {
     return{
         type: "Undo",

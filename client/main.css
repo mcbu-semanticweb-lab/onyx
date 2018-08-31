@@ -13,7 +13,7 @@ body{
     height: 100%;
 }
 
-.canvas {
+#canvas {
     height: 90vh;
     background: #ecf0f1;
 }
