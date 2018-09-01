@@ -71,6 +71,12 @@ export const canvasAnimations = (state = false, action) => {
                 type: action.animation,
             };
 
+        case 'Hide':
+            return {
+                animation: action.boole,
+                type: action.animation,
+            };
+
         default:
             return state;
     }

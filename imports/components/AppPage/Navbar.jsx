@@ -11,7 +11,8 @@ import {
     shownavigator,
     showsidebar,
     redo,
-    popup
+    popup,
+    hide
 } from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 import SearchBar from './Search';
@@ -69,6 +70,7 @@ export class Navbar extends Component {
                 <Menu.Item name='Pitfall' position='left'> <Pitfall/> </Menu.Item>
                 <Menu.Item name='Navigator' position='left' onClick={this.props.showNavigator}/>
                 <Menu.Item name='Pop-up' position='left' onClick={this.props.pop_up}/>
+                <Menu.Item name='Hide' position='left' onClick={this.props.hide}/>
                 <SearchBar/>
                 <Menu.Item position='right' onClick={this.props.showSidebar}>
                     <Icon link name='angle left' size='big'/>
@@ -112,6 +114,9 @@ const mapDispatchToProps = dispatch => {
         },
         pop_up: function () {
             return dispatch(popup())
+        },
+        hide: function () {
+            return dispatch(hide())
         },
     };
 };

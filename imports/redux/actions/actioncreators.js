@@ -103,6 +103,14 @@ export const popup = function () {
     }
 };
 
+export const hide = function () {
+    return {
+        type: "Hide",
+        boole: true,
+        animation: "Hide",
+    }
+};
+
 
 //UI animations
 

@@ -237,6 +237,9 @@ export function unselectNode(cy, id) {
     cy.getElementById(id).removeClass("select")
 }
 
+export function hide(id,cy) {
+    cy.getElementById(id).style("display", "none");
+}
 
 export function add(cy) {
 

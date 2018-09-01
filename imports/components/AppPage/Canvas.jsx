@@ -19,7 +19,8 @@ import {
     unselectNode,
     search,
     showRestrictions, add2,
-    MakeTippy
+    MakeTippy,
+    hide
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 
@@ -195,6 +196,8 @@ class CytoscapeRenderer extends Component {
             showNeighborhoods(nextProps.selectedNode, cy);
         else if (nextProps.canvasAnimation.type === "ShowRestriction")
             showRestrictions(nextProps.selectedNode, cy);
+        else if (nextProps.canvasAnimation.type === "Hide")
+            hide(nextProps.selectedNode, cy);
     }
 
 
