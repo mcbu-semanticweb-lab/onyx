@@ -1,27 +1,27 @@
 //User login control
 export const isLoggedIn = function (boole) {
-    return{
+    return {
         type: "Login",
-        boole : boole
+        boole: boole
     }
 };
 
 
 //Node select
 
-export const select = function(id) {
+export const select = function (id) {
     return {
-        type : "SELECTED",
-        id : id
+        type: "SELECTED",
+        id: id
     }
 };
 
 //Should canvas draw
 
 export const draw = function (boole) {
-    return{
+    return {
         type: "CANVAS",
-        boole : boole
+        boole: boole
     }
 };
 
@@ -29,67 +29,77 @@ export const draw = function (boole) {
 //Canvas animations
 
 export const showNeighborhood = function (boole) {
-    return{
+    return {
         type: "ShowNeighborhood",
-        boole : boole,
+        boole: boole,
         animation: "ShowNeighborhood"
     }
 };
 
 export const resetCanvas = function () {
-    return{
+    return {
         type: "ResetCanvas",
-        boole : false,
+        boole: false,
         animation: "ResetCanvas"
     } //canvas reducer la birleşecek
 };
 
 export const pitfall = function (affected_elements) {
-    return{
+    return {
         type: "ShowPitfall",
-        boole : true,
-        animation : "ShowPitfalls",
-        affected_elements : affected_elements,
+        boole: true,
+        animation: "ShowPitfalls",
+        affected_elements: affected_elements,
     }
 };
 
-export const search = function () {
-    return{
-        type: "Search",
-        boole : true,
-        animation : "Search",
+export const searchAC = function (text) {
+        return {
+            type: "Search",
+            boole: true,
+            animation: "Search",
+            text : text
+        }
+};
+
+export const searchRes = function (res) {
+    return {
+        type: "SearchResult",
+        boole: true,
+        animation: "SearchResult",
+        search_result : res
     }
 };
 
 export const showrestriction = function () {
-    return{
+    return {
         type: "ShowRestriction",
-        boole : true,
-        animation : "ShowRestriction",
+        boole: true,
+        animation: "ShowRestriction",
     }
 };
 
 export const undo = function () {
-    return{
+    return {
         type: "Undo",
-        boole : true,
-        animation : "Undo",
+        boole: true,
+        animation: "Undo",
     }
 };
 
 export const redo = function () {
-    return{
+    return {
         type: "Redo",
-        boole : true,
-        animation : "Redo",
+        boole: true,
+        animation: "Redo",
     }
 };
 
 export const popup = function () {
-    return{
+    return {
         type: "Pop-up",
-        boole : true,
-        animation : "Pop-up",
+        boole: true,
+        animation: "Pop-up",
     }
 };
 
@@ -97,13 +107,13 @@ export const popup = function () {
 //UI animations
 
 export const shownavigator = function () {
-    return{
+    return {
         type: "showNavigator"
     }
 };
 
 export const showsidebar = function () {
-    return{
+    return {
         type: "showSidebar"
     }
 };
@@ -111,9 +121,9 @@ export const showsidebar = function () {
 // Canvas history
 
 export const addhistory = function (event) {
-    return{
+    return {
         type: "addHistory",
-        event : event
+        event: event
     }
 };
 

@@ -9,7 +9,7 @@ import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import {Random} from 'meteor/random';
 import {Grid,Loader,Card,Transition} from 'semantic-ui-react';
 import {connect} from 'react-redux';
-import {select, draw, showNeighborhood,addhistory} from '../../redux/actions/actioncreators';
+import {select, draw, showNeighborhood, addhistory, searchAC, searchRes} from '../../redux/actions/actioncreators';
 
 import {
     showNeighborhoods,
@@ -112,8 +112,6 @@ class CytoscapeRenderer extends Component {
 
                 cy.panzoom( defaults );
 
-
-
                 cy.on('mouseover', 'node', function(event){
                     event.target.addClass("hover");
                 });
@@ -180,6 +178,10 @@ class CytoscapeRenderer extends Component {
                 tip.hide();
             }, 1500);
         }
+        else if (nextProps.searchReducer.type === "Search"){
+            let result = search(cy, nextProps.searchReducer.text);
+            this.props.SearchRes(result);
+        }
         else if (this.props.canvasAnimation.type === nextProps.canvasAnimation.type) {
             console.log("states are equal");
         }
@@ -193,8 +195,6 @@ class CytoscapeRenderer extends Component {
             showNeighborhoods(nextProps.selectedNode, cy);
         else if (nextProps.canvasAnimation.type === "ShowRestriction")
             showRestrictions(nextProps.selectedNode, cy);
-        else if (nextProps.canvasAnimation.type === "Search")
-            search(cy, nextProps.canvasAnimation.label);
     }
 
 
@@ -228,7 +228,10 @@ const mapDispatchToProps = dispatch => {
         },
         addHistory: function (event) {
             return dispatch(addhistory(event))
-        }
+        },
+        SearchRes: function (result) {
+            return dispatch(searchRes(result))
+        },
     }
 };
 
@@ -236,6 +239,7 @@ const mapStateToProps = state => {
     return {
         canvas: state.RootReducer.draw,
         selectedNode: state.RootReducer.selectedNode,
+        searchReducer : state.RootReducer.SearchReducer,
         canvasAnimation: state.RootReducer.canvasAnimations,
         canvasProperties: state.RootReducer.canvasProperties,
         pitfall_affected_elements: state.RootReducer.canvasAnimations.affected_elements,

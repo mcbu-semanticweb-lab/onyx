@@ -16,7 +16,7 @@ export const draw = (state = false, action) => {
     }
 };
 
-export const userLoggedIn = function(state = false , action) {
+export const userLoggedIn = function (state = false, action) {
     switch (action.type) {
         case 'Login':
             return action.boole;
@@ -29,50 +29,44 @@ export const canvasAnimations = (state = false, action) => {
     switch (action.type) {
         case 'ShowNeighborhood':
             return {
-                animation : action.boole,
-                type : action.animation
+                animation: action.boole,
+                type: action.animation
             };
 
 
         case 'ShowRestriction':
             return {
-                animation : action.boole,
-                type : action.animation
+                animation: action.boole,
+                type: action.animation
             };
 
         case 'ResetCanvas':
-            return{
+            return {
                 animation: action.boole,
                 type: action.animation
             };
 
         case 'ShowPitfall':
-            return{
+            return {
                 animation: action.boole,
-                type:action.animation,
+                type: action.animation,
                 affected_elements: action.affected_elements
             };
 
-        case 'Search':
-            return{
-                animation: action.boole,
-                type: action.animation,
-            };
-
         case 'Undo':
-            return{
+            return {
                 animation: action.boole,
                 type: action.animation,
             };
 
         case 'Redo':
-            return{
+            return {
                 animation: action.boole,
                 type: action.animation,
             };
 
         case 'Pop-up':
-            return{
+            return {
                 animation: action.boole,
                 type: action.animation,
             };
@@ -83,8 +77,8 @@ export const canvasAnimations = (state = false, action) => {
 };
 
 let initial_ui_state = {
-    sidebar : false,
-    navigator : true
+    sidebar: false,
+    navigator: true
 };
 
 
@@ -92,18 +86,18 @@ export const canvasProperties = (state = initial_ui_state, action) => {
     switch (action.type) {
         case 'showNavigator':
             state.navigator = !state.navigator;
-            return ( {...state }  );
+            return ({...state});
         case 'showSidebar':
             state.sidebar = !state.sidebar;
             console.log("sidebar");
-            return ( {...state }  );
+            return ({...state});
         default:
             return state;
     }
 };
 
 
-export const History = (state = [] , action) => {
+export const History = (state = [], action) => {
     switch (action.type) {
         case 'addHistory':
             state.push(action.event);
@@ -113,3 +107,26 @@ export const History = (state = [] , action) => {
             return state;
     }
 };
+
+
+export const SearchReducer = (state = [], action) => {
+    switch (action.type) {
+        case 'Search':
+            return {
+                animation: action.boole,
+                type: action.animation,
+                text: action.text,
+                result: []
+            };
+
+        case 'SearchResult':
+            return {
+                animation: action.boole,
+                type: action.animation,
+                result: action.search_result,
+            };
+        default:
+            return { result : [] };
+    }
+};
+

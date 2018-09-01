@@ -219,17 +219,16 @@ export function selectNode(cy, id) {
     cy.getElementById(id).addClass("select")
 }
 
-export function search(cy, string) {
-    ele = cy.getElementById(string);
-    eles = ele.neighborhood();
-    console.log(eles);
-    cy.nodes().difference(eles).style("display", "none");
-    ele.style("display", "element");
-    cy.animation({
-        fit: {
-            eles: eles
-        }
-    }).play();
+export function search(cy, text) {
+    let result = [];
+    let eles = cy.nodes('[label *= "'+ text + '"]');
+    eles.forEach(function (ele) {
+        result.push({
+            id : ele.data('id'),
+            title : ele.data('label')
+        });
+    });
+    return result;
 }
 
 
