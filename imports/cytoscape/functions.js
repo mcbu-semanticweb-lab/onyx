@@ -224,6 +224,7 @@ export function search(cy, text) {
     let eles = cy.nodes('[label @*= "'+ text + '"]');
     eles.forEach(function (ele) {
         result.push({
+            key : Random.id(),
             id : ele.data('id'),
             title : ele.data('label')
         });
