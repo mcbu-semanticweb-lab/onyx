@@ -121,7 +121,7 @@ class CytoscapeRenderer extends Component {
                     event.target.removeClass("hover");
                 });
 
-                cy.on('tap', function(event){
+                cy.on('tap', 'node', function(event){
                     self.props.select(event.target.id());
                 });
 
