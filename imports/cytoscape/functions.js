@@ -221,7 +221,7 @@ export function selectNode(cy, id) {
 
 export function search(cy, text) {
     let result = [];
-    let eles = cy.nodes('[label *= "'+ text + '"]');
+    let eles = cy.nodes('[label @*= "'+ text + '"]');
     eles.forEach(function (ele) {
         result.push({
             id : ele.data('id'),
