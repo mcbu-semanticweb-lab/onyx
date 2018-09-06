@@ -1024,6 +1024,77 @@ function get_list(id,callback) {
     })
 }
 
+export function filter(cy) {
+    ele = cy.edges('edge[group="subclass"]');
+    eles = ele.connectedNodes();
+    cy.nodes().difference(eles).style("display", "none");
+    ele.style("display", "element");
+    cy.animation({
+        fit: {
+            eles: eles
+        }
+    }).play();
+
+    //hiyerarşik gösterim eklenebilir
+}
+
+/*
+export function hideRestriction(cy) {
+    ele = cy.edges('edge[group="restriction"]');
+    eles = ele.connectedNodes();
+    cy.nodes().difference(eles).style("display", "none");
+    ele.style("display", "element");
+    cy.animation({
+        fit: {
+            eles: eles
+        }
+    }).play();
+}
+
+export function hideAnonymous(cy) {
+    ele = cy.edges('edge[group="anonymous"]');
+    eles = ele.connectedNodes();
+    cy.nodes().difference(eles).style("display", "none");
+    ele.style("display", "element");
+    cy.animation({
+        fit: {
+            eles: eles
+        }
+    }).play();
+}
+
+export function hideDatatype(cy) {
+    ele = cy.edges('edge[group="datatype"]');
+    eles = ele.connectedNodes();
+    cy.nodes().difference(eles).style("display", "none");
+    ele.style("display", "element");
+    cy.animation({
+        fit: {
+            eles: eles
+        }
+    }).play();
+}
+
+export function hideObjectproperty(cy) {
+    ele = cy.edges('edge[group="objectproperty"]');
+    eles = ele.connectedNodes();
+    cy.nodes().difference(eles).style("display", "none");
+    ele.style("display", "element");
+    cy.animation({
+        fit: {
+            eles: eles
+        }
+    }).play();
+}
+
+hideIntersectionOf,hideUnionOf,hideEnumeratedClasses,hidePropertyCharacteristics
+
+
+
+
+
+*/
+
 /*
 TODO : filter için
 

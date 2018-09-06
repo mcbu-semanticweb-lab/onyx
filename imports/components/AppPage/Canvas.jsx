@@ -7,7 +7,7 @@ import panzoom from 'cytoscape-panzoom';
 import popper from 'cytoscape-popper';
 import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import {Random} from 'meteor/random';
-import {Grid,Loader,Card,Transition} from 'semantic-ui-react';
+import {Grid, Loader, Card, Transition} from 'semantic-ui-react';
 import {connect} from 'react-redux';
 import {select, draw, showNeighborhood, addhistory, searchAC, searchRes} from '../../redux/actions/actioncreators';
 
@@ -20,7 +20,8 @@ import {
     search,
     showRestrictions, add2,
     MakeTippy,
-    hide
+    hide,
+    filter
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 
@@ -32,9 +33,9 @@ class CytoscapeRenderer extends Component {
         this.state = {
             cy: null,
             draw: true,
-            png : null,
-            loading : true,
-            ur : null,
+            png: null,
+            loading: true,
+            ur: null,
             navigator_visible: false
         };
     }
@@ -46,10 +47,10 @@ class CytoscapeRenderer extends Component {
             if (res.length !== 0) {
 
                 cytoscape.use(cola);
-                cytoscape.use( popper );
-                undoRedo( cytoscape );
-                navigator( cytoscape);
-                panzoom( cytoscape );
+                cytoscape.use(popper);
+                undoRedo(cytoscape);
+                navigator(cytoscape);
+                panzoom(cytoscape);
 
                 let cy = cytoscape({
                     container: document.getElementById('canvas'),
@@ -70,7 +71,7 @@ class CytoscapeRenderer extends Component {
                     , rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
                 };
 
-                cy.navigator( defaults ); // get navigator instance, nav
+                cy.navigator(defaults); // get navigator instance, nav
 
                 var options = {
                     isDebug: false, // Debug mode for console messages
@@ -99,7 +100,7 @@ class CytoscapeRenderer extends Component {
                     panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib); scales from this to 1.0
                     zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
                     fitSelector: undefined, // selector of elements to fit
-                    animateOnFit: function(){ // whether to animate on fit
+                    animateOnFit: function () { // whether to animate on fit
                         return false;
                     },
                     fitAnimationDuration: 1000, // duration of animation on fit
@@ -111,18 +112,18 @@ class CytoscapeRenderer extends Component {
                     resetIcon: 'fa fa-expand'
                 };  //icons should implement for semantic-ui
 
-                cy.panzoom( defaults );
+                cy.panzoom(defaults);
 
-                cy.on('mouseover', 'node', function(event){
+                cy.on('mouseover', 'node', function (event) {
                     event.target.addClass("hover");
                 });
 
 
-                cy.on('mouseout', 'node', function(event){
+                cy.on('mouseout', 'node', function (event) {
                     event.target.removeClass("hover");
                 });
 
-                cy.on('tap', 'node', function(event){
+                cy.on('tap', 'node', function (event) {
                     self.props.select(event.target.id());
                 });
 
@@ -138,9 +139,9 @@ class CytoscapeRenderer extends Component {
                     let str = "Do " + args.nodes[0].data().label + "  " + actionName;
                     self.props.addHistory(str);
                 });
-                
+
                 cy.ready(function (event) {
-                    if(event)
+                    if (event)
                         self.setState({loading: false})
                 });
 
@@ -161,25 +162,23 @@ class CytoscapeRenderer extends Component {
             unselectNode(cy, this.props.selectedNode);
             selectNode(cy, nextProps.selectedNode);
         }
-        if (nextProps.canvasAnimation.type === "Undo"){
+        if (nextProps.canvasAnimation.type === "Undo") {
             ur.undo();
         }
-        else  if (nextProps.canvasAnimation.type === "Redo")
-        {
+        else if (nextProps.canvasAnimation.type === "Redo") {
             console.log("redo");
             ur.redo();
         }
-        else  if (nextProps.canvasAnimation.type === "Pop-up")
-        {
+        else if (nextProps.canvasAnimation.type === "Pop-up") {
             console.log(nextProps.selectedNode);
             let node = cy.getElementById(nextProps.selectedNode);
-            let tip = MakeTippy(node,nextProps.selectedNode);
+            let tip = MakeTippy(node, nextProps.selectedNode);
             tip.show();
-            Meteor.setTimeout(function() {
+            Meteor.setTimeout(function () {
                 tip.hide();
             }, 1500);
         }
-        else if (nextProps.searchReducer.type === "Search"){
+        else if (nextProps.searchReducer.type === "Search") {
             let result = search(cy, nextProps.searchReducer.text);
             this.props.SearchRes(result);
         }
@@ -198,23 +197,24 @@ class CytoscapeRenderer extends Component {
             showRestrictions(nextProps.selectedNode, cy);
         else if (nextProps.canvasAnimation.type === "Hide")
             hide(nextProps.selectedNode, cy);
+        else if (nextProps.canvasAnimation.type === "Filter")
+            filter(cy);
     }
 
 
     render() {
-            console.log(this.props.canvasProperties);
-            return (<Grid>
-                <Loader/>
-                <Grid.Row>
-                    <Grid.Column id="canvas">
-                        <Grid.Row className="cy-panzoom" />
-                            <Loader active = {this.state.loading} />
-                            <Transition visible={this.props.canvasProperties.navigator} animation='scale' duration={500}>
-                                <Card id="nav"> </Card>
-                            </Transition>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>);
+        return (<Grid>
+            <Loader/>
+            <Grid.Row>
+                <Grid.Column id="canvas">
+                    <Grid.Row/>
+                    <Loader active={this.state.loading}/>
+                    <Transition visible={this.props.canvasProperties.navigator} animation='scale' duration={500}>
+                        <Card id="nav"> </Card>
+                    </Transition>
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>);
     };
 }
 
@@ -242,7 +242,7 @@ const mapStateToProps = state => {
     return {
         canvas: state.RootReducer.draw,
         selectedNode: state.RootReducer.selectedNode,
-        searchReducer : state.RootReducer.SearchReducer,
+        searchReducer: state.RootReducer.SearchReducer,
         canvasAnimation: state.RootReducer.canvasAnimations,
         canvasProperties: state.RootReducer.canvasProperties,
         pitfall_affected_elements: state.RootReducer.canvasAnimations.affected_elements,

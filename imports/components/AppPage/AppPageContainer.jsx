@@ -1,22 +1,22 @@
 import React, {Component} from 'react';
-import {Grid, Menu,Sidebar, Icon} from 'semantic-ui-react';
+import {Grid, Menu, Sidebar, Icon, Tab} from 'semantic-ui-react';
 import CytoscapeCanvas from "./Canvas";
-import CytoscapeInfo from "./Info";
 import Navbar from "./Navbar";
-import { showsidebar } from "../../redux/actions/actioncreators";
+import {showsidebar} from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
+import SidebarComp from './mySidebar';
 
 
-class AppPageContainer extends Component{
+class AppPageContainer extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            sidebar_visible:false,
+            sidebar_visible: false,
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         Meteor.call('get_individual_num', function (err, res) {
             if (res)
                 console.log(res);
@@ -25,25 +25,16 @@ class AppPageContainer extends Component{
         });
     }
 
-    render(){
+    render() {
+
         return (
             <Grid>
                 <Grid.Row>
                     <Navbar/>
                     <Grid.Column width={16}>
                         <CytoscapeCanvas/>
+                        <SidebarComp/>
                     </Grid.Column>
-                    <Sidebar
-                        as={Menu}
-                        animation='overlay'
-                        width='wide'
-                        direction='right'
-                        visible={this.props.canvasProperties.sidebar}
-                        vertical
-                    >
-                        <Icon bordered link name='remove' size='big' className='sidebar-icon' onClick={this.props.showSidebar}/><br/><br/><br/><br/><br/>
-                        <CytoscapeInfo/>
-                    </Sidebar>
                 </Grid.Row>
             </Grid>
         )
@@ -66,4 +57,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps,mapDispatchToProps)(AppPageContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AppPageContainer);

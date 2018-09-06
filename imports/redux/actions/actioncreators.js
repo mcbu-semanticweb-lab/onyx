@@ -112,6 +112,15 @@ export const hide = function () {
 };
 
 
+export const filter = function () {
+    return {
+        type: "Filter",
+        boole: true,
+        animation: "Filter",
+    }
+};
+
+
 //UI animations
 
 export const shownavigator = function () {
