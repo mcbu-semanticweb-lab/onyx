@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {Menu, Sidebar, Icon, Tab} from 'semantic-ui-react';
-import CytoscapeInfo from "./Info";
+import CytoscapeInfo from "./CanvasInfo";
 import {showsidebar} from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
-import AppConfig from "./AppConfig";
+import CanvasProperties from "./CanvasProperties";
+import CanvasFunctions from "./CanvasFunctions";
 
 
 class mySidebar extends Component {
@@ -19,7 +20,8 @@ class mySidebar extends Component {
     render() {
         const panes = [
             {menuItem: 'Tab 1', render: () => <Tab.Pane attached={false}><CytoscapeInfo/></Tab.Pane>},
-            {menuItem: 'Tab 2', render: () => <Tab.Pane attached={false}> <AppConfig/> </Tab.Pane>}
+            {menuItem: 'Tab 2', render: () => <Tab.Pane attached={false}> <CanvasProperties/> </Tab.Pane>},
+            {menuItem: 'Tab 2', render: () => <Tab.Pane attached={false}> <CanvasFunctions/> </Tab.Pane>}
         ];
 
 

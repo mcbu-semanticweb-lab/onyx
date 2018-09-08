@@ -12,7 +12,7 @@ import {connect} from "react-redux";
 import {Checkbox} from 'semantic-ui-react'
 
 
-class AppConfig extends Component {
+class CanvasProperties extends Component {
 
     constructor(props) {
         super(props);
@@ -58,4 +58,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppConfig);
+export default connect(mapStateToProps, mapDispatchToProps)(CanvasProperties);

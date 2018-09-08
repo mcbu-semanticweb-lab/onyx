@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Button, Header, Image, Modal } from 'semantic-ui-react'
 import CytoscapeCanvas from "./Canvas";
-import CytoscapeInfo from "./Info";
+import CytoscapeInfo from "./CanvasInfo";
 import response from "../../api/oops-test-response";
 
 export default class Pitfall extends Component{

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Grid, Menu, Sidebar, Icon, Tab} from 'semantic-ui-react';
 import CytoscapeCanvas from "./Canvas";
-import Navbar from "./Navbar";
+import Navbar from "./CanvasFunctions";
 import {showsidebar} from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 import SidebarComp from './mySidebar';
@@ -30,8 +30,8 @@ class AppPageContainer extends Component {
         return (
             <Grid>
                 <Grid.Row>
-                    <Navbar/>
-                    <Grid.Column width={16}>
+                    <Grid.Column floated='right' width={16}>
+                            <Icon size='huge' name='bars' className="sidebar-icon" onClick= { this.props.showSidebar }/>
                         <CytoscapeCanvas/>
                         <SidebarComp/>
                     </Grid.Column>

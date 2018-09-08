@@ -199,6 +199,7 @@ class CytoscapeRenderer extends Component {
             hide(nextProps.selectedNode, cy);
         else if (nextProps.canvasAnimation.type === "Filter")
             filter(cy);
+        //canvasAnimation burada yada calıstırılan fonk.ların sonunda resetlenebilir
     }
 
 

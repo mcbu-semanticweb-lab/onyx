@@ -26,6 +26,14 @@ body{
     height: 80vh;
 }
 
+.sidebar-icon{
+    position: absolute;
+    z-index: 2;
+    top: 3%;
+    right: 5%;
+    cursor: pointer;
+}
+
 #nav{
     position: fixed;
     border: 1px solid #000;

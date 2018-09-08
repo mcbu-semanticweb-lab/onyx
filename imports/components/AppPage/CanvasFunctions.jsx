@@ -18,7 +18,7 @@ import {
 import {connect} from "react-redux";
 import SearchBar from './Search';
 
-export class Navbar extends Component {
+export class CanvasFunctions extends Component {
 
     constructor(props) {
         super(props);
@@ -61,18 +61,14 @@ export class Navbar extends Component {
 
     render() {
         return (
-            <Menu attached='top' size="small" >
-                <Menu.Item name='Remove Nodes and BackDashboard' position='left' onClick={this.Remove}/>
+            <Menu size="small" vertical>
+                <SearchBar/>
                 <Menu.Item name='Show Neighborhood' position='left' onClick={this.ShowNeighborhood}/>
                 <Menu.Item name='Reset Canvas' position='left' onClick={this.ResetCanvas}/>
                 <Menu.Item name='Show Restriction' position='left' onClick={this.ShowRestriction}/>
                 <Menu.Item name='Undo' position='left' onClick={this.props.undo}/>
                 <Menu.Item name='Redo' position='left' onClick={this.props.redo}/>
                 <Menu.Item name='Pitfall' position='left'> <Pitfall/> </Menu.Item>
-                <SearchBar/>
-                <Menu.Item position='right' onClick={this.props.showSidebar}>
-                    <Icon link name='angle left' size='small'/>
-                </Menu.Item>
             </Menu>
         );
     }
@@ -107,9 +103,6 @@ const mapDispatchToProps = dispatch => {
         showNavigator: function () {
             return dispatch(shownavigator())
         },
-        showSidebar: function () {
-            return dispatch(showsidebar())
-        },
         pop_up: function () {
             return dispatch(popup())
         },
@@ -123,4 +116,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 
-export default connect(null, mapDispatchToProps)(Navbar);
+export default connect(null, mapDispatchToProps)(CanvasFunctions);
