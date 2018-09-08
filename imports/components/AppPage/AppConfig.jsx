@@ -23,10 +23,11 @@ class AppConfig extends Component {
 
 
     render() {
+        // sağ tık onclick de sidebar açılabilir
 
         return (
             <div>
-                <Checkbox slider name='Navigator' label='Navigator' position='left' onClick={this.props.showNavigator}/>
+                <Checkbox slider checked={this.props.canvasProperties.navigator} name='Navigator' label='Navigator' position='left' onClick={this.props.showNavigator}/>
                 <br/>
                 <Checkbox slider name='Pop-up' label='Pop-up' position='left' onClick={this.props.pop_up}/>
             </div>
