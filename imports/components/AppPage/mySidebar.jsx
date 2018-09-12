@@ -21,7 +21,7 @@ class mySidebar extends Component {
         const panes = [
             {menuItem: 'Tab 1', render: () => <Tab.Pane attached={false}><CytoscapeInfo/></Tab.Pane>},
             {menuItem: 'Tab 2', render: () => <Tab.Pane attached={false}> <CanvasProperties/> </Tab.Pane>},
-            {menuItem: 'Tab 2', render: () => <Tab.Pane attached={false}> <CanvasFunctions/> </Tab.Pane>}
+            {menuItem: 'Tab 3', render: () => <Tab.Pane attached={false}> <CanvasFunctions/> </Tab.Pane>}
         ];
 
 
