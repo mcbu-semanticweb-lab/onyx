@@ -61,7 +61,7 @@ export class CanvasFunctions extends Component {
 
     render() {
         return (
-            <Menu size="small" vertical>
+            <Menu size="huge" vertical>
                 <SearchBar/>
                 <Menu.Item name='Show Neighborhood' position='left' onClick={this.ShowNeighborhood}/>
                 <Menu.Item name='Reset Canvas' position='left' onClick={this.ResetCanvas}/>
