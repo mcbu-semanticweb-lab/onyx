@@ -19,9 +19,9 @@ class mySidebar extends Component {
 
     render() {
         const panes = [
-            {menuItem: 'Tab 1', render: () => <Tab.Pane attached={false}><CytoscapeInfo/></Tab.Pane>},
-            {menuItem: 'Tab 2', render: () => <Tab.Pane attached={false}> <CanvasProperties/> </Tab.Pane>},
-            {menuItem: 'Tab 3', render: () => <Tab.Pane attached={false}> <CanvasFunctions/> </Tab.Pane>}
+            {menuItem: 'Node Info', render: () => <Tab.Pane attached={false} basic><CytoscapeInfo/></Tab.Pane>},
+            {menuItem: 'Properties', render: () => <Tab.Pane attached={false} basic> <CanvasProperties/> </Tab.Pane>},
+            {menuItem: 'Functions', render: () => <Tab.Pane attached={false} basic> <CanvasFunctions/> </Tab.Pane>}
         ];
 
 
@@ -35,9 +35,8 @@ class mySidebar extends Component {
                     visible={this.props.canvasProperties.sidebar}
                     vertical
                 >
+                    <Icon link className="sidebar-close-icon" name='remove' size='large' onClick={this.props.showSidebar}/><br/>
                     <Tab menu={{secondary: true, pointing: true}} panes={panes}/>
-                    <Icon bordered link name='remove' size='big' className='sidebar-icon'
-                          onClick={this.props.showSidebar}/><br/><br/><br/><br/><br/>
                 </Sidebar>
             </div>
         )

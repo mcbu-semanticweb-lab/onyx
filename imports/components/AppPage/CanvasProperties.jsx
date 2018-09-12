@@ -28,7 +28,7 @@ class CanvasProperties extends Component {
         return (
             <div>
                 <Checkbox slider checked={this.props.canvasProperties.navigator} name='Navigator' label='Navigator' position='left' onClick={this.props.showNavigator}/>
-                <br/>
+                <br/><br/>
                 <Checkbox slider name='Pop-up' label='Pop-up' position='left' onClick={this.props.pop_up}/>
             </div>
         )

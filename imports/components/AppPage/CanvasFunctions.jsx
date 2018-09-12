@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Menu, Icon, Dropdown, Checkbox} from 'semantic-ui-react'
+import {Menu, Icon, Dropdown, Checkbox, Button} from 'semantic-ui-react'
 import Pitfall from "./Pitfall";
 import {
     draw,
@@ -61,18 +61,22 @@ export class CanvasFunctions extends Component {
 
     render() {
         return (
-            <Menu size="huge" vertical>
-                <SearchBar/>
-                <Menu.Item name='Show Neighborhood' position='left' onClick={this.ShowNeighborhood}/>
-                <Menu.Item name='Reset Canvas' position='left' onClick={this.ResetCanvas}/>
-                <Menu.Item name='Show Restriction' position='left' onClick={this.ShowRestriction}/>
-                <Menu.Item name='Undo' position='left' onClick={this.props.undo}/>
-                <Menu.Item name='Redo' position='left' onClick={this.props.redo}/>
-                <Menu.Item name='Pitfall' position='left'> <Pitfall/> </Menu.Item>
+            <Menu size="huge" vertical secondary>
+                <Button.Group vertical labeled icon>
+                    <SearchBar/>
+                    <Button icon='sitemap' content='Show Neighborhood' onClick={this.ShowNeighborhood}/>
+                    <br/>
+                    <Button icon='refresh' content='Reset Canvas' onClick={this.ResetCanvas}/>
+                    <br/>
+                    <Button icon='registered outline' content='Show Restriction' onClick={this.ShowRestriction} />
+                    <br/>
+                    <Button icon='undo' content='Undo'onClick={this.props.undo} />
+                    <br/>
+                    <Button icon='repeat' content='Redo' onClick={this.props.redo} />
+                </Button.Group>
             </Menu>
         );
     }
-
 
 }
 
