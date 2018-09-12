@@ -144,7 +144,8 @@ class CytoscapeRenderer extends Component {
                     if (event)
                         self.setState({loading: false})
                 });
-
+                cy.zoom(0.3);
+                cy.center();
                 self.setState({
                     cy: cy,
                     ur: ur
