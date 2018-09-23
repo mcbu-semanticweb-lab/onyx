@@ -21,7 +21,6 @@ export const select = function (id) {
 export const draw = function (boole) {
     return {
         type: "CANVAS",
-        boole: boole
     }
 };
 
@@ -30,9 +29,7 @@ export const draw = function (boole) {
 
 export const showNeighborhood = function (boole) {
     return {
-        type: "ShowNeighborhood",
-        boole: boole,
-        animation: "ShowNeighborhood"
+        type: "ShowNeighborhood"
     }
 };
 
@@ -40,15 +37,12 @@ export const resetCanvas = function () {
     return {
         type: "ResetCanvas",
         boole: false,
-        animation: "ResetCanvas"
     } //canvas reducer la birleşecek
 };
 
 export const pitfall = function (affected_elements) {
     return {
-        type: "ShowPitfall",
-        boole: true,
-        animation: "ShowPitfalls",
+        type: "ShowPitfalls",
         affected_elements: affected_elements,
     }
 };
@@ -56,8 +50,6 @@ export const pitfall = function (affected_elements) {
 export const searchAC = function (text) {
         return {
             type: "Search",
-            boole: true,
-            animation: "Search",
             text : text
         }
 };
@@ -65,8 +57,6 @@ export const searchAC = function (text) {
 export const searchRes = function (res) {
     return {
         type: "SearchResult",
-        boole: true,
-        animation: "SearchResult",
         search_result : res
     }
 };
@@ -74,49 +64,44 @@ export const searchRes = function (res) {
 export const showrestriction = function () {
     return {
         type: "ShowRestriction",
-        boole: true,
-        animation: "ShowRestriction",
     }
 };
 
 export const undo = function () {
     return {
         type: "Undo",
-        boole: true,
-        animation: "Undo",
     }
 };
 
 export const redo = function () {
     return {
         type: "Redo",
-        boole: true,
-        animation: "Redo",
     }
 };
 
 export const popup = function () {
     return {
         type: "Pop-up",
-        boole: true,
-        animation: "Pop-up",
     }
 };
 
 export const hide = function () {
     return {
         type: "Hide",
-        boole: true,
-        animation: "Hide",
     }
 };
 
 
-export const filter = function () {
+export const filter = function (type) {
     return {
         type: "Filter",
-        boole: true,
-        animation: "Filter",
+        filter : type
+    }
+};
+
+export const reset = function (type) {
+    return {
+        type: "Reset",
     }
 };
 

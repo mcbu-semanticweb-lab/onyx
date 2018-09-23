@@ -74,8 +74,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        search: function (text,result) {
-            return (dispatch(searchAC(text,result)));
+        search: function (text) {
+            return (dispatch(searchAC(text)));
         },
         select: function (id) {
             return (dispatch(select(id)));

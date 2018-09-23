@@ -75,6 +75,8 @@ export class CanvasFunctions extends Component {
                     <br/>
                     <Button icon='repeat' content='Redo' onClick={this.props.redo} />
                 </Button.Group>
+                <br/><br/>
+                <Checkbox slider name='Pop-up' label='Pop-up' position='left' onClick={this.props.pop_up}/>
             </Menu>
         );
     }
@@ -99,11 +101,11 @@ const mapDispatchToProps = dispatch => {
         showrestriction: function (eles) {
             return dispatch(showrestriction(eles))
         },
-        undo: function (eles) {
-            return dispatch(undo(eles))
+        undo: function () {
+            return dispatch(undo())
         },
-        redo: function (eles) {
-            return dispatch(redo(eles))
+        redo: function () {
+            return dispatch(redo())
         },
         showNavigator: function () {
             return dispatch(shownavigator())

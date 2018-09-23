@@ -29,59 +29,59 @@ export const canvasAnimations = (state = false, action) => {
     switch (action.type) {
         case 'ShowNeighborhood':
             return {
-                animation: action.boole,
-                type: action.animation
+                animation: action.type,
             };
 
 
         case 'ShowRestriction':
             return {
-                animation: action.boole,
-                type: action.animation
+                animation: action.type,
             };
+
 
         case 'ResetCanvas':
             return {
-                animation: action.boole,
-                type: action.animation
+                animation: action.type,
             };
 
         case 'ShowPitfall':
             return {
-                animation: action.boole,
-                type: action.animation,
+                animation: action.type,
                 affected_elements: action.affected_elements
             };
 
         case 'Undo':
             return {
-                animation: action.boole,
-                type: action.animation,
+                animation: action.type,
             };
+
 
         case 'Redo':
             return {
-                animation: action.boole,
-                type: action.animation,
+                animation: action.type,
             };
+
 
         case 'Pop-up':
             return {
-                animation: action.boole,
-                type: action.animation,
+                animation: action.type,
             };
 
         case 'Hide':
             return {
-                animation: action.boole,
-                type: action.animation,
+                animation: action.type,
             };
 
         case 'Filter':
             return {
-                animation: action.boole,
-                type: action.animation,
+                animation: action.type,
             };
+
+        case 'Reset':
+            return{
+                animation: "Reset"
+            };
+
 
         default:
             return state;
@@ -125,16 +125,14 @@ export const SearchReducer = (state = [], action) => {
     switch (action.type) {
         case 'Search':
             return {
-                animation: action.boole,
-                type: action.animation,
+                type: action.type,
                 text: action.text,
                 result: []
             };
 
         case 'SearchResult':
             return {
-                animation: action.boole,
-                type: action.animation,
+                type: action.type,
                 result: action.search_result,
             };
         default:

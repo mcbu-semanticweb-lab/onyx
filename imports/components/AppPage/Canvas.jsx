@@ -9,7 +9,7 @@ import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import {Random} from 'meteor/random';
 import {Grid, Loader, Card, Transition} from 'semantic-ui-react';
 import {connect} from 'react-redux';
-import {select, draw, showNeighborhood, addhistory, searchAC, searchRes} from '../../redux/actions/actioncreators';
+import {select, draw, showNeighborhood, addhistory, reset, searchRes} from '../../redux/actions/actioncreators';
 
 import {
     showNeighborhoods,
@@ -117,48 +117,61 @@ class CytoscapeRenderer extends Component {
             unselectNode(cy, this.props.selectedNode);
             selectNode(cy, nextProps.selectedNode);
         }
-        if (nextProps.canvasAnimation.type === "Undo") {
-            ur.undo();
-        }
-        else if (nextProps.canvasAnimation.type === "Redo") {
-            console.log("redo");
-            ur.redo();
-        }
-        else if (nextProps.canvasAnimation.type === "Pop-up") {
-            console.log(nextProps.selectedNode);
-            let node = cy.getElementById(nextProps.selectedNode);
-            let tip = MakeTippy(node, nextProps.selectedNode);
-            tip.show();
-            Meteor.setTimeout(function () {
-                tip.hide();
-            }, 1500);
-        }
-        else if (nextProps.searchReducer.type === "Search") {
+
+        if (nextProps.searchReducer.type === 'Search') {
+            console.log("search");
             let result = search(cy, nextProps.searchReducer.text);
             this.props.SearchRes(result);
         }
-        else if (this.props.canvasAnimation.type === nextProps.canvasAnimation.type) {
-            console.log("states are equal");
+
+
+        if (this.props.canvasAnimation.animation && this.props.canvasAnimation.animation !== 'Reset' && this.props.canvasAnimation.animation === nextProps.canvasAnimation.animation)
+            this.props.reset(); //reset gelistirilebilir, kontrol saglanabılır
+        else {
+
+            switch (nextProps.canvasAnimation.animation) {
+                case "Undo":
+                    ur.undo();
+                    break;
+                case "Redo":
+                    ur.redo();
+                    break;
+                case "Pop-up":
+                    console.log(nextProps.selectedNode);
+                    let node = cy.getElementById(nextProps.selectedNode);
+                    let tip = MakeTippy(node, nextProps.selectedNode);
+                    tip.show();
+                    Meteor.setTimeout(function () {
+                        tip.hide();
+                    }, 1500);
+                    break;
+                case "ResetCanvas":
+                    resetCanvas(cy);
+                    break;
+                case "ShowPitfalls":
+                    showPitfalls(cy, nextProps.pitfall_affected_elements);
+                    break;
+                case "ShowNeighborhood":
+                    showNeighborhoods(nextProps.selectedNode, cy);
+                    break;
+                case "ShowRestriction":
+                    showRestrictions(nextProps.selectedNode, cy);
+                    break;
+                case "Hide":
+                    hide(nextProps.selectedNode, cy);
+                    break;
+                case "Filter":
+                    filter(cy, var1);
+                    break;
+                default:
+                    break;
+            }
         }
-        else if (nextProps.canvasAnimation.type === "ResetCanvas") //reset sonrası select
-            resetCanvas(cy);
-        //else if(this.props.canvasAnimation.animation&&nextProps.canvasAnimation.animation)
-        //  resetCanvas(cy);
-        else if (nextProps.canvasAnimation.type === "ShowPitfalls")
-            showPitfalls(cy, nextProps.pitfall_affected_elements);
-        else if (nextProps.canvasAnimation.type === "ShowNeighborhood")
-            showNeighborhoods(nextProps.selectedNode, cy);
-        else if (nextProps.canvasAnimation.type === "ShowRestriction")
-            showRestrictions(nextProps.selectedNode, cy);
-        else if (nextProps.canvasAnimation.type === "Hide")
-            hide(nextProps.selectedNode, cy);
-        else if (nextProps.canvasAnimation.type === "Filter")
-            filter(cy);
-        //canvasAnimation burada yada calıstırılan fonk.ların sonunda resetlenebilir
     }
 
 
     render() {
+        console.log("render");
         return (<Grid>
             <Loader/>
             <Grid.Row>
@@ -190,6 +203,9 @@ const mapDispatchToProps = dispatch => {
         },
         SearchRes: function (result) {
             return dispatch(searchRes(result))
+        },
+        reset: function () {
+            return dispatch(reset())
         },
     }
 };
