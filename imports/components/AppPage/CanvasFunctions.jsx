@@ -62,8 +62,9 @@ export class CanvasFunctions extends Component {
     render() {
         return (
             <Menu size="huge" vertical secondary>
+                <SearchBar/>
+                <br/><br/>
                 <Button.Group vertical labeled icon>
-                    <SearchBar/>
                     <Button icon='sitemap' content='Show Neighborhood' onClick={this.ShowNeighborhood}/>
                     <br/>
                     <Button icon='refresh' content='Reset Canvas' onClick={this.ResetCanvas}/>
