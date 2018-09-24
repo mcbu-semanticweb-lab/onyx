@@ -125,10 +125,7 @@ class CytoscapeRenderer extends Component {
         }
 
 
-        if (this.props.canvasAnimation.animation && this.props.canvasAnimation.animation !== 'Reset' && this.props.canvasAnimation.animation === nextProps.canvasAnimation.animation)
-            this.props.reset(); //reset gelistirilebilir, kontrol saglanabılır
-        else {
-
+        if (!(this.props.canvasAnimation.animation && this.props.canvasAnimation.animation !== 'Reset' && this.props.canvasAnimation.animation === nextProps.canvasAnimation.animation)) {
             switch (nextProps.canvasAnimation.animation) {
                 case "Undo":
                     ur.undo();
@@ -161,17 +158,20 @@ class CytoscapeRenderer extends Component {
                     hide(nextProps.selectedNode, cy);
                     break;
                 case "Filter":
-                    filter(cy, var1);
+                    console.log("filter");
+                    filter(cy, nextProps.canvasAnimation.filter_type, nextProps.canvasAnimation.checked);
                     break;
                 default:
                     break;
             }
+        } //reset gelistirilebilir, kontrol saglanabılır, filter için arka arakaya gelen işlemi yapamıyor
+        else {
+            this.props.reset();
         }
     }
 
 
     render() {
-        console.log("render");
         return (<Grid>
             <Loader/>
             <Grid.Row>

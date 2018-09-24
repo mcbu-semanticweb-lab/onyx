@@ -75,6 +75,8 @@ export const canvasAnimations = (state = false, action) => {
         case 'Filter':
             return {
                 animation: action.type,
+                filter_type: action.filter_type,
+                checked: action.checked
             };
 
         case 'Reset':
@@ -101,7 +103,6 @@ export const canvasProperties = (state = initial_ui_state, action) => {
             return ({...state});
         case 'showSidebar':
             state.sidebar = !state.sidebar;
-            console.log("sidebar");
             return ({...state});
         default:
             return state;

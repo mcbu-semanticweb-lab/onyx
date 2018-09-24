@@ -122,8 +122,8 @@ export function showRestrictions(id, cy) {
 
                                 console.log(triple);
 
-                                get_list(triple.object,function (err,res) {
-                                    console.log(err,res);
+                                get_list(triple.object, function (err, res) {
+                                    console.log(err, res);
                                 });
                             }
 
@@ -221,12 +221,12 @@ export function selectNode(cy, id) {
 
 export function search(cy, text) {
     let result = [];
-    let eles = cy.nodes('[label @*= "'+ text + '"]');
+    let eles = cy.nodes('[label @*= "' + text + '"]');
     eles.forEach(function (ele) {
         result.push({
-            key : Random.id(),
-            id : ele.data('id'),
-            title : ele.data('label')
+            key: Random.id(),
+            id: ele.data('id'),
+            title: ele.data('label')
         });
     });
     return result;
@@ -238,7 +238,7 @@ export function unselectNode(cy, id) {
     cy.getElementById(id).removeClass("select")
 }
 
-export function hide(id,cy) {
+export function hide(id, cy) {
     cy.getElementById(id).style("display", "none");
 }
 
@@ -246,7 +246,7 @@ export function add(cy) {
 
     Meteor.call('get_subjects_and_their_predicates', function (err, res) {
 
-        if(err)
+        if (err)
             console.log(err);
 
         if (res) {
@@ -339,7 +339,7 @@ export function add(cy) {
             res.forEach(function (object) {
 
                 object.predicates.forEach(function (triple) {
-                     //console.log(object.id, triple.predicate, triple.id);
+                    //console.log(object.id, triple.predicate, triple.id);
 
                     if (triple.predicate === "<http://www.w3.org/2000/01/rdf-schema#domain>") {
                         //console.log(cy.getElementById(triple.object));
@@ -529,22 +529,23 @@ export function add(cy) {
             }); //Edge Adding*!/*/
 
         }
-        console.log("okey");/*
-        let layout = cy.layout(OPTIONS);
-        layout.run();*/
+        console.log("okey");
+        /*
+                let layout = cy.layout(OPTIONS);
+                layout.run();*/
     });
 
     return cy;
 }
 
 
-export function add2(callback){
+export function add2(callback) {
 
     data = [];
 
     Meteor.call('get_subjects_and_their_predicates', function (err, res) {
 
-        if(err)
+        if (err)
             console.log(err);
 
         if (res) {
@@ -800,8 +801,7 @@ export function add2(callback){
                         if (triple.id === "http://www.w3.org/2002/07/owl#Thing") {
                             //pass
                         }
-                        else if(triple.id.startsWith("_:"))
-                        {
+                        else if (triple.id.startsWith("_:")) {
                             //pass
                         }
                         else {
@@ -837,8 +837,6 @@ export function add2(callback){
         layout.run();*/
     });
 }
-
-
 
 
 /*  Meteor.call('get_triples_by_type', function (err, res) {
@@ -1012,30 +1010,30 @@ function find_range(obj) {
 }
 
 
-function get_list(id,callback) {
+function get_list(id, callback) {
     Meteor.call('get_list', id, function (err, res) {
         if (res) {
             if (res.rest !== null)
                 get_list(id);
             else
                 list.append(res);
-        callback(list)
+            callback(list)
         }
     })
 }
 
-export function filter(cy) {
-    ele = cy.edges('edge[group="subclass"]');
-    eles = ele.connectedNodes();
-    cy.nodes().difference(eles).style("display", "none");
-    ele.style("display", "element");
-    cy.animation({
-        fit: {
-            eles: eles
-        }
-    }).play();
+export function filter(cy, filter_type, checked) {
+    let ele = cy.edges('edge[group="' + filter_type + '"]');
+    let eles = ele.connectedNodes();
+    if (checked) {
+        cy.nodes().difference(eles).style("display", "none");
 
+    }
+    else{
+        cy.nodes().difference(eles).style("display", "element");
+    }
     //hiyerarşik gösterim eklenebilir
+    //animasyon eklenebilir
 }
 
 /*
@@ -1111,10 +1109,10 @@ cy.animation({
 }).play();*/
 
 
-export function MakeTippy(node, text){
-    console.log(node,text);
-    return tippy( node.popperRef(), {
-        html: (function(){
+export function MakeTippy(node, text) {
+    console.log(node, text);
+    return tippy(node.popperRef(), {
+        html: (function () {
             var div = document.createElement('div');
             div.innerHTML = text;
             return div;
@@ -1125,5 +1123,5 @@ export function MakeTippy(node, text){
         hideOnClick: false,
         multiple: false,
         sticky: true
-    } ).tooltips[0];
+    }).tooltips[0];
 };

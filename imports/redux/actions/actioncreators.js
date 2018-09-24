@@ -92,10 +92,11 @@ export const hide = function () {
 };
 
 
-export const filter = function (type) {
+export const filter = function (filter_type,checked) {
     return {
         type: "Filter",
-        filter : type
+        filter_type : filter_type,
+        checked: checked
     }
 };
 

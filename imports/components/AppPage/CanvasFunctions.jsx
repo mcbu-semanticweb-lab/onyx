@@ -76,7 +76,7 @@ export class CanvasFunctions extends Component {
                     <Button icon='repeat' content='Redo' onClick={this.props.redo} />
                 </Button.Group>
                 <br/><br/>
-                <Checkbox slider name='Pop-up' label='Pop-up' position='left' onClick={this.props.pop_up}/>
+                <Checkbox slider name='Filter-Subclass' label='Filter-Subclass' position='left' onClick={(e,data) => this.props.filter("subclass",data.checked)}/>
             </Menu>
         );
     }
@@ -116,8 +116,8 @@ const mapDispatchToProps = dispatch => {
         hide: function () {
             return dispatch(hide())
         },
-        filter: function () {
-            return dispatch(filter())
+        filter: function (filter_type,checked) {
+            return dispatch(filter(filter_type,checked))
         },
     };
 };
