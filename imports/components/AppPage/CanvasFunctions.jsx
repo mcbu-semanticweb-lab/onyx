@@ -77,6 +77,8 @@ export class CanvasFunctions extends Component {
                 </Button.Group>
                 <br/><br/>
                 <Checkbox slider name='Filter-Subclass' label='Filter-Subclass' position='left' onClick={(e,data) => this.props.filter("subclass",data.checked)}/>
+                <br/><br/>
+                <Pitfall/>
             </Menu>
         );
     }

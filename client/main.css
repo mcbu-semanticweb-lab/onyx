@@ -9,6 +9,7 @@ body{
     height: 100%;
 }
 
+
 .login-form{
     height: 100%;
 }
@@ -43,7 +44,7 @@ body{
     position: fixed;
     border: 1px solid #000;
     background: #fff;
-    z-index: 99999;
+    z-index: 1;
     width: 400px;
     height: 400px;
     bottom: 0;

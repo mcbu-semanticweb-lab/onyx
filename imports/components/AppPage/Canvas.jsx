@@ -110,7 +110,7 @@ class CytoscapeRenderer extends Component {
 
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps) {  //TODO: UNSAFE method must change
         let cy = this.state.cy;
         let ur = this.state.ur;
         if (this.props.selectedNode !== nextProps.selectedNode) {
