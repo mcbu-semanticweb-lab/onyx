@@ -2,6 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {HTTP} from 'meteor/http'
 import {ontology_data} from "./data";
 import {check} from 'meteor/check'
+
 let Future = Npm.require('fibers/future');
 
 var N3 = require('n3');
@@ -41,8 +42,8 @@ Meteor.methods({
         console.log("parse completed");
 
         x.forEach(function (triple) {
-             if (triple.object.includes('@')) // NamedNode İçin çözüm bul, eski parse tekniği?
-                 triple.object = triple.object.slice(triple.object.lastIndexOf('@'));
+            if (triple.object.includes('@')) // NamedNode İçin çözüm bul, eski parse tekniği?
+                triple.object = triple.object.slice(triple.object.lastIndexOf('@'));
             HTTP.post('http://localhost:64210/api/v2/write', {
                 data: [{
                     "subject": triple.subject,
@@ -51,7 +52,7 @@ Meteor.methods({
                 }]
             });
         });
-        return(1);
+        return (1);
     },
 
 
@@ -103,7 +104,7 @@ Meteor.methods({
                     "lang": "gizmo"
                 },
                 content: 'var n = g.V().Out().Count();\n' +
-                'g.Emit(n);'
+                    'g.Emit(n);'
             });
         return (JSON.parse(result.content).result[0]);
     },
@@ -166,25 +167,37 @@ Meteor.methods({
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
             {
                 content: 'g.V().In().Unique().ForEach( function(d) {\n' +
-                '\n' +
-                '    d.predicates = g.V(d.id).Out(null,"predicate").Tag("object").TagArray()\n' +
-                '\n' +
-                '    g.Emit(d)\n' +
-                '\n' +
-                '})'
+                    '\n' +
+                    '    d.predicates = g.V(d.id).Out(null,"predicate").Tag("object").TagArray()\n' +
+                    '\n' +
+                    '    g.Emit(d)\n' +
+                    '\n' +
+                    '})'
             });
         return (JSON.parse(result.content).result);
     },
 
     get_individual_num: function (id) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
-            {
-                content: 'var a =  g.V("' + id + '").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()    \n' +
-                'g.Emit(a)\n' +
-                '\t\t\n' +
-                '\n'
-            });
+        let result;
+        if (id) {
+            result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
+                {
+                    content: 'var a =  g.V("' + id + '").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()    \n' +
+                        'g.Emit(a)\n' +
+                        '\t\t\n' +
+                        '\n'
+                });
+        }
+        else {
+            result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
+                {
+                    content: 'var a =  g.V().In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()    \n' +
+                        'g.Emit(a)\n' +
+                        '\t\t\n' +
+                        '\n'
+                });
+        }
         return (JSON.parse(result.content).result);
     },
 
@@ -194,8 +207,8 @@ Meteor.methods({
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
             {
                 content: 'g.V("' + id + '").In("http://www.w3.org/2000/01/rdf-schema#subClassOf").All()    \n' +
-                '\t\t\n' +
-                '\n'
+                    '\t\t\n' +
+                    '\n'
             });
         return (JSON.parse(result.content).result);
     },
@@ -205,13 +218,13 @@ Meteor.methods({
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
             {
                 content: '\n' +
-                '    var list = {};\n' +
-                '\n' +
-                'list.first = g.V("' + id + '").Out("<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>").TagValue("first")\n' +
-                '\n' +
-                'list.rest = g.V("' + id + '").Out("<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>").TagValue("rest")\n' +
-                '\n' +
-                'g.Emit(list)\n'
+                    '    var list = {};\n' +
+                    '\n' +
+                    'list.first = g.V("' + id + '").Out("<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>").TagValue("first")\n' +
+                    '\n' +
+                    'list.rest = g.V("' + id + '").Out("<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>").TagValue("rest")\n' +
+                    '\n' +
+                    'g.Emit(list)\n'
             });
         return (JSON.parse(result.content).result);
     },

@@ -108,6 +108,11 @@ class CytoscapeRenderer extends Component {
             }
         });
 
+        Meteor.call('get_individual_num',function (err,res) {
+            if(res)
+                console.log("ind number is" + res);
+        })
+
     }
 
     componentWillReceiveProps(nextProps) {  //TODO: UNSAFE method must change
