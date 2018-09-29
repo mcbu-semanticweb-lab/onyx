@@ -44,7 +44,7 @@ export const canvasAnimations = (state = false, action) => {
                 animation: action.type,
             };
 
-        case 'ShowPitfall':
+        case 'ShowPitfalls':
             return {
                 animation: action.type,
                 affected_elements: action.affected_elements

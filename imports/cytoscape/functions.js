@@ -196,17 +196,18 @@ export function resetCanvas(cy) {
 }
 
 export function showPitfalls(cy, eles) {
-
     if (eles.length === undefined) {
-        cy.getElementById('<' + node["@value"] + '>').addClass("pitfall");
+        cy.getElementById(eles["@value"]).addClass("pitfall");
     }
     else {
         eles.forEach(function (node) {
-            cy.getElementById('<' + node["@value"] + '>').addClass("pitfall");
+            console.log(node,node["@value"]);
+            cy.getElementById(node["@value"]).addClass("pitfall");
         });
     }
     let elements = cy.elements(".pitfall");
-    cy.nodes().difference(elements).style("display", "none");
+    console.log(elements);
+    //cy.nodes().difference(elements).style("display", "none");
     cy.animation({
         fit: {
             eles: elements
