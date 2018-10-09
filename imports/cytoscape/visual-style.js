@@ -43,11 +43,12 @@ export const DEF_VISUAL_STYLE = [
         style: {
             'shape' : 'rectangle',
             'background-color' : '#707070',
+            'font-size' : '50%',
+            'font-weight' : 'bolder',
             'text-valign': 'center',
-            'border-style' : 'double',
             'border-color' : 'black',
-            'border-width' : '6',
-            'width' : '20',
+            'border-width' : '3',
+            'width' : '40',
             'height' : '50'
         }
     },
