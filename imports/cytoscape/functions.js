@@ -555,16 +555,22 @@ function find_range(obj) {
 }
 
 export function filter(cy, filter_type, checked) {
-    let ele = cy.edges('edge[group="' + filter_type + '"]');
-    let eles = ele.connectedNodes();
+    let eles;
+    if(filter_type.indexOf("node")>=0)
+        eles = cy.elements(filter_type);
+    else{
+        eles = cy.edges( filter_type ).connectedNodes();
+    }
+
+
     if (checked) {
-        cy.nodes().difference(eles).style("display", "none");
+        cy.nodes(eles).style("display", "none");
 
     }
     else {
-        cy.nodes().difference(eles).style("display", "element");
+        cy.nodes(eles).style("display", "element");
     }
-    //hiyerarşik gösterim eklenebilir
+    //hiyerarşik gösterim eklenebilir subclass icin
     //animasyon eklenebilir
 }
 

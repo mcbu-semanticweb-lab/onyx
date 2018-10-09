@@ -21,8 +21,6 @@ export class CanvasFunctions extends Component {
     constructor(props) {
         super(props);
         this.Remove = this.Remove.bind(this);
-        this.ShowNeighborhood = this.ShowNeighborhood.bind(this);
-        this.ResetCanvas = this.ResetCanvas.bind(this);
         this.searchSubmit = this.searchSubmit.bind(this);
     }
 
@@ -37,13 +35,6 @@ export class CanvasFunctions extends Component {
         });
     }
 
-    ShowNeighborhood() {
-        this.props.showNeighborhoods(true);
-    }
-
-    ResetCanvas() {
-        this.props.resetCanvas(true);
-    }
 
 
     searchSubmit(event) {
@@ -58,9 +49,9 @@ export class CanvasFunctions extends Component {
                 <SearchBar/>
                 <br/><br/>
                 <Button.Group vertical labeled icon>
-                    <Button icon='sitemap' content='Show Neighborhood' onClick={this.ShowNeighborhood}/>
+                    <Button icon='sitemap' content='Show Neighborhood' onClick={this.props.showNeighborhoods}/>
                     <br/>
-                    <Button icon='refresh' content='Reset Canvas' onClick={this.ResetCanvas}/>
+                    <Button icon='refresh' content='Reset Canvas' onClick={this.props.resetCanvas}/>
                     <br/>
                     <Button icon='registered outline' content='Show Restriction' onClick={this.props.showRestriction} />
                     <br/>
@@ -69,7 +60,9 @@ export class CanvasFunctions extends Component {
                     <Button icon='repeat' content='Redo' onClick={this.props.redo} />
                 </Button.Group>
                 <br/><br/>
-                <Checkbox slider name='Filter-Subclass' label='Filter-Subclass' position='left' onClick={(e,data) => this.props.filter("subclass",data.checked)}/>
+                <Checkbox slider name='Filter-Subclass' label='Filter-Subclass' position='left' onClick={(e,data) => this.props.filter('edge[group="subclass"]',data.checked)}/>
+                <br/><br/>
+                <Checkbox slider name='Filter-Restriction' label='Filter-restriction' position='left' onClick={(e,data) => this.props.filter('node[group="restriction"]',data.checked)}/>
                 <br/><br/>
                 <Pitfall/>
             </Menu>
@@ -84,17 +77,17 @@ const mapDispatchToProps = dispatch => {
         draw: function (boole) {
             return dispatch(draw(boole))
         },
-        showNeighborhoods: function (boole) {
-            return dispatch(showNeighborhood(boole))
+        showNeighborhoods: function () {
+            return dispatch(showNeighborhood())
         },
-        resetCanvas: function (boole) {
-            return dispatch(resetCanvas(boole))
+        resetCanvas: function () {
+            return dispatch(resetCanvas())
         },
         search: function (label) {
             return dispatch(search(label))
         },
-        showRestriction: function (eles) {
-            return dispatch(showRestriction(eles))
+        showRestriction: function () {
+            return dispatch(showRestriction())
         },
         undo: function () {
             return dispatch(undo())
