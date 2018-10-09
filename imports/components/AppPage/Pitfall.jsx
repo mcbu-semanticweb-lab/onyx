@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Modal, Table} from 'semantic-ui-react'
-import { pitfall } from '../../redux/actions/actioncreators'
+import {pitfall} from '../../redux/actions/actioncreators'
 import {connect} from 'react-redux';
 
 
@@ -15,21 +15,25 @@ export class Pitfall extends Component {
 
 
     componentDidMount() {
-        let self = this;
-        Meteor.call('pitfall_scanner', "http://xmlns.com/foaf/spec/", function (err, res) {
-            if (res) {
-                Meteor.call('rdf_translator', null, res, function (err, res) {
-                    if (res) {
-                        let x = JSON.parse(res);
-                        self.setState({pitfall_res: x["@graph"]});
-                    }
-                    else
-                        console.log(err);
-                })
-            }
-            else
-                console.log(err);
-        })
+        if (this.state.pitfall_res === null) { //TODO: sürekli mount olması sorunu çözülmeli
+            let self = this;
+            Meteor.call('pitfall_scanner', "http://xmlns.com/foaf/spec/", function (err, res) {
+                if (res) {
+                    Meteor.call('rdf_translator', null, res, function (err, res) {
+                        if (res) {
+                            let x = JSON.parse(res);
+                            self.setState({pitfall_res: x["@graph"]});
+                        }
+                        else
+                            console.log(err);
+                    })
+                }
+                else
+                    console.log(err);
+            })
+        }
+        else
+            console.log("not first mount");
     }
 
     render() {
@@ -40,25 +44,27 @@ export class Pitfall extends Component {
         if (this.state.pitfall_res !== null && this.state.pitfall_res !== undefined) {
             console.log(this.state.pitfall_res);
             this.state.pitfall_res.map((data, index) => {
-              if(data["oops:hasAffectedElement"]){
-                content.push(
-                    <Table.Row key={index}>
-                        <Table.Cell> {data["@type"]} </Table.Cell>
-                        <Table.Cell> {data["oops:hasName"]} </Table.Cell>
-                        <Table.Cell> {data["oops:hasDescription"]} </Table.Cell>
-                        <Table.Cell> <Button onClick={ () => {this.props.pitfall(data["oops:hasAffectedElement"])} }> Show Pitfalls</Button></Table.Cell>
-                    </Table.Row>
-            );
-              }
-              else{
-                content.push(
-                    <Table.Row key={index}>
-                        <Table.Cell> {data["@type"]} </Table.Cell>
-                        <Table.Cell> {data["oops:hasName"]} </Table.Cell>
-                        <Table.Cell> {data["oops:hasDescription"]} </Table.Cell>
-                    </Table.Row>
-                );
-              }
+                if (data["oops:hasAffectedElement"]) {
+                    content.push(
+                        <Table.Row key={index}>
+                            <Table.Cell> {data["@type"]} </Table.Cell>
+                            <Table.Cell> {data["oops:hasName"]} </Table.Cell>
+                            <Table.Cell> {data["oops:hasDescription"]} </Table.Cell>
+                            <Table.Cell> <Button onClick={() => {
+                                this.props.pitfall(data["oops:hasAffectedElement"])
+                            }}> Show Pitfalls</Button></Table.Cell>
+                        </Table.Row>
+                    );
+                }
+                else {
+                    content.push(
+                        <Table.Row key={index}>
+                            <Table.Cell> {data["@type"]} </Table.Cell>
+                            <Table.Cell> {data["oops:hasName"]} </Table.Cell>
+                            <Table.Cell> {data["oops:hasDescription"]} </Table.Cell>
+                        </Table.Row>
+                    );
+                }
 
             })
         }
@@ -92,4 +98,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(null,mapDispatchToProps)(Pitfall);
+export default connect(null, mapDispatchToProps)(Pitfall);

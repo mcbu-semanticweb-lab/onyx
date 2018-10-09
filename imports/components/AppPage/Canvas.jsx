@@ -46,6 +46,7 @@ class CytoscapeRenderer extends Component {
         let self = this;
         add2(function (res) {
             if (res.length !== 0) {
+                console.log(res);
 
                 cytoscape.use(cola);
                 cytoscape.use(popper);
@@ -157,6 +158,7 @@ class CytoscapeRenderer extends Component {
                     showNeighborhoods(nextProps.selectedNode, cy);
                     break;
                 case "ShowRestriction":
+                    console.log("restriction");
                     showRestrictions(nextProps.selectedNode, cy);
                     break;
                 case "Hide":

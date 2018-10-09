@@ -39,7 +39,6 @@ Meteor.methods({
 
     send_to_cayley: function (data) {
         let x = parser.parse(data);
-        console.log("parse completed");
 
         x.forEach(function (triple) {
             if (triple.object.includes('@')) // NamedNode İçin çözüm bul, eski parse tekniği?
@@ -137,7 +136,6 @@ Meteor.methods({
     },
 
     find_attributes_restriction: function (id) {
-        let triples = [];
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v2/query',
             {
@@ -146,19 +144,8 @@ Meteor.methods({
                 },
                 content: 'g.V("' + id + '").Tag("subject").Out(null, "predicate").Tag("object").All()'
             });
-        let atts = JSON.parse(result.content).result;
-        if (atts === null)
-            return null;
-        atts.forEach(function (res) {
-            triples.push(
-                {
-                    subject: res.subject,
-                    predicate: res.predicate.split("#")[1],
-                    object: res.object
-                }
-            )
-        });
-        return (triples);
+
+        return (JSON.parse(result.content).result);
     },
 
 
@@ -217,15 +204,10 @@ Meteor.methods({
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
             {
-                content: '\n' +
-                    '    var list = {};\n' +
-                    '\n' +
-                    'list.first = g.V("' + id + '").Out("<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>").TagValue("first")\n' +
-                    '\n' +
-                    'list.rest = g.V("' + id + '").Out("<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>").TagValue("rest")\n' +
-                    '\n' +
-                    'g.Emit(list)\n'
+                content: 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
+                    'g.V("'+id+'").FollowRecursive(f_r).All()'
             });
+        console.log(result);
         return (JSON.parse(result.content).result);
     },
 

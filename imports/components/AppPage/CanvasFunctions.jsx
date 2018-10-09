@@ -4,12 +4,10 @@ import Pitfall from "./Pitfall";
 import {
     draw,
     resetCanvas,
-    search,
     showNeighborhood,
-    showrestriction,
+    showRestriction,
     undo,
     shownavigator,
-    showsidebar,
     redo,
     popup,
     hide,
@@ -25,7 +23,6 @@ export class CanvasFunctions extends Component {
         this.Remove = this.Remove.bind(this);
         this.ShowNeighborhood = this.ShowNeighborhood.bind(this);
         this.ResetCanvas = this.ResetCanvas.bind(this);
-        this.ShowRestriction = this.ShowRestriction.bind(this);
         this.searchSubmit = this.searchSubmit.bind(this);
     }
 
@@ -48,10 +45,6 @@ export class CanvasFunctions extends Component {
         this.props.resetCanvas(true);
     }
 
-    ShowRestriction() {
-        this.props.showrestriction(true);
-    }
-
 
     searchSubmit(event) {
         if (event.target.value.length !== 0)
@@ -69,7 +62,7 @@ export class CanvasFunctions extends Component {
                     <br/>
                     <Button icon='refresh' content='Reset Canvas' onClick={this.ResetCanvas}/>
                     <br/>
-                    <Button icon='registered outline' content='Show Restriction' onClick={this.ShowRestriction} />
+                    <Button icon='registered outline' content='Show Restriction' onClick={this.props.showRestriction} />
                     <br/>
                     <Button icon='undo' content='Undo'onClick={this.props.undo} />
                     <br/>
@@ -100,8 +93,8 @@ const mapDispatchToProps = dispatch => {
         search: function (label) {
             return dispatch(search(label))
         },
-        showrestriction: function (eles) {
-            return dispatch(showrestriction(eles))
+        showRestriction: function (eles) {
+            return dispatch(showRestriction(eles))
         },
         undo: function () {
             return dispatch(undo())

@@ -37,6 +37,21 @@ export const DEF_VISUAL_STYLE = [
         }
     },
 
+
+    {
+        selector: 'node[group="intersectionOf"]',
+        style: {
+            'shape' : 'rectangle',
+            'background-color' : '#707070',
+            'text-valign': 'center',
+            'border-style' : 'double',
+            'border-color' : 'black',
+            'border-width' : '6',
+            'width' : '20',
+            'height' : '50'
+        }
+    },
+
     {
         selector: 'node[group="object_property"]',
         style: {

@@ -27,7 +27,7 @@ export const draw = function (boole) {
 
 //Canvas animations
 
-export const showNeighborhood = function (boole) {
+export const showNeighborhood = function () {
     return {
         type: "ShowNeighborhood"
     }
@@ -61,7 +61,7 @@ export const searchRes = function (res) {
     }
 };
 
-export const showrestriction = function () {
+export const showRestriction = function () {
     return {
         type: "ShowRestriction",
     }
