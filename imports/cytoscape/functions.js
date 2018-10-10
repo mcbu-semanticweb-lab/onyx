@@ -7,11 +7,11 @@ var list = [];
 export function showNeighborhoods(id, cy) {
     ele = cy.getElementById(id);
     eles = ele.neighborhood();
-    cy.nodes().difference(eles).style("display","none");
-    ele.style("display","element");
+    cy.nodes().difference(eles).style("display", "none");
+    ele.style("display", "element");
     cy.animation({
-        fit : {
-            eles : eles
+        fit: {
+            eles: eles
         }
     }).play();
 
@@ -66,7 +66,7 @@ export function showRestrictions(id, cy) {
             let ele = cy.getElementById(id);
             let eles = ele.neighborhood();
             let eles2 = eles.neighborhood();
-            cy.nodes().difference(eles,eles2).style("display", "none");
+            cy.nodes().difference(eles, eles2).style("display", "none");
             ele.style("display", "element");
             // cy.animation({
             //     center: {
@@ -239,6 +239,19 @@ function nodeAdd(data) {
                                         id: object.id,
                                         label: "R",
                                         group: "restriction"
+                                    }
+                                },
+                            );
+                        }
+
+                        else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                        group: "thing"
                                     }
                                 },
                             );
@@ -431,9 +444,6 @@ function edgeAdd(data) {
                             if (triple.id === "http://www.w3.org/2002/07/owl#Thing") {
                                 //pass
                             }
-                            else if (triple.id.startsWith("_:")) {
-                                //pass
-                            }
                             else {
                                 data.push(
                                     {
@@ -463,13 +473,13 @@ function edgeAdd(data) {
                                     group: "nodes",
                                     data: {
                                         id: triple.id,
-                                        label: "N",
+                                        label: "∩",
                                         group: "intersectionOf"
                                     }
                                 },
                                 {
                                     group: "edges",
-                                    data: {id: Random.id(), source: object.id, target: triple.id }
+                                    data: {id: Random.id(), source: object.id, target: triple.id}
                                 }
                             );
 
@@ -478,6 +488,56 @@ function edgeAdd(data) {
 
                             //collection alınıp first ler eklenecek(node adding e gönderilecek)
                         }
+
+                        else if (triple.predicate === "http://www.w3.org/2002/07/owl#unionOf") {
+
+
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: triple.id,
+                                        label: "∪",
+                                        group: "unionOf"
+                                    }
+                                },
+                                {
+                                    group: "edges",
+                                    data: {id: Random.id(), source: object.id, target: triple.id}
+                                }
+                            );
+
+                            await get_list(triple.id, data);
+
+                        }
+
+                        else if (triple.predicate === "http://www.w3.org/2002/07/owl#oneOf") {
+
+                            if (object.id.includes('_:')) {
+                                console.log("pass");
+                            }
+                            else {
+
+                                data.push(
+                                    {
+                                        group: "nodes",
+                                        data: {
+                                            id: triple.id,
+                                            label: "oneOf",
+                                            group: "oneOf"
+                                        }
+                                    },
+                                    {
+                                        group: "edges",
+                                        data: {id: Random.id(), source: object.id, target: triple.id}
+                                    }
+                                );
+
+                                await get_list(triple.id, data);
+                            }
+
+                        }
+
 
                         else {
                             // pass
@@ -501,6 +561,8 @@ function get_list(id, data) {
         Meteor.call('get_list', id, function (err, res) {
             if (res) {
 
+                console.log(res);
+
                 res.forEach(function (list_element) {
 
                     if (list_element.type === "http://www.w3.org/1999/02/22-rdf-syntax-ns#first") {
@@ -508,7 +570,7 @@ function get_list(id, data) {
                         data.push(
                             {
                                 group: "edges",
-                                data: {id: Random.id(), source: id, target:list_element.id}
+                                data: {id: Random.id(), source: id, target: list_element.id}
                             }
                         );
 
@@ -556,10 +618,10 @@ function find_range(obj) {
 
 export function filter(cy, filter_type, checked) {
     let eles;
-    if(filter_type.indexOf("node")>=0)
+    if (filter_type.indexOf("node") >= 0)
         eles = cy.elements(filter_type);
-    else{
-        eles = cy.edges( filter_type ).connectedNodes();
+    else {
+        eles = cy.edges(filter_type).connectedNodes();
     }
 
 
