@@ -12,7 +12,6 @@ export const DEF_VISUAL_STYLE = [
         selector: 'node[group="class"]',
         style: {
             'shape' : 'ellipse',
-            'background-color' : '#f7d708',
             'text-valign': 'center',
             'border-style' : 'double',
             'border-color' : 'black',

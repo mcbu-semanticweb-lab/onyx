@@ -5,8 +5,8 @@ import tippy from 'tippy.js';
 var list = [];
 
 export function showNeighborhoods(id, cy) {
-    ele = cy.getElementById(id);
-    eles = ele.neighborhood();
+    let ele = cy.getElementById(id);
+    let eles = ele.neighborhood();
     cy.nodes().difference(eles).style("display", "none");
     ele.style("display", "element");
     cy.animation({
@@ -143,13 +143,12 @@ export function hide(id, cy) {
 export function add2(callback) {
 
     let data = [];
-
     // await Promise.all([nodeAdd(data),edgeAdd(data)]);
     // return callback(data);
 
     let pro1 = nodeAdd(data);
     let pro2 = edgeAdd(data);
-    Promise.all([pro1, pro2]).then(function (result) {
+    Promise.all([pro1, pro2]).then(function () {
         return callback(data);
     });
 
@@ -158,16 +157,16 @@ export function add2(callback) {
 
 
 function nodeAdd(data) {
-    return new Promise(function (resolve, reject) {
-        Meteor.call('get_subjects_and_their_predicates', function (err, res) {
+    return new Promise(async function (resolve, reject) {
+        let ind_num = await get_ind_num();
+        Meteor.call('get_subjects_and_their_predicates', async function (err, res) {
 
             if (err)
                 reject(err);
 
             if (res) {
-
                 res.forEach(function (object) {
-                    object.predicates.forEach(function (triple) {
+                    object.predicates.forEach(async function (triple) {
 
                         if (triple.object === "http://www.w3.org/2002/07/owl#Class" || triple.object === "http://www.w3.org/2000/01/rdf-schema#Class") {
 
@@ -175,7 +174,15 @@ function nodeAdd(data) {
                                 console.log("pass");
                             }
                             else {
-
+                                let fc = await get_fullness(object.id);
+                                console.log(object.id,fc);
+                                let color;
+                                if ((fc / ind_num) < 0.25)
+                                    color = "#E0F700";
+                                else if ((fc / ind_num) > 0.75)
+                                    color = "#F70500";
+                                else
+                                    color = "#F78C00";
                                 data.push(
                                     {
                                         group: "nodes",
@@ -183,7 +190,13 @@ function nodeAdd(data) {
                                             id: object.id,
                                             label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
                                             group: "class"
+                                        },
+
+                                        style: {
+                                            'background-color': color
                                         }
+
+
                                     },
                                 );
                             }
@@ -269,7 +282,7 @@ function nodeAdd(data) {
             }
         });
     });
-};
+}
 
 function edgeAdd(data) {
     return new Promise(function (resolve, reject) {
@@ -286,7 +299,7 @@ function edgeAdd(data) {
                             //console.log(cy.getElementById(triple.object));
                             if (triple.object === "http://www.w3.org/2000/01/rdf-schema#Literal") {
 
-                                literal_id = Random.id();
+                                let literal_id = Random.id();
 
                                 data.push(
                                     {
@@ -365,7 +378,7 @@ function edgeAdd(data) {
 
                             if (triple.object === "http://www.w3.org/2000/01/rdf-schema#Literal") {
 
-                                literal_id = Random.id();
+                                let literal_id = Random.id();
 
                                 data.push(
                                     {
@@ -446,14 +459,14 @@ function edgeAdd(data) {
                             }
                             else {
                                 data.push(
-                                    {
-                                        group: "nodes",
-                                        data: {
-                                            id: object.id,
-                                            label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                            group: "object_property"
-                                        }
-                                    },
+                                    // {
+                                    //     group: "nodes", //TODO : incelenmeli
+                                    //     data: {
+                                    //         id: object.id,
+                                    //         label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                    //         group: "object_property"
+                                    //     }
+                                    // },
                                     {
                                         group: "edges",
                                         data: {id: Random.id(), source: object.id, target: triple.id, group: "subclass"}
@@ -582,9 +595,32 @@ function get_list(id, data) {
                 return reject("err");
         });
     })
-
 }
 
+
+function get_ind_num() {
+    return new Promise(function (resolve, reject) {
+        Meteor.call('get_individual_num', function (err, res) {
+            if (res) {
+                resolve(res);
+            }
+            else
+                reject("err");
+        });
+    })
+}
+
+function get_fullness(id) {
+    return new Promise(function (resolve, reject) {
+        Meteor.call('get_fullness', id, function (err, res) {
+            if (res) {
+                resolve(res);
+            }
+            else
+                reject("err");
+        });
+    })
+}
 
 function extra_add(node, data) {
 

@@ -164,27 +164,44 @@ Meteor.methods({
         return (JSON.parse(result.content).result);
     },
 
-    get_individual_num: function (id) {
+    get_individual_num: function () {
+        // get ind -> g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class").All()
+        // TODO : query limit fix
+        // TODO : rdf class control
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result;
-        if (id) {
-            result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
-                {
-                    content: 'var a =  g.V("' + id + '").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()    \n' +
-                        'g.Emit(a)\n' +
-                        '\t\t\n' +
-                        '\n'
-                });
-        }
-        else {
-            result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
-                {
-                    content: 'var a =  g.V().In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()    \n' +
-                        'g.Emit(a)\n' +
-                        '\t\t\n' +
-                        '\n'
-                });
-        }
+
+        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
+            {
+                content: 'var a = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
+                    'g.Emit(a)\n' +
+                    '\t\t\n' +
+                    '\n'
+            });
+
+        return (JSON.parse(result.content).result[0]);
+    },
+
+    get_fullness: function (id) {
+        // get ind -> g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class").All()
+        // TODO : query limit fix
+        // TODO : rdf class control
+        let sync = Meteor.wrapAsync(HTTP.post);
+        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
+            {
+                content: 'var ind = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class").Is("'+id+'").Count() \n' +
+                    '\n' +
+                    'var sub_max = 0;\n' +
+                    '\n' +
+                    'g.V().Has("http://www.w3.org/2000/01/rdf-schema#subClassOf","'+id+'").ForEach(function(res){\n' +
+                    '      \n' +
+                    '  var current = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Is(res.id).Count()  \n' +
+                    '  if(current > sub_max){\n' +
+                    '    sub_max = current;\n' +
+                    '  }\n' +
+                    '})\n' +
+                    '\n' +
+                    'g.Emit(ind+sub_max)'
+            });
         return (JSON.parse(result.content).result);
     },
 
@@ -205,9 +222,8 @@ Meteor.methods({
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
             {
                 content: 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
-                    'g.V("'+id+'").FollowRecursive(f_r).All()'
+                    'g.V("' + id + '").FollowRecursive(f_r).All()'
             });
-        console.log(result);
         return (JSON.parse(result.content).result);
     },
 
