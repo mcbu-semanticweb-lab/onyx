@@ -151,6 +151,15 @@ export const DEF_VISUAL_STYLE = [
     },
 
     {
+        selector: 'edge[group="list"]',
+        style: {
+            'label': 'List item',
+            'target-arrow-shape': 'triangle',
+            'target-arrow-color': 'black',
+        }
+    },
+
+    {
         selector: '.hover',
         style: {
             'background-color' : '#ff0000',

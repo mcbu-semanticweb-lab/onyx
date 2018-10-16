@@ -478,8 +478,6 @@ function edgeAdd(data) {
                         else if (triple.predicate === "http://www.w3.org/2002/07/owl#intersectionOf") {
 
 
-                            //intersection of kutusu eklenecek
-
 
                             data.push(
                                 {
@@ -583,7 +581,7 @@ function get_list(id, data) {
                         data.push(
                             {
                                 group: "edges",
-                                data: {id: Random.id(), source: id, target: list_element.id}
+                                data: {id: Random.id(), source: id, target: list_element.id , group: "list"}
                             }
                         );
 
