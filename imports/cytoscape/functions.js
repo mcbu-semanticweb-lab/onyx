@@ -19,7 +19,7 @@ export function showNeighborhoods(id, cy) {
 
 export function showRestrictions(id, cy) {
 
-    Meteor.call('find_attributes_restriction', id, function (err, res) {
+    Meteor.call('find_attributes', id, function (err, res) {
 
         if (res) {
             res.forEach(function (triple) {

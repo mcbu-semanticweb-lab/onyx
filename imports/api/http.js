@@ -108,7 +108,7 @@ Meteor.methods({
         return (JSON.parse(result.content).result[0]);
     },
 
-    find_attributes: function (id) {
+    find_attributes: function (id,type) {
         let triples = [];
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v2/query',
@@ -118,36 +118,29 @@ Meteor.methods({
                 },
                 content: 'g.V("' + id + '").Tag("subject").Out(null, "predicate").Tag("object").All()'
             });
-        let atts = JSON.parse(result.content).result;
-        if (atts === null)
-            return null;
-        atts.forEach(function (res) {
-            if (res.predicate.includes('#')) {
-                triples.push(
-                    {
-                        subject: res.subject,
-                        predicate: res.predicate.split("#")[1],
-                        object: res.object
-                    }
-                )
-            }
-        });
-        return (triples);
-    },
 
-    find_attributes_restriction: function (id) {
-        let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v2/query',
-            {
-                params: {
-                    "lang": "gizmo"
-                },
-                content: 'g.V("' + id + '").Tag("subject").Out(null, "predicate").Tag("object").All()'
+        if (type === "info") {
+            console.log("info");
+            let atts = JSON.parse(result.content).result;
+            if (atts === null)
+                return null;
+            atts.forEach(function (res) {
+                if (res.predicate.includes('#')) {
+                    triples.push(
+                        {
+                            subject: res.subject,
+                            predicate: res.predicate.split("#")[1],
+                            object: res.object
+                        }
+                    )
+                }
             });
-
-        return (JSON.parse(result.content).result);
+            return (triples);
+        }
+        else {
+            return JSON.parse(result.content).result;
+        }
     },
-
 
     get_subjects_and_their_predicates: function () {
         let sync = Meteor.wrapAsync(HTTP.post);
@@ -205,17 +198,6 @@ Meteor.methods({
         return (JSON.parse(result.content).result);
     },
 
-
-    get_subclasses: function (id) {
-        let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
-            {
-                content: 'g.V("' + id + '").In("http://www.w3.org/2000/01/rdf-schema#subClassOf").All()    \n' +
-                    '\t\t\n' +
-                    '\n'
-            });
-        return (JSON.parse(result.content).result);
-    },
 
     get_list: function (id) {
         let sync = Meteor.wrapAsync(HTTP.post);
