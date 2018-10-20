@@ -5,27 +5,26 @@ stages:
 variables:
   DOCKER_DRIVER: overlay
   DOCKER_USER: dockerci
-  VERSION: $(cat version)
 services:
 - docker:dind
 before_script:
 - apk update && apk add --no-cache git
 - docker info
+- version=$(cat version)
 build:
   stage: build
   tags:
     - docker 
   script:
     - docker build --pull -t $CI_REGISTRY_IMAGE:latest .
-    - docker build --pull -t $CI_REGISTRY_IMAGE:$VERSION .
+    - docker build --pull -t $CI_REGISTRY_IMAGE:$version .
 release:
   stage: release
   tags:
     - docker
   before_script:
-    - version=$(cat version)
     - echo $version
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker push $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$VERSION
+    - docker push $CI_REGISTRY_IMAGE:$version
