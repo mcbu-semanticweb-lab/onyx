@@ -1,6 +1,7 @@
 image: docker:latest
 stages:
 - build
+- release
 variables:
   DOCKER_DRIVER: overlay
   DOCKER_USER: dockerci
