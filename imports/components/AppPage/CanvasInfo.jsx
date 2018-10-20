@@ -57,7 +57,7 @@ class CytoscapeInfo extends Component {
 
     componentWillReceiveProps(nextProps) {
         self = this;
-        Meteor.call('find_attributes', nextProps.selectedNode, function (err, res) {
+        Meteor.call('find_attributes', nextProps.selectedNode, "info", function (err, res) {
             if (err)
                 console.log(err);
             else

@@ -8,10 +8,10 @@ import RootReducer from '../imports/redux/reducers/root-reducer';
 
 import { routerForBrowser } from 'redux-little-router';
 
-import HomePage from "../imports/components/app";
+import HomePage from "../imports/components/App";
 
 import { initializeCurrentLocation } from 'redux-little-router';
-import Dashboard from "../imports/components/dashboard";
+import Dashboard from "../imports/components/IndexPage/IndexPageContainer";
 
 const routes = {
     '/': {
@@ -34,10 +34,9 @@ const {reducer, middleware, enhancer} = routerForBrowser({routes});
 
 const store = createStore(
     combineReducers({ router: reducer, RootReducer }),
-    {}
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
     ,
-    compose(enhancer, applyMiddleware(middleware),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+    compose(enhancer, applyMiddleware(middleware))
 );
 
 // ...after creating your store

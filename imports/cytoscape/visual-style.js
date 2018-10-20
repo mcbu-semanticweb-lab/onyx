@@ -12,13 +12,12 @@ export const DEF_VISUAL_STYLE = [
         selector: 'node[group="class"]',
         style: {
             'shape' : 'ellipse',
-            'background-color' : '#f7d708',
             'text-valign': 'center',
             'border-style' : 'double',
             'border-color' : 'black',
             'border-width' : '6',
-            'width' : '160',
-            'height' : '160'
+            'width' : '160%',
+            'height' : '160%'
         }
     },
 
@@ -32,8 +31,51 @@ export const DEF_VISUAL_STYLE = [
             'border-style' : 'double',
             'border-color' : 'black',
             'border-width' : '6',
-            'width' : '50',
-            'height' : '50'
+            'width' : '50%',
+            'height' : '50%'
+        }
+    },
+
+
+    {
+        selector: 'node[group="intersectionOf"]',
+        style: {
+            'shape' : 'rectangle',
+            'background-color' : '#707070',
+            'font-size' : '50%',
+            'font-weight' : 'bolder',
+            'text-valign': 'center',
+            'border-color' : 'black',
+            'border-width' : '3',
+            'width' : '40%',
+            'height' : '50%'
+        }
+    },
+
+    {
+        selector: 'node[group="unionOf"]',
+        style: {
+            'shape' : 'rectangle',
+            'background-color' : '#707070',
+            'font-size' : '50%',
+            'text-valign': 'center',
+            'border-color' : 'black',
+            'border-width' : '3',
+            'width' : '40%',
+            'height' : '50%'
+        }
+    },
+
+    {
+        selector: 'node[group="oneOf"]',
+        style: {
+            'shape' : 'rectangle',
+            'background-color' : '#707070',
+            'text-valign': 'center',
+            'border-color' : 'black',
+            'border-width' : '3',
+            'width' : '130%',
+            'height' : '50%'
         }
     },
 
@@ -58,6 +100,20 @@ export const DEF_VISUAL_STYLE = [
             'width' : '130%',
             'font-size' : '9',
             'padding' : '50%',
+        }
+    },
+
+    {
+        selector: 'node[group="thing"]',
+        style: {
+            'shape' : 'ellipse',
+            'background-color' : '#ffffff',
+            'text-valign': 'center',
+            'border-style' : 'double',
+            'border-color' : 'black',
+            'border-width' : '6',
+            'width' : '90%',
+            'height' : '90%'
         }
     },
 
@@ -89,6 +145,15 @@ export const DEF_VISUAL_STYLE = [
         style: {
             'label': 'Subclass of',
             'line-style' : 'dashed',
+            'target-arrow-shape': 'triangle',
+            'target-arrow-color': 'black',
+        }
+    },
+
+    {
+        selector: 'edge[group="list"]',
+        style: {
+            'label': 'List item',
             'target-arrow-shape': 'triangle',
             'target-arrow-color': 'black',
         }
