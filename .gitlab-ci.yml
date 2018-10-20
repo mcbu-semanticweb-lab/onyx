@@ -17,18 +17,5 @@ build:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker build -t $CI_REGISTRY_IMAGE:test .
-    - docker push $CI_REGISTRY_IMAGE:test 
-release:
-  stage: release
-  tags:
-    - docker
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  script:
-    - version=$(cat version)
-    - docker pull $CI_REGISTRY_IMAGE:test 
-    - docker tag $CI_REGISTRY_IMAGE:test $CI_REGISTRY_IMAGE:$version
-    - docker tag $CI_REGISTRY_IMAGE:test $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$version
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - echo $CI_COMMIT_REF_SLUG
+    - echo $CI_COMMIT_SHA
