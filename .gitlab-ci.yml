@@ -3,7 +3,7 @@ stages:
 - build
 - release
 variables:
-  DOCKER_DRIVER: overlay
+  DOCKER_DRIVER: overlay2
   DOCKER_USER: dockerci
 services:
 - docker:dind
@@ -16,15 +16,17 @@ build:
   tags:
     - docker 
   script:
-    - docker build --pull -t $CI_REGISTRY_IMAGE:latest .
-    - docker build --pull -t $CI_REGISTRY_IMAGE:$version .
+    - docker build -t $CI_REGISTRY_IMAGE:test .
+    - docker push $CI_REGISTRY_IMAGE:test 
 release:
   stage: release
   tags:
     - docker
   before_script:
-    - echo $version
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker pull $CI_REGISTRY_IMAGE:test 
+    - docker tag $CI_REGISTRY_IMAGE:test $CI_REGISTRY_IMAGE:$version
+    - docker tag $CI_REGISTRY_IMAGE:test $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:$version
+    - docker push $CI_REGISTRY_IMAGE:latest
