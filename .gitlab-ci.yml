@@ -5,6 +5,8 @@ stages:
 variables:
   DOCKER_DRIVER: overlay
   DOCKER_USER: dockerci
+  CONTAINER_TEST_IMAGE: registry.example.com/my-group/my-project:$CI_BUILD_REF_NAME
+  CONTAINER_RELEASE_IMAGE: registry.example.com/my-group/my-project:latest
 services:
 - docker:dind
 before_script:
@@ -16,13 +18,13 @@ build:
   tags:
     - docker
   script:
-    - docker build --pull -t $CI_REGISTRY_IMAGE:latest .
-    - docker build --pull -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+    - docker build --pull -t $CI_REGISTRY_IMAGE:CONTAINER_TEST_IMAGE .
+    - docker build --pull -t $CI_REGISTRY_IMAGE:CONTAINER_TEST_IMAGE
 release:
   stage: release
   tags:
     - docker
   script:
-    - docker push $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
