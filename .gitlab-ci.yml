@@ -10,7 +10,6 @@ services:
 before_script:
 - apk update && apk add --no-cache git
 - docker info
-- version=$(cat version)
 build:
   stage: build
   tags:
@@ -27,6 +26,7 @@ release:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
+    - version=$(cat version)
     - docker pull $CI_REGISTRY_IMAGE:test 
     - docker tag $CI_REGISTRY_IMAGE:test $CI_REGISTRY_IMAGE:$version
     - docker tag $CI_REGISTRY_IMAGE:test $CI_REGISTRY_IMAGE:latest
