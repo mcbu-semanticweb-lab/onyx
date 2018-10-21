@@ -19,7 +19,7 @@ build:
     - docker
   script:
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
-    - docker build --pull -t $CONTAINER_TEST_IMAGE
+    - docker build --pull -t $CONTAINER_TEST_IMAGE .
 release:
   stage: release
   tags:
