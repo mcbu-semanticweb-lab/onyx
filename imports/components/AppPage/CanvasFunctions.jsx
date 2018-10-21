@@ -11,7 +11,7 @@ import {
     redo,
     popup,
     hide,
-    filter
+    filter, showClassHierarchy
 } from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 import SearchBar from './Search';
@@ -54,6 +54,8 @@ export class CanvasFunctions extends Component {
                     <Button icon='refresh' content='Reset Canvas' onClick={this.props.resetCanvas}/>
                     <br/>
                     <Button icon='registered outline' content='Show Restriction' onClick={this.props.showRestriction} />
+                    <br/>
+                    <Button icon='registered outline' content='Show Class Hierarchy' onClick={this.props.showClassHierarchy} />
                     <br/>
                     <Button icon='undo' content='Undo'onClick={this.props.undo} />
                     <br/>
@@ -106,6 +108,9 @@ const mapDispatchToProps = dispatch => {
         },
         filter: function (filter_type,checked) {
             return dispatch(filter(filter_type,checked))
+        },
+        showClassHierarchy: function () {
+            return dispatch(showClassHierarchy())
         },
     };
 };

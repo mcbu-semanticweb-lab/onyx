@@ -32,6 +32,11 @@ export const showNeighborhood = function () {
         type: "ShowNeighborhood"
     }
 };
+export const showClassHierarchy = function () {
+    return {
+        type: "ShowClassHierarchy"
+    }
+};
 
 export const resetCanvas = function () {
     return {

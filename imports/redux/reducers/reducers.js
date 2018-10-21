@@ -38,6 +38,11 @@ export const canvasAnimations = (state = false, action) => {
                 animation: action.type,
             };
 
+        case 'ShowClassHierarchy':
+            return {
+                animation: action.type,
+            };
+
 
         case 'ResetCanvas':
             return {

@@ -21,7 +21,7 @@ import {
     showRestrictions, add2,
     MakeTippy,
     hide,
-    filter
+    filter, ShowClassHierarchy
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 import {navigator_options, panzoom_options, undo_redo_options} from "../../cytoscape/extensions-options";
@@ -167,6 +167,9 @@ class CytoscapeRenderer extends Component {
                 case "Filter":
                     console.log("filter");
                     filter(cy, nextProps.canvasAnimation.filter_type, nextProps.canvasAnimation.checked);
+                    break;
+                case "ShowClassHierarchy":
+                    ShowClassHierarchy(cy, nextProps.canvasAnimation.filter_type);
                     break;
                 default:
                     break;

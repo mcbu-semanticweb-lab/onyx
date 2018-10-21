@@ -671,6 +671,19 @@ export function filter(cy, filter_type, checked) {
 }
 
 
+export function ShowClassHierarchy(cy) {
+    let ele = cy.edges('edge[group="subclass"]');
+    let eles = ele.connectedNodes();
+    cy.nodes().difference(eles).style("display", "none");
+    ele.style("display", "element");
+    cy.animation({
+        fit: {
+            eles: eles
+        }
+    }).play();
+
+}
+
 export function MakeTippy(node, text) {
     console.log(node, text);
     return tippy(node.popperRef(), {
