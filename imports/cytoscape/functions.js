@@ -17,49 +17,67 @@ export function showNeighborhoods(id, cy) {
 
 }
 
+function restriction_helper(source,target,type,cy) {
+    console.log(source,target,type,cy);
+    cy.add([
+        {
+            group: "nodes",
+            data: {
+                id: target,
+                label: target,
+                group: type
+            }
+        },
+    ]);
+
+
+    cy.add([
+        {
+            group: "edges",
+            data: {
+                id: Random.id(),
+                source: source,
+                target: target,
+            },
+            style: {
+                label: type,
+            }
+        }
+    ]);
+}
+
 export function showRestrictions(id, cy) {
 
     Meteor.call('find_attributes', id, function (err, res) {
 
         if (res) {
             res.forEach(function (triple) {
-                console.log(res);
+                console.log(triple);
+                if (triple.predicate === "http://www.w3.org/2002/07/owl#onProperty") {
 
-                if (triple.predicate === "http://www.w3.org/2002/07/owl#onProperty" || triple.predicate === "http://www.w3.org/2002/07/owl#hasValue") {
-
-                    console.log(triple.object);
-
-                    cy.add([
-                        {
-                            group: "nodes",
-                            data: {
-                                id: triple.object,
-                                label: triple.object,
-                                group: "object_property"
-                            }
-                        },
-                    ]);
-
-
-                    cy.add([
-                        {
-                            group: "edges",
-                            data: {
-                                id: Random.id(),
-                                source: triple.subject,
-                                target: triple.object,
-                            },
-                            style: {
-                                label: triple.predicate,
-                            }
-                        }
-                    ]);
-
+                    restriction_helper(triple.subject,triple.object,"onProperty",cy)
 
                 }
 
                 else {
-                    //pass
+                    switch (triple.predicate) {
+                        case "http://www.w3.org/2002/07/owl#hasValue":
+                            restriction_helper(triple.subject,triple.object,"hasValue",cy);
+                            break;
+                        case "http://www.w3.org/2002/07/owl#allValuesFrom":
+                            restriction_helper(triple.subject,triple.object,"allValuesFrom",cy);
+                            break;
+                        case "http://www.w3.org/2002/07/owl#someValuesFrom":
+                            restriction_helper(triple.subject,triple.object,"someValuesFrom",cy);
+                            break;
+                        case "http://www.w3.org/2002/07/owl#cardinality":
+                            restriction_helper(triple.subject,triple.object,"cardinality",cy);
+                            break;
+                        default:
+                            break;
+
+                    }
+
                 }
             });
 
@@ -620,35 +638,8 @@ function get_fullness(id) {
     })
 }
 
-function extra_add(node, data) {
-
-    console.log(node.id);
-    if (node.type === "http://www.w3.org/1999/02/22-rdf-syntax-ns#first") {
-
-        data.push(
-            {
-                group: "nodes",
-                data: {
-                    id: node.id,
-                    label: node.id,
-                    group: "class"
-                }
-            }
-        );
-
-    }
 
 
-}
-
-
-function find_domain(obj) {
-    return obj.predicate === "http://www.w3.org/2000/01/rdf-schema#domain";
-}
-
-function find_range(obj) {
-    return obj.predicate === "http://www.w3.org/2000/01/rdf-schema#range";
-}
 
 export function filter(cy, filter_type, checked) {
     let eles;

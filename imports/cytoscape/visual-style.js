@@ -67,6 +67,45 @@ export const DEF_VISUAL_STYLE = [
     },
 
     {
+        selector: 'node[group="allValuesFrom"]',
+        style: {
+            'shape' : 'rectangle',
+            'background-color' : '#E0F700',
+            'font-size' : '50%',
+            'text-valign': 'center',
+            'border-color' : 'black',
+            'border-width' : '3',
+            'width' : '40%',
+            'height' : '50%'
+        }
+    },
+    {
+        selector: 'node[group="someValuesFrom"]',
+        style: {
+            'shape' : 'rectangle',
+            'background-color' : '#E0F700',
+            'font-size' : '50%',
+            'text-valign': 'center',
+            'border-color' : 'black',
+            'border-width' : '3',
+            'width' : '40%',
+            'height' : '50%'
+        }
+    },
+    {
+        selector: 'node[group="hasValue"]',
+        style: {
+            'shape' : 'ellipse',
+            'background-color' : '#ffffff',
+            'text-valign': 'center',
+            'border-style' : 'double',
+            'border-color' : 'black',
+            'border-width' : '6',
+            'width' : '90%',
+            'height' : '90%'
+        }
+    },
+    {
         selector: 'node[group="oneOf"]',
         style: {
             'shape' : 'rectangle',
