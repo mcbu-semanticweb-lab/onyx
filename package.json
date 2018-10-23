@@ -30,7 +30,9 @@
     "tippy.js": "^2.6.0"
   },
   "devDependencies": {
-    "autoprefixer": "^9.2.0"
+    "autoprefixer": "^9.2.0",
+    "cytoscape-cose-bilkent": "^4.0.0",
+    "cytoscape-spread": "^3.0.0"
   },
   "postcss": {
     "plugins": {

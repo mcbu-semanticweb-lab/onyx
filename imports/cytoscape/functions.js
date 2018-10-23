@@ -4,6 +4,56 @@ import tippy from 'tippy.js';
 
 var list = [];
 
+var defaults = {
+    name: 'cose-bilkent',
+    animationEasing: 'ease-out',
+    animationDuration: 1000,
+    // Called on `layoutready`
+    ready: function () {
+    },
+    // Called on `layoutstop`
+    stop: function () {
+    },
+    // Whether to include labels in node dimensions. Useful for avoiding label overlap
+    nodeDimensionsIncludeLabels: false,
+    // number of ticks per frame; higher is faster but more jerky
+    refresh: 30,
+    // Whether to fit the network view after when done
+    fit: true,
+    // Padding on fit
+    padding: 150,
+    // Whether to enable incremental mode
+    randomize: true,
+    // Node repulsion (non overlapping) multiplier
+    nodeRepulsion: 4500,
+    // Ideal (intra-graph) edge length
+    idealEdgeLength: 50,
+    // Divisor to compute edge forces
+    edgeElasticity: 0.45,
+    // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
+    nestingFactor: 0.1,
+    // Gravity force (constant)
+    gravity: 0.25,
+    // Maximum number of iterations to perform
+    numIter: 2500,
+    // Whether to tile disconnected nodes
+    tile: true,
+    // Type of layout animation. The option set is {'during', 'end', false}
+    animate: 'end',
+    // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
+    tilingPaddingVertical: 10,
+    // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
+    tilingPaddingHorizontal: 10,
+    // Gravity range (constant) for compounds
+    gravityRangeCompound: 1.5,
+    // Gravity force (constant) for compounds
+    gravityCompound: 1.0,
+    // Gravity range (constant)
+    gravityRange: 3.8,
+    // Initial cooling factor for incremental layout
+    initialEnergyOnIncremental: 0.5
+};
+
 export function showNeighborhoods(id, cy) {
     let ele = cy.getElementById(id);
     let eles = ele.neighborhood();
@@ -17,8 +67,8 @@ export function showNeighborhoods(id, cy) {
 
 }
 
-function restriction_helper(source,target,type,cy) {
-    console.log(source,target,type,cy);
+function restriction_helper(source, target, type, cy) {
+    console.log(source, target, type, cy);
     cy.add([
         {
             group: "nodes",
@@ -55,23 +105,23 @@ export function showRestrictions(id, cy) {
                 console.log(triple);
                 if (triple.predicate === "http://www.w3.org/2002/07/owl#onProperty") {
 
-                    restriction_helper(triple.subject,triple.object,"onProperty",cy)
+                    restriction_helper(triple.subject, triple.object, "onProperty", cy)
 
                 }
 
                 else {
                     switch (triple.predicate) {
                         case "http://www.w3.org/2002/07/owl#hasValue":
-                            restriction_helper(triple.subject,triple.object,"hasValue",cy);
+                            restriction_helper(triple.subject, triple.object, "hasValue", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#allValuesFrom":
-                            restriction_helper(triple.subject,triple.object,"allValuesFrom",cy);
+                            restriction_helper(triple.subject, triple.object, "allValuesFrom", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#someValuesFrom":
-                            restriction_helper(triple.subject,triple.object,"someValuesFrom",cy);
+                            restriction_helper(triple.subject, triple.object, "someValuesFrom", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#cardinality":
-                            restriction_helper(triple.subject,triple.object,"cardinality",cy);
+                            restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             break;
                         default:
                             break;
@@ -193,7 +243,7 @@ function nodeAdd(data) {
                             }
                             else {
                                 let fc = await get_fullness(object.id);
-                                console.log(object.id,fc);
+                                console.log(object.id, fc);
                                 let color;
                                 if ((fc / ind_num) < 0.25)
                                     color = "#E0F700";
@@ -496,7 +546,6 @@ function edgeAdd(data) {
                         else if (triple.predicate === "http://www.w3.org/2002/07/owl#intersectionOf") {
 
 
-
                             data.push(
                                 {
                                     group: "nodes",
@@ -599,7 +648,7 @@ function get_list(id, data) {
                         data.push(
                             {
                                 group: "edges",
-                                data: {id: Random.id(), source: id, target: list_element.id , group: "list"}
+                                data: {id: Random.id(), source: id, target: list_element.id, group: "list"}
                             }
                         );
 
@@ -639,8 +688,6 @@ function get_fullness(id) {
 }
 
 
-
-
 export function filter(cy, filter_type, checked) {
     let eles;
     if (filter_type.indexOf("node") >= 0)
@@ -657,6 +704,9 @@ export function filter(cy, filter_type, checked) {
     else {
         cy.nodes(eles).style("display", "element");
     }
+
+    var ly = cy.layout(defaults);
+    ly.run();
     //hiyerarşik gösterim eklenebilir subclass icin
     //animasyon eklenebilir
 }
