@@ -162,15 +162,14 @@ Meteor.methods({
         // TODO : query limit fix
         // TODO : rdf class control
         let sync = Meteor.wrapAsync(HTTP.post);
-
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
+        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
             {
                 content: 'var a = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
                     'g.Emit(a)\n' +
                     '\t\t\n' +
                     '\n'
             });
-
+        console.log(result.content.result);
         return (JSON.parse(result.content).result[0]);
     },
 

@@ -31,7 +31,7 @@ class AppPageContainer extends Component {
             <Grid>
                 <Grid.Row>
                     <Grid.Column floated='right' width={16}>
-                            <Icon size='huge' name='bars' className="sidebar-icon" onClick= { this.props.showSidebar }/>
+                        <Icon size='huge' name='bars' className="sidebar-icon" onClick={this.props.showSidebar}/>
                         <CytoscapeCanvas/>
                         <SidebarComp/>
                     </Grid.Column>
