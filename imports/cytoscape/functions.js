@@ -123,6 +123,14 @@ export function showRestrictions(id, cy) {
                         case "http://www.w3.org/2002/07/owl#cardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             break;
+                        case "http://www.w3.org/2002/07/owl#maxCardinality":
+                            restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            break;
+                         case "http://www.w3.org/2002/07/owl#minCardinality":
+                            restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            break;
+
+
                         default:
                             break;
 
