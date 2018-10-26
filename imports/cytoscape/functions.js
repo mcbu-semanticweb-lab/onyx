@@ -218,7 +218,7 @@ export function showPitfalls(cy, eles) {
     }
     let elements = cy.elements(".pitfall");
     console.log(elements);
-    //cy.nodes().difference(elements).style("display", "none");
+    cy.nodes().difference(elements).style("display", "none");
     cy.animation({
         fit: {
             eles: elements
@@ -259,6 +259,7 @@ export async function prepareData(callback) {
     let data = [];
 
     let triples = await get_triples();
+    console.log(triples);
     let addNodes = nodeAdd(data, triples);
     let addEdges = edgeAdd(data, triples);
     Promise.all([addNodes, addEdges]).then(([res1, res2]) => {
@@ -274,7 +275,6 @@ export async function prepareData(callback) {
 function nodeAdd(data, triples) {
     return new Promise(async function (resolve, reject) {
         let ind_num = await get_ind_num();
-
         for (let object of triples) {
             for (let triple of object.predicates) {
 
@@ -339,8 +339,8 @@ function nodeAdd(data, triples) {
                         },
                     );
                 }
-
                 else if (triple.object === "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") {
+                    console.log(object.id);
                     data.push(
                         {
                             group: "nodes",
@@ -723,10 +723,12 @@ function get_ind_num() {
     return new Promise(function (resolve, reject) {
         Meteor.call('get_individual_num', function (err, res) {
             if (res) {
+                console.log(res);
                 resolve(res);
             }
-            else
-                reject("err");
+            else{
+                console.log(err);
+            }
         });
     })
 }

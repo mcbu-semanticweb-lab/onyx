@@ -9,7 +9,8 @@ export class Pitfall extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pitfall_res: null
+            pitfall_res: null,
+            open: false
         };
     }
 
@@ -36,6 +37,8 @@ export class Pitfall extends Component {
             console.log("not first mount");
     }
 
+    close = () => this.setState({ open: false });
+
     render() {
         let style = {
             "overflow": "scroll" //should be temp. solution, should investigate
@@ -51,7 +54,8 @@ export class Pitfall extends Component {
                             <Table.Cell> {data["oops:hasName"]} </Table.Cell>
                             <Table.Cell> {data["oops:hasDescription"]} </Table.Cell>
                             <Table.Cell> <Button onClick={() => {
-                                this.props.pitfall(data["oops:hasAffectedElement"])
+                                this.props.pitfall(data["oops:hasAffectedElement"]);
+                                this.close();
                             }}> Show Pitfalls</Button></Table.Cell>
                         </Table.Row>
                     );
@@ -68,25 +72,29 @@ export class Pitfall extends Component {
 
             })
         }
-        return (<Modal trigger={<Button>Show Pitfalls</Button>} className="scrolling" style={style}>
-            <Modal.Header>Select a Photo</Modal.Header>
-            <Modal.Content>
-                <Table celled>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>Type</Table.HeaderCell>
-                            <Table.HeaderCell>Name</Table.HeaderCell>
-                            <Table.HeaderCell>Description</Table.HeaderCell>
-                            <Table.HeaderCell>Show Pitfalls</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
+        return (
+            <div>
+                <Button onClick={ () => {this.setState({open : true}) } }>Show Pitfalls</Button>
+                <Modal className="scrolling " style={style} closeIcon open={this.state.open} onClose={ this.close }>
+                    <Modal.Header>Select a Photo</Modal.Header>
+                    <Modal.Content>
+                        <Table celled>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Type</Table.HeaderCell>
+                                    <Table.HeaderCell>Name</Table.HeaderCell>
+                                    <Table.HeaderCell>Description</Table.HeaderCell>
+                                    <Table.HeaderCell>Show Pitfalls</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
 
-                    <Table.Body>
-                        {content}
-                    </Table.Body>
-                </Table>
-            </Modal.Content>
-        </Modal>);
+                            <Table.Body>
+                                {content}
+                            </Table.Body>
+                        </Table>
+                    </Modal.Content>
+                </Modal>
+            </div>);
     }
 }
 

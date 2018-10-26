@@ -169,8 +169,11 @@ Meteor.methods({
                     '\t\t\n' +
                     '\n'
             });
-        console.log(result.content.result);
-        return (JSON.parse(result.content).result[0]);
+        if(JSON.parse(result.content).result[0]===0) {
+            return("zero");
+        }
+        else
+            return (JSON.parse(result.content).result[0]);
     },
 
     get_fullness: function (id) {
@@ -209,12 +212,10 @@ Meteor.methods({
              query = 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
                     'g.V("' + id + '").FollowRecursive(f_r).All()'
         }
-        console.log(query);
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
             {
                 content: query
             });
-        console.log(result);
         return (JSON.parse(result.content).result);
     },
 
