@@ -6,8 +6,7 @@ export const isLoggedIn = function (boole) {
     }
 };
 
-
-//Node select
+//Ontology Info
 
 export const select = function (id) {
     return {
@@ -16,16 +15,18 @@ export const select = function (id) {
     }
 };
 
-//Should canvas draw
 
-export const draw = function (boole) {
+//Node select
+
+export const setNamespace = function (ns) {
     return {
-        type: "CANVAS",
+        type: "namespace",
+        namespace: ns
     }
 };
 
 
-//Canvas animations
+//Canvas animations TODO : tek aksiyon oluşturucu ile minimize?
 
 export const showNeighborhood = function () {
     return {
@@ -114,13 +115,13 @@ export const reset = function (type) {
 
 //UI animations
 
-export const shownavigator = function () {
+export const showNavigator = function () {
     return {
         type: "showNavigator"
     }
 };
 
-export const showsidebar = function () {
+export const showSidebar = function () {
     return {
         type: "showSidebar"
     }
@@ -128,7 +129,7 @@ export const showsidebar = function () {
 
 // Canvas history
 
-export const addhistory = function (event) {
+export const addHistory = function (event) {
     return {
         type: "addHistory",
         event: event

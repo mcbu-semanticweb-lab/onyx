@@ -3,6 +3,7 @@ import {Card, Accordion, Icon} from 'semantic-ui-react';
 import {connect} from 'react-redux';
 
 import {Random} from 'meteor/random'
+import {setNamespace} from "../../redux/actions/actioncreators";
 
 class CytoscapeInfo extends Component {
 
@@ -15,40 +16,46 @@ class CytoscapeInfo extends Component {
             class_utilization: null,
             instance_number: null,
             property_number: null,
-            pitfall_res:null
+            pitfall_res: null
         };
         this.handleClick = this.handleClick.bind(this);
 
     }
 
-    componentDidMount(){
+    componentDidMount() {
 
-        let self=this;
+        let self = this;
 
-        Meteor.call('class_number',function (err,res) {
-            if(res)
+        Meteor.call('class_number', function (err, res) {
+            if (res)
                 self.setState({class_number: res});
             else
                 console.log(err);
         });
 
-        Meteor.call('class_utilization',function (err,res) {
-            if(res)
+        Meteor.call('class_utilization', function (err, res) {
+            if (res)
                 self.setState({class_utilization: res});
             else
                 console.log(err);
         });
 
-        Meteor.call('instance_number',function (err,res) {
-            if(res)
+        Meteor.call('instance_number', function (err, res) {
+            if (res)
                 self.setState({instance_number: res});
             else
                 console.log(err);
         });
 
-        Meteor.call('property_number',function (err,res) {
-            if(res)
+        Meteor.call('property_number', function (err, res) {
+            if (res)
                 self.setState({property_number: res});
+            else
+                console.log(err);
+        });
+        Meteor.call('get_namespace', function (err, res) {
+            if (res)
+                self.props.setNamespace(res);
             else
                 console.log(err);
         });
@@ -98,21 +105,29 @@ class CytoscapeInfo extends Component {
                     <Card.Header>
                         Ontology Metrics
                     </Card.Header><br/>
-                    {console.log(this.state.class_number,this.state.class_utilization,this.state.instance_number,this.state.property_number )}
-                    Class Number is { this.state.class_number } <br/><br/>
-                    Class Utilization is { this.state.class_utilization } <br/><br/>
-                    Instance number is { this.state.instance_number } <br/><br/>
-                    Property number is { this.state.property_number }
+                    {console.log(this.state.class_number, this.state.class_utilization, this.state.instance_number, this.state.property_number)}
+                    Class Number is {this.state.class_number} <br/><br/>
+                    Class Utilization is {this.state.class_utilization} <br/><br/>
+                    Instance number is {this.state.instance_number} <br/><br/>
+                    Property number is {this.state.property_number}
                     <Card.Header><br/><br/><br/>
                         Node Info{this.props.selectedNode}
                     </Card.Header>
 
-                    { content }
+                    {content}
                 </Card.Content>
             </Card>
         );
     }
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setNamespace: function (ns) {
+            return (dispatch(setNamespace(ns)));
+        },
+    }
+};
 
 const mapStateToProps = state => {
     return {
@@ -120,4 +135,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(CytoscapeInfo);
+export default connect(mapStateToProps,mapDispatchToProps)(CytoscapeInfo);

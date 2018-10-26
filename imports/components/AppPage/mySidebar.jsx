@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Menu, Sidebar, Icon, Tab} from 'semantic-ui-react';
 import CytoscapeInfo from "./CanvasInfo";
-import {showsidebar} from "../../redux/actions/actioncreators";
+import {showSidebar, showsidebar} from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 import CanvasProperties from "./CanvasProperties";
 import CanvasFunctions from "./CanvasFunctions";
@@ -53,7 +53,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         showSidebar: function () {
-            return dispatch(showsidebar())
+            return dispatch(showSidebar())
         },
 
     };

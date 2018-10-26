@@ -1,12 +1,8 @@
 import React, {Component} from 'react';
-import {Menu, Sidebar, Icon, Tab} from 'semantic-ui-react';
 import {
-    draw, filter, hide, popup, redo,
-    resetCanvas,
-    search, shownavigator,
-    showNeighborhood,
-    showrestriction,
-    showsidebar, undo
+    popup,
+    showNavigator,
+    showSidebar
 } from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 import {Checkbox} from 'semantic-ui-react'
@@ -45,10 +41,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         showNavigator: function () {
-            return dispatch(shownavigator())
+            return dispatch(showNavigator())
         },
         showSidebar: function () {
-            return dispatch(showsidebar())
+            return dispatch(showSidebar())
         },
         pop_up: function () {
             return dispatch(popup())

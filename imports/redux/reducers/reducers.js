@@ -7,10 +7,12 @@ export const selectedNode = (state = null, action) => {
     }
 };
 
-export const draw = (state = false, action) => {
+export const ontologyInfo = (state = null , action) => {
     switch (action.type) {
-        case 'CANVAS':
-            return action.boole;
+        case 'namespace':
+            return {
+                namespace : action.namespace
+            };
         default:
             return state;
     }

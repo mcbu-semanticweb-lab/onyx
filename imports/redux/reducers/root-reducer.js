@@ -1,8 +1,17 @@
 import { combineReducers } from 'redux'
-import  { selectedNode,draw,canvasAnimations,userLoggedIn,canvasProperties,History,SearchReducer}  from './reducers'
+import {
+    selectedNode,
+    draw,
+    canvasAnimations,
+    userLoggedIn,
+    canvasProperties,
+    History,
+    SearchReducer,
+    ontologyInfo
+} from './reducers'
 
 const RootReducer = combineReducers({
-     selectedNode,draw,canvasAnimations,userLoggedIn,canvasProperties,History,SearchReducer
+     selectedNode,canvasAnimations,userLoggedIn,canvasProperties,History,SearchReducer,ontologyInfo
 });
 
 export default RootReducer

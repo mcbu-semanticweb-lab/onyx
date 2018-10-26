@@ -9,7 +9,13 @@ import {DEF_VISUAL_STYLE} from '../../cytoscape/visual-style';
 import {Random} from 'meteor/random';
 import {Grid, Loader, Card, Transition} from 'semantic-ui-react';
 import {connect} from 'react-redux';
-import {select, draw, showNeighborhood, addhistory, reset, searchRes} from '../../redux/actions/actioncreators';
+import {
+    select,
+    showNeighborhood,
+    reset,
+    searchRes,
+    addHistory
+} from '../../redux/actions/actioncreators';
 import coseBilkent from 'cytoscape-cose-bilkent';
 
 import {
@@ -82,7 +88,6 @@ class CytoscapeRenderer extends Component {
         super(props);
         this.state = {
             cy: null,
-            draw: true,
             png: null,
             loading: true,
             ur: null,
@@ -249,14 +254,11 @@ const mapDispatchToProps = dispatch => {
         select: function (id) {
             return (dispatch(select(id)));
         },
-        draw: function (boole) {
-            return (dispatch(draw(boole)))
-        },
         showNeighborhoods: function (boole) {
             return dispatch(showNeighborhood(boole))
         },
         addHistory: function (event) {
-            return dispatch(addhistory(event))
+            return dispatch(addHistory(event))
         },
         SearchRes: function (result) {
             return dispatch(searchRes(result))
@@ -269,7 +271,6 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
     return {
-        canvas: state.RootReducer.draw,
         selectedNode: state.RootReducer.selectedNode,
         searchReducer: state.RootReducer.SearchReducer,
         canvasAnimation: state.RootReducer.canvasAnimations,

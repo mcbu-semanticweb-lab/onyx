@@ -219,6 +219,16 @@ Meteor.methods({
         return (JSON.parse(result.content).result);
     },
 
+    get_namespace : function () {
+        let sync = Meteor.wrapAsync(HTTP.post);
+        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
+            {
+                content: 'var ns = g.V().Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Ontology").ToValue()\n' +
+                    'g.Emit(ns)'
+            });
+        return (JSON.parse(result.content).result[0]);
+    }
+
 
 });
 

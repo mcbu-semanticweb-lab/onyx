@@ -18,7 +18,8 @@ export class Pitfall extends Component {
     componentDidMount() {
         if (this.state.pitfall_res === null) { //TODO: sürekli mount olması sorunu çözülmeli
             let self = this;
-            Meteor.call('pitfall_scanner', "http://xmlns.com/foaf/spec/", function (err, res) {
+            console.log(this.props.namespace);
+            Meteor.call('pitfall_scanner', this.props.namespace , function (err, res) {
                 if (res) {
                     Meteor.call('rdf_translator', null, res, function (err, res) {
                         if (res) {
@@ -106,4 +107,10 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(null, mapDispatchToProps)(Pitfall);
+const mapStateToProps = state => {
+    return {
+        namespace : state.RootReducer.ontologyInfo.namespace
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Pitfall);
