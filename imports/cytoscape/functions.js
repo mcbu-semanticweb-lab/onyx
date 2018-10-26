@@ -4,6 +4,56 @@ import tippy from 'tippy.js';
 
 var list = [];
 
+var defaults = {
+    name: 'cose-bilkent',
+    animationEasing: 'ease-in-cubic',
+    animationDuration: 1000,
+    // Called on `layoutready`
+    ready: function () {
+    },
+    // Called on `layoutstop`
+    stop: function () {
+    },
+    // Whether to include labels in node dimensions. Useful for avoiding label overlap
+    nodeDimensionsIncludeLabels: false,
+    // number of ticks per frame; higher is faster but more jerky
+    refresh: 30,
+    // Whether to fit the network view after when done
+    fit: true,
+    // Padding on fit
+    padding: 150,
+    // Whether to enable incremental mode
+    randomize: true,
+    // Node repulsion (non overlapping) multiplier
+    nodeRepulsion: 4500,
+    // Ideal (intra-graph) edge length
+    idealEdgeLength: 50,
+    // Divisor to compute edge forces
+    edgeElasticity: 0.45,
+    // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
+    nestingFactor: 0.1,
+    // Gravity force (constant)
+    gravity: 0.25,
+    // Maximum number of iterations to perform
+    numIter: 2500,
+    // Whether to tile disconnected nodes
+    tile: true,
+    // Type of layout animation. The option set is {'during', 'end', false}
+    animate: 'end',
+    // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
+    tilingPaddingVertical: 10,
+    // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
+    tilingPaddingHorizontal: 10,
+    // Gravity range (constant) for compounds
+    gravityRangeCompound: 1.5,
+    // Gravity force (constant) for compounds
+    gravityCompound: 1.0,
+    // Gravity range (constant)
+    gravityRange: 3.8,
+    // Initial cooling factor for incremental layout
+    initialEnergyOnIncremental: 0.5
+};
+
 export function showNeighborhoods(id, cy) {
     let ele = cy.getElementById(id);
     let eles = ele.neighborhood();
@@ -17,8 +67,8 @@ export function showNeighborhoods(id, cy) {
 
 }
 
-function restriction_helper(source,target,type,cy) {
-    console.log(source,target,type,cy);
+function restriction_helper(source, target, type, cy) {
+    console.log(source, target, type, cy);
     cy.add([
         {
             group: "nodes",
@@ -55,23 +105,23 @@ export function showRestrictions(id, cy) {
                 console.log(triple);
                 if (triple.predicate === "http://www.w3.org/2002/07/owl#onProperty") {
 
-                    restriction_helper(triple.subject,triple.object,"onProperty",cy)
+                    restriction_helper(triple.subject, triple.object, "onProperty", cy)
 
                 }
 
                 else {
                     switch (triple.predicate) {
                         case "http://www.w3.org/2002/07/owl#hasValue":
-                            restriction_helper(triple.subject,triple.object,"hasValue",cy);
+                            restriction_helper(triple.subject, triple.object, "hasValue", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#allValuesFrom":
-                            restriction_helper(triple.subject,triple.object,"allValuesFrom",cy);
+                            restriction_helper(triple.subject, triple.object, "allValuesFrom", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#someValuesFrom":
-                            restriction_helper(triple.subject,triple.object,"someValuesFrom",cy);
+                            restriction_helper(triple.subject, triple.object, "someValuesFrom", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#cardinality":
-                            restriction_helper(triple.subject,triple.object,"cardinality",cy);
+                            restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             break;
                         default:
                             break;
@@ -86,11 +136,13 @@ export function showRestrictions(id, cy) {
             let eles2 = eles.neighborhood();
             cy.nodes().difference(eles, eles2).style("display", "none");
             ele.style("display", "element");
-            // cy.animation({
-            //     center: {
-            //         eles: eles
-            //     }
-            // }).play();
+            //let ly = cy.layout(defaults);
+            //ly.run();
+            cy.animation({
+                center: {
+                    eles: eles
+                }
+            }).play();
 
         }
     });
@@ -158,430 +210,427 @@ export function hide(id, cy) {
     cy.getElementById(id).style("display", "none");
 }
 
-export function add2(callback) {
+export async function prepareData(callback) {
 
     let data = [];
-    // await Promise.all([nodeAdd(data),edgeAdd(data)]);
-    // return callback(data);
 
-    let pro1 = nodeAdd(data);
-    let pro2 = edgeAdd(data);
-    Promise.all([pro1, pro2]).then(function () {
-        return callback(data);
+    let triples = await get_triples();
+    let addNodes = nodeAdd(data, triples);
+    let addEdges = edgeAdd(data, triples);
+    Promise.all([addNodes, addEdges]).then(([res1, res2]) => {
+
+        console.log(res1, res2);
+        return callback(data)
+
+
     });
-
-
 }
 
 
-function nodeAdd(data) {
+function nodeAdd(data, triples) {
     return new Promise(async function (resolve, reject) {
         let ind_num = await get_ind_num();
-        Meteor.call('get_subjects_and_their_predicates', async function (err, res) {
 
-            if (err)
-                reject(err);
+        for (let object of triples) {
+            for (let triple of object.predicates) {
 
-            if (res) {
-                res.forEach(function (object) {
-                    object.predicates.forEach(async function (triple) {
+                if (triple.object === "http://www.w3.org/2002/07/owl#Class" || triple.object === "http://www.w3.org/2000/01/rdf-schema#Class") {
 
-                        if (triple.object === "http://www.w3.org/2002/07/owl#Class" || triple.object === "http://www.w3.org/2000/01/rdf-schema#Class") {
+                    if (object.id.includes('_:')) {
+                        console.log("pass");
+                    }
+                    else {
+                        let fc = await get_fullness(object.id);
+                        let color;
+                        if ((fc / ind_num) < 0.25)
+                            color = "#E0F700";
+                        else if ((fc / ind_num) > 0.75)
+                            color = "#F70500";
+                        else
+                            color = "#F78C00";
+                        data.push(
+                            {
+                                group: "nodes",
+                                data: {
+                                    id: object.id,
+                                    label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                    group: "class"
+                                },
 
-                            if (object.id.includes('_:')) {
-                                console.log("pass");
+                                style: {
+                                    'background-color': color
+                                }
+
+
+                            },
+                        );
+                    }
+                }
+
+
+                else if (triple.object === "http://www.w3.org/2002/07/owl#ObjectProperty") {
+
+                    data.push(
+                        {
+                            group: "nodes",
+                            data: {
+                                id: object.id,
+                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                group: "object_property"
                             }
-                            else {
-                                let fc = await get_fullness(object.id);
-                                console.log(object.id,fc);
-                                let color;
-                                if ((fc / ind_num) < 0.25)
-                                    color = "#E0F700";
-                                else if ((fc / ind_num) > 0.75)
-                                    color = "#F70500";
-                                else
-                                    color = "#F78C00";
-                                data.push(
-                                    {
-                                        group: "nodes",
-                                        data: {
-                                            id: object.id,
-                                            label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                            group: "class"
-                                        },
+                        },
+                    );
+                }
 
-                                        style: {
-                                            'background-color': color
-                                        }
+                else if (triple.object === "http://www.w3.org/2002/07/owl#DatatypeProperty") {
 
-
-                                    },
-                                );
+                    data.push(
+                        {
+                            group: "nodes",
+                            data: {
+                                id: object.id,
+                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                group: "datatype_property"
                             }
-                        }
+                        },
+                    );
+                }
+
+                else if (triple.object === "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") {
+                    data.push(
+                        {
+                            group: "nodes",
+                            data: {
+                                id: object.id,
+                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                group: "object_property"
+                            }
+                        },
+                    );
+                }
+
+                else if (triple.object === "http://www.w3.org/2002/07/owl#Restriction") {
+                    data.push(
+                        {
+                            group: "nodes",
+                            data: {
+                                id: object.id,
+                                label: "R",
+                                group: "restriction"
+                            }
+                        },
+                    );
+                }
+
+                else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
+                    data.push(
+                        {
+                            group: "nodes",
+                            data: {
+                                id: object.id,
+                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                group: "thing"
+                            }
+                        },
+                    );
+                }
 
 
-                        else if (triple.object === "http://www.w3.org/2002/07/owl#ObjectProperty") {
+                else {
+                    //pass
+                }
 
-                            data.push(
-                                {
-                                    group: "nodes",
-                                    data: {
-                                        id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                        group: "object_property"
-                                    }
-                                },
-                            );
-                        }
-
-                        else if (triple.object === "http://www.w3.org/2002/07/owl#DatatypeProperty") {
-
-                            data.push(
-                                {
-                                    group: "nodes",
-                                    data: {
-                                        id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                        group: "datatype_property"
-                                    }
-                                },
-                            );
-                        }
-
-                        else if (triple.object === "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") {
-                            data.push(
-                                {
-                                    group: "nodes",
-                                    data: {
-                                        id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                        group: "object_property"
-                                    }
-                                },
-                            );
-                        }
-
-                        else if (triple.object === "http://www.w3.org/2002/07/owl#Restriction") {
-                            data.push(
-                                {
-                                    group: "nodes",
-                                    data: {
-                                        id: object.id,
-                                        label: "R",
-                                        group: "restriction"
-                                    }
-                                },
-                            );
-                        }
-
-                        else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
-                            data.push(
-                                {
-                                    group: "nodes",
-                                    data: {
-                                        id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                        group: "thing"
-                                    }
-                                },
-                            );
-                        }
-
-                        else {
-                            //pass
-                        }
-
-                    })
-                }); //Node Adding
-
-                console.log("node adding completed");
-                resolve("node adding completed");
             }
-        });
+        }
+        ; //Node Adding
+
+        resolve("node adding completed");
     });
 }
 
-function edgeAdd(data) {
-    return new Promise(function (resolve, reject) {
-        Meteor.call('get_subjects_and_their_predicates', async function (err, res) {
-            if (err)
-                reject(err);
 
-            if (res) {
-                for (object of res) {
-                    for (let triple of object.predicates) {
-                        //console.log(object.id, triple.predicate, triple.id);
+function edgeAdd(data, triples) {
+    return new Promise(async function (resolve, reject) {
 
-                        if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#domain") {
-                            //console.log(cy.getElementById(triple.object));
-                            if (triple.object === "http://www.w3.org/2000/01/rdf-schema#Literal") {
+        for (let object of triples) {
+            for (let triple of object.predicates) {
 
-                                let literal_id = Random.id();
+                if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#domain") {
 
-                                data.push(
-                                    {
-                                        group: "nodes",
-                                        data: {
-                                            id: literal_id,
-                                            label: "Literal",
-                                        },
-                                        style: {
-                                            'shape': 'rectangle',
-                                            'color': 'black',
-                                            'width': '130%',
-                                            'font-size': '9',
-                                            'padding': '50%',
-                                            'background-color': '#fc3',
-                                            'border-style': 'dashed',
-                                            'border-color': 'black',
-                                            'border-width': '2'
-                                        }
-                                    },
-                                    {
-                                        group: "edges",
-                                        data: {id: Random.id(), source: literal_id, target: object.id, group: "range"}
-                                    }
-                                );
+                    if (triple.object === "http://www.w3.org/2000/01/rdf-schema#Literal") {
 
+                        let literal_id = Random.id();
 
-                            }
-
-                            // else if (triple.object === "<http://www.w3.org/2002/07/owl#Thing>") {
-                            //     range = "thing_".concat(object.predicates.find(find_range).object);
-                            //
-                            //     data.push(
-                            //         {
-                            //             group: "nodes",
-                            //             data: {
-                            //                 id: range,
-                            //                 label: "Thing",
-                            //             },
-                            //             style: {
-                            //                 'shape': 'ellipse',
-                            //                 'background-color': '#fff',
-                            //                 'text-valign': 'center',
-                            //                 'border-style': 'dashed',
-                            //                 'border-color': 'black',
-                            //                 'border-width': '1',
-                            //                 'height': '120',
-                            //                 'width': '120'
-                            //             }
-                            //         },
-                            //         {
-                            //             group: "edges",
-                            //             data: {id: Random.id(), source: range, target: object.id, group: "domain"}
-                            //         }
-                            //     );
-                            //
-                            //
-                            // }
-
-                            else {
-                                data.push(
-                                    {
-                                        group: "edges",
-                                        data: {
-                                            id: Random.id(),
-                                            source: triple.object,
-                                            target: object.id,
-                                            group: "domain"
-                                        }
-                                    }
-                                );
-                            }
-                        }
-
-                        else if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#range") {
-
-                            if (triple.object === "http://www.w3.org/2000/01/rdf-schema#Literal") {
-
-                                let literal_id = Random.id();
-
-                                data.push(
-                                    {
-                                        group: "nodes",
-                                        data: {
-                                            id: literal_id,
-                                            label: "Literal",
-                                        },
-                                        style: {
-                                            'shape': 'rectangle',
-                                            'color': 'black',
-                                            'width': '130%',
-                                            'font-size': '9',
-                                            'padding': '50%',
-                                            'background-color': '#fc3',
-                                            'border-style': 'dashed',
-                                            'border-color': 'black',
-                                            'border-width': '2'
-                                        }
-                                    },
-                                    {
-                                        group: "edges",
-                                        data: {id: Random.id(), source: object.id, target: literal_id, group: "range"}
-                                    }
-                                );
-
-
-                            }
-
-                            // else if (triple.object === "<http://www.w3.org/2002/07/owl#Thing>") {
-                            //     let domain = object.predicates.find(find_domain).object.concat('_thing');
-                            //
-                            //     data.push(
-                            //         {
-                            //             group: "nodes",
-                            //             data: {
-                            //                 id: domain,
-                            //                 label: "Thing",
-                            //             },
-                            //             style: {
-                            //                 'shape': 'ellipse',
-                            //                 'background-color': '#fff',
-                            //                 'text-valign': 'center',
-                            //                 'border-style': 'dashed',
-                            //                 'border-color': 'black',
-                            //                 'border-width': '1',
-                            //                 'height': '120',
-                            //                 'width': '120'
-                            //             }
-                            //         },
-                            //         {
-                            //             group: "edges",
-                            //             data: {id: Random.id(), source: object.id, target: domain, group: "range"}
-                            //         }
-                            //     );
-                            //
-                            //
-                            // }
-
-                            else {
-                                data.push(
-                                    {
-                                        group: "edges",
-                                        data: {
-                                            id: Random.id(),
-                                            source: object.id,
-                                            target: triple.object,
-                                            group: "range"
-                                        }
-                                    }
-                                );
-                            }
-                        }
-
-                        else if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#subClassOf") {
-                            if (triple.id === "http://www.w3.org/2002/07/owl#Thing") {
-                                //pass
-                            }
-                            else {
-                                data.push(
-                                    // {
-                                    //     group: "nodes", //TODO : incelenmeli
-                                    //     data: {
-                                    //         id: object.id,
-                                    //         label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                    //         group: "object_property"
-                                    //     }
-                                    // },
-                                    {
-                                        group: "edges",
-                                        data: {id: Random.id(), source: object.id, target: triple.id, group: "subclass"}
-                                    }
-                                );
-                            }
-                        }
-
-                        else if (triple.predicate === "http://www.w3.org/2002/07/owl#intersectionOf") {
-
-
-
-                            data.push(
-                                {
-                                    group: "nodes",
-                                    data: {
-                                        id: triple.id,
-                                        label: "∩",
-                                        group: "intersectionOf"
-                                    }
+                        data.push(
+                            {
+                                group: "nodes",
+                                data: {
+                                    id: literal_id,
+                                    label: "Literal",
                                 },
-                                {
-                                    group: "edges",
-                                    data: {id: Random.id(), source: object.id, target: triple.id}
+                                style: {
+                                    'shape': 'rectangle',
+                                    'color': 'black',
+                                    'width': '130%',
+                                    'font-size': '9',
+                                    'padding': '50%',
+                                    'background-color': '#fc3',
+                                    'border-style': 'dashed',
+                                    'border-color': 'black',
+                                    'border-width': '2'
                                 }
-                            );
-
-                            await get_list(triple.id, data);
-
-
-                            //collection alınıp first ler eklenecek(node adding e gönderilecek)
-                        }
-
-                        else if (triple.predicate === "http://www.w3.org/2002/07/owl#unionOf") {
-
-
-                            data.push(
-                                {
-                                    group: "nodes",
-                                    data: {
-                                        id: triple.id,
-                                        label: "∪",
-                                        group: "unionOf"
-                                    }
-                                },
-                                {
-                                    group: "edges",
-                                    data: {id: Random.id(), source: object.id, target: triple.id}
-                                }
-                            );
-
-                            await get_list(triple.id, data);
-
-                        }
-
-                        else if (triple.predicate === "http://www.w3.org/2002/07/owl#oneOf") {
-
-                            if (object.id.includes('_:')) {
-                                console.log("pass");
+                            },
+                            {
+                                group: "edges",
+                                data: {id: Random.id(), source: literal_id, target: object.id, group: "range"}
                             }
-                            else {
+                        );
 
-                                data.push(
-                                    {
-                                        group: "nodes",
-                                        data: {
-                                            id: triple.id,
-                                            label: "oneOf",
-                                            group: "oneOf"
-                                        }
-                                    },
-                                    {
-                                        group: "edges",
-                                        data: {id: Random.id(), source: object.id, target: triple.id}
-                                    }
-                                );
-
-                                await get_list(triple.id, data);
-                            }
-
-                        }
-
-
-                        else {
-                            // pass
-                        }
 
                     }
-                    ;
-                }
-                ; //Edge Adding*!/*/
-                console.log("edge adding completed");
-                resolve("edge adding completed");
-            }
 
-        });
+                    // else if (triple.object === "<http://www.w3.org/2002/07/owl#Thing>") {
+                    //     range = "thing_".concat(object.predicates.find(find_range).object);
+                    //
+                    //     data.push(
+                    //         {
+                    //             group: "nodes",
+                    //             data: {
+                    //                 id: range,
+                    //                 label: "Thing",
+                    //             },
+                    //             style: {
+                    //                 'shape': 'ellipse',
+                    //                 'background-color': '#fff',
+                    //                 'text-valign': 'center',
+                    //                 'border-style': 'dashed',
+                    //                 'border-color': 'black',
+                    //                 'border-width': '1',
+                    //                 'height': '120',
+                    //                 'width': '120'
+                    //             }
+                    //         },
+                    //         {
+                    //             group: "edges",
+                    //             data: {id: Random.id(), source: range, target: object.id, group: "domain"}
+                    //         }
+                    //     );
+                    //
+                    //
+                    // }
+
+                    else {
+                        data.push(
+                            {
+                                group: "edges",
+                                data: {
+                                    id: Random.id(),
+                                    source: triple.object,
+                                    target: object.id,
+                                    group: "domain"
+                                }
+                            }
+                        );
+                    }
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#range") {
+
+                    if (triple.object === "http://www.w3.org/2000/01/rdf-schema#Literal") {
+
+                        let literal_id = Random.id();
+
+                        data.push(
+                            {
+                                group: "nodes",
+                                data: {
+                                    id: literal_id,
+                                    label: "Literal",
+                                },
+                                style: {
+                                    'shape': 'rectangle',
+                                    'color': 'black',
+                                    'width': '130%',
+                                    'font-size': '9',
+                                    'padding': '50%',
+                                    'background-color': '#fc3',
+                                    'border-style': 'dashed',
+                                    'border-color': 'black',
+                                    'border-width': '2'
+                                }
+                            },
+                            {
+                                group: "edges",
+                                data: {id: Random.id(), source: object.id, target: literal_id, group: "range"}
+                            }
+                        );
+
+
+                    }
+
+                    // else if (triple.object === "<http://www.w3.org/2002/07/owl#Thing>") {
+                    //     let domain = object.predicates.find(find_domain).object.concat('_thing');
+                    //
+                    //     data.push(
+                    //         {
+                    //             group: "nodes",
+                    //             data: {
+                    //                 id: domain,
+                    //                 label: "Thing",
+                    //             },
+                    //             style: {
+                    //                 'shape': 'ellipse',
+                    //                 'background-color': '#fff',
+                    //                 'text-valign': 'center',
+                    //                 'border-style': 'dashed',
+                    //                 'border-color': 'black',
+                    //                 'border-width': '1',
+                    //                 'height': '120',
+                    //                 'width': '120'
+                    //             }
+                    //         },
+                    //         {
+                    //             group: "edges",
+                    //             data: {id: Random.id(), source: object.id, target: domain, group: "range"}
+                    //         }
+                    //     );
+                    //
+                    //
+                    // }
+
+                    else {
+                        data.push(
+                            {
+                                group: "edges",
+                                data: {
+                                    id: Random.id(),
+                                    source: object.id,
+                                    target: triple.object,
+                                    group: "range"
+                                }
+                            }
+                        );
+                    }
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#subClassOf") {
+                    if (triple.id === "http://www.w3.org/2002/07/owl#Thing") {
+                        //pass
+                    }
+                    else {
+                        data.push(
+                            // {
+                            //     group: "nodes", //TODO : incelenmeli
+                            //     data: {
+                            //         id: object.id,
+                            //         label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                            //         group: "object_property"
+                            //     }
+                            // },
+                            {
+                                group: "edges",
+                                data: {id: Random.id(), source: object.id, target: triple.id, group: "subclass"}
+                            }
+                        );
+                    }
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#intersectionOf") {
+
+
+                    data.push(
+                        {
+                            group: "nodes",
+                            data: {
+                                id: triple.id,
+                                label: "∩",
+                                group: "intersectionOf"
+                            }
+                        },
+                        {
+                            group: "edges",
+                            data: {id: Random.id(), source: object.id, target: triple.id}
+                        }
+                    );
+
+                    await get_list(triple.id, data);
+
+
+                    //collection alınıp first ler eklenecek(node adding e gönderilecek)
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#unionOf") {
+
+
+                    data.push(
+                        {
+                            group: "nodes",
+                            data: {
+                                id: triple.id,
+                                label: "∪",
+                                group: "unionOf"
+                            }
+                        },
+                        {
+                            group: "edges",
+                            data: {id: Random.id(), source: object.id, target: triple.id}
+                        }
+                    );
+
+                    await get_list(triple.id, data);
+
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#oneOf") {
+
+                    if (object.id.includes('_:')) {
+                        console.log("pass");
+                    }
+                    else {
+
+                        data.push(
+                            {
+                                group: "nodes",
+                                data: {
+                                    id: triple.id,
+                                    label: "oneOf",
+                                    group: "oneOf"
+                                }
+                            },
+                            {
+                                group: "edges",
+                                data: {id: Random.id(), source: object.id, target: triple.id}
+                            }
+                        );
+
+                        await get_list(triple.id, data);
+                    }
+
+                }
+                else {
+                    // pass
+                }
+            }
+            ;
+        }
+        ; //Edge Adding*!/*/
+        resolve("edge adding completed");
+
+
     });
+}
+
+
+function get_triples() {
+    return new Promise(function (resolve, reject) {
+        Meteor.call('get_subjects_and_their_predicates', function (err, res) {
+            if (res) {
+                resolve(res);
+            }
+            else
+                reject("err");
+        });
+    })
 }
 
 
@@ -590,8 +639,6 @@ function get_list(id, data) {
         Meteor.call('get_list', id, function (err, res) {
             if (res) {
 
-                console.log(res);
-
                 res.forEach(function (list_element) {
 
                     if (list_element.type === "http://www.w3.org/1999/02/22-rdf-syntax-ns#first") {
@@ -599,7 +646,7 @@ function get_list(id, data) {
                         data.push(
                             {
                                 group: "edges",
-                                data: {id: Random.id(), source: id, target: list_element.id , group: "list"}
+                                data: {id: Random.id(), source: id, target: list_element.id, group: "list"}
                             }
                         );
 
@@ -627,7 +674,7 @@ function get_ind_num() {
 }
 
 function get_fullness(id) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
         Meteor.call('get_fullness', id, function (err, res) {
             if (res) {
                 resolve(res);
@@ -637,8 +684,6 @@ function get_fullness(id) {
         });
     })
 }
-
-
 
 
 export function filter(cy, filter_type, checked) {
@@ -657,6 +702,9 @@ export function filter(cy, filter_type, checked) {
     else {
         cy.nodes(eles).style("display", "element");
     }
+
+    var ly = cy.layout(defaults);
+    ly.run();
     //hiyerarşik gösterim eklenebilir subclass icin
     //animasyon eklenebilir
 }
