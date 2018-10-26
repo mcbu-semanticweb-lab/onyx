@@ -67,45 +67,80 @@ export function showNeighborhoods(id, cy) {
 
 }
 
-function restriction_helper(source, target, type, cy) {
+async function restriction_helper(source, target, type, cy) {
     console.log(source, target, type, cy);
-    cy.add([
-        {
-            group: "nodes",
-            data: {
-                id: target,
-                label: target,
-                group: type
-            }
-        },
-    ]);
+
+    if (type === "someValuesFrom" || type === "allValuesFrom") {
+        let collection = await get_collection(target);
+        console.log(collection);
+        for (let node of collection) {
+            if (node.type === "http://www.w3.org/1999/02/22-rdf-syntax-ns#first") {
+                cy.add([
+                    {
+                        group: "nodes",
+                        data: {
+                            id: node.id,
+                            label: node.id,
+                            group: type
+                        }
+                    },
+                ]);
 
 
-    cy.add([
-        {
-            group: "edges",
-            data: {
-                id: Random.id(),
-                source: source,
-                target: target,
-            },
-            style: {
-                label: type,
+                cy.add([
+                    {
+                        group: "edges",
+                        data: {
+                            id: Random.id(),
+                            source: source,
+                            target: node.id,
+                        },
+                        style: {
+                            label: type,
+                        }
+                    }
+                ]);
             }
         }
-    ]);
+    }
+    else {
+        cy.add([
+            {
+                group: "nodes",
+                data: {
+                    id: target,
+                    label: target,
+                    group: type
+                }
+            },
+        ]);
+
+
+        cy.add([
+            {
+                group: "edges",
+                data: {
+                    id: Random.id(),
+                    source: source,
+                    target: target,
+                },
+                style: {
+                    label: type,
+                }
+            }
+        ]);
+    }
 }
 
 export function showRestrictions(id, cy) {
 
-    Meteor.call('find_attributes', id, function (err, res) {
+    Meteor.call('find_attributes', id, async function (err, res) {
 
         if (res) {
-            res.forEach(function (triple) {
-                console.log(triple);
+            for (let triple of res) {
                 if (triple.predicate === "http://www.w3.org/2002/07/owl#onProperty") {
 
-                    restriction_helper(triple.subject, triple.object, "onProperty", cy)
+                    restriction_helper(triple.subject, triple.object, "onProperty", cy);
 
                 }
 
@@ -115,7 +150,7 @@ export function showRestrictions(id, cy) {
                             restriction_helper(triple.subject, triple.object, "hasValue", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#allValuesFrom":
-                            restriction_helper(triple.subject, triple.object, "allValuesFrom", cy);
+                            await restriction_helper(triple.subject, triple.object, "allValuesFrom", cy);
                             break;
                         case "http://www.w3.org/2002/07/owl#someValuesFrom":
                             restriction_helper(triple.subject, triple.object, "someValuesFrom", cy);
@@ -126,7 +161,7 @@ export function showRestrictions(id, cy) {
                         case "http://www.w3.org/2002/07/owl#maxCardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             break;
-                         case "http://www.w3.org/2002/07/owl#minCardinality":
+                        case "http://www.w3.org/2002/07/owl#minCardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             break;
 
@@ -137,7 +172,8 @@ export function showRestrictions(id, cy) {
                     }
 
                 }
-            });
+            }
+            ;
 
             let ele = cy.getElementById(id);
             let eles = ele.neighborhood();
@@ -361,6 +397,7 @@ function edgeAdd(data, triples) {
     return new Promise(async function (resolve, reject) {
 
         for (let object of triples) {
+            console.log(object);
             for (let triple of object.predicates) {
 
                 if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#domain") {
@@ -561,7 +598,7 @@ function edgeAdd(data, triples) {
                         }
                     );
 
-                    await get_list(triple.id, data);
+                    await get_collection_and_add(triple.id, data);
 
 
                     //collection alınıp first ler eklenecek(node adding e gönderilecek)
@@ -585,7 +622,7 @@ function edgeAdd(data, triples) {
                         }
                     );
 
-                    await get_list(triple.id, data);
+                    await get_collection_and_add(triple.id, data);
 
                 }
 
@@ -610,8 +647,8 @@ function edgeAdd(data, triples) {
                                 data: {id: Random.id(), source: object.id, target: triple.id}
                             }
                         );
-
-                        await get_list(triple.id, data);
+                        console.log(triple.id, object.id);
+                        await get_collection_and_add(triple.id, data);
                     }
 
                 }
@@ -642,7 +679,7 @@ function get_triples() {
 }
 
 
-function get_list(id, data) {
+function get_collection_and_add(id, data) {
     return new Promise(function (resolve, reject) {
         Meteor.call('get_list', id, function (err, res) {
             if (res) {
@@ -663,7 +700,20 @@ function get_list(id, data) {
                 resolve("intersection add");
             }
             else
-                return reject("err");
+                reject("err");
+        });
+    })
+}
+
+function get_collection(id) {
+    return new Promise(function (resolve, reject) {
+        Meteor.call('get_list', id, true, function (err, res) {
+            if (res) {
+                resolve(res)
+            }
+            else {
+                reject(err);
+            }
         });
     })
 }

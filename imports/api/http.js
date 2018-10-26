@@ -198,13 +198,23 @@ Meteor.methods({
     },
 
 
-    get_list: function (id) {
+    get_list: function (id,restriction) {
         let sync = Meteor.wrapAsync(HTTP.post);
+        let query;
+        if(restriction){
+            query = 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
+                    'g.V("' + id + '").Out("http://www.w3.org/2002/07/owl#oneOf").FollowRecursive(f_r).All()'
+        }
+        else{
+             query = 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
+                    'g.V("' + id + '").FollowRecursive(f_r).All()'
+        }
+        console.log(query);
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
             {
-                content: 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
-                    'g.V("' + id + '").FollowRecursive(f_r).All()'
+                content: query
             });
+        console.log(result);
         return (JSON.parse(result.content).result);
     },
 
