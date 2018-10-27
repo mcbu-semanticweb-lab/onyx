@@ -148,27 +148,27 @@ export function showRestrictions(id, cy) {
                     switch (triple.predicate) {
                         case "http://www.w3.org/2002/07/owl#hasValue":
                             restriction_helper(triple.subject, triple.object, "hasValue", cy);
-                            cy.getElementById(triple.subject).data('label', '∃r.{x}' );
+                            cy.getElementById(triple.subject).data('label', '∃r.{x}'); //TODO : formal gösterimler için unicode?
                             break;
                         case "http://www.w3.org/2002/07/owl#allValuesFrom":
                             await restriction_helper(triple.subject, triple.object, "allValuesFrom", cy);
-                            cy.getElementById(triple.subject).data('label', '∀R.C' );
+                            cy.getElementById(triple.subject).data('label', '∀R.C');
                             break;
                         case "http://www.w3.org/2002/07/owl#someValuesFrom":
                             restriction_helper(triple.subject, triple.object, "someValuesFrom", cy);
-                            cy.getElementById(triple.subject).data('label', '∃R.C' );
+                            cy.getElementById(triple.subject).data('label', '∃R.C');
                             break;
                         case "http://www.w3.org/2002/07/owl#cardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
-                            cy.getElementById(triple.subject).data('label', '= nR' );
+                            cy.getElementById(triple.subject).data('label', '= nR');
                             break;
                         case "http://www.w3.org/2002/07/owl#maxCardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
-                            cy.getElementById(triple.subject).data('label', '≥ nR' );
+                            cy.getElementById(triple.subject).data('label', '≥ nR');
                             break;
                         case "http://www.w3.org/2002/07/owl#minCardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
-                            cy.getElementById(triple.subject).data('label', '≤ nR' );
+                            cy.getElementById(triple.subject).data('label', '≤ nR');
                             break;
 
 
@@ -284,116 +284,112 @@ function nodeAdd(data, triples) {
         for (let object of triples) {
             for (let triple of object.predicates) {
 
-                if (triple.object === "http://www.w3.org/2002/07/owl#Class" || triple.object === "http://www.w3.org/2000/01/rdf-schema#Class") {
+                if (triple.predicate === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
+                    switch (triple.object) {
+                        case "http://www.w3.org/2002/07/owl#Class" :
+                        case "http://www.w3.org/2000/01/rdf-schema#Class":
+                            if (object.id.includes('_:')) {
+                                console.log("pass");
+                            }
+                            else {
+                                let fc = await get_fullness(object.id); //TODO: KCE den hesaplanacak
+                                let color;
+                                if ((fc / ind_num) < 0.25)
+                                    color = "#E0F700";
+                                else if ((fc / ind_num) > 0.75)
+                                    color = "#F70500";
+                                else
+                                    color = "#F78C00";
+                                data.push(
+                                    {
+                                        group: "nodes",
+                                        data: {
+                                            id: object.id,
+                                            label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                            group: "class"
+                                        },
 
-                    if (object.id.includes('_:')) {
-                        console.log("pass");
-                    }
-                    else {
-                        let fc = await get_fullness(object.id);
-                        let color;
-                        if ((fc / ind_num) < 0.25)
-                            color = "#E0F700";
-                        else if ((fc / ind_num) > 0.75)
-                            color = "#F70500";
-                        else
-                            color = "#F78C00";
-                        data.push(
-                            {
-                                group: "nodes",
-                                data: {
-                                    id: object.id,
-                                    label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                    group: "class"
+                                        style: {
+                                            'background-color': color
+                                        }
+
+
+                                    },
+                                );
+                            }
+                            break;
+
+                        case "http://www.w3.org/2002/07/owl#ObjectProperty":
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                        group: "object_property"
+                                    }
                                 },
+                            );
+                            break;
 
-                                style: {
-                                    'background-color': color
-                                }
+                        case "http://www.w3.org/2002/07/owl#DatatypeProperty":
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                        group: "datatype_property"
+                                    }
+                                },
+                            );
+                            break;
 
+                        case "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property":
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                        group: "object_property"
+                                    }
+                                },
+                            );
+                            break;
 
-                            },
-                        );
+                        case "http://www.w3.org/2002/07/owl#Restriction":
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: "R",
+                                        group: "restriction"
+                                    }
+                                },
+                            );
+                            break;
+
+                        case "http://www.w3.org/2002/07/owl#Thing":
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                        group: "thing"
+                                    }
+                                },
+                            );
+                            break;
+
+                        default:
+                            console.log("unexpected type");
                     }
                 }
-
-
-                else if (triple.object === "http://www.w3.org/2002/07/owl#ObjectProperty") {
-
-                    data.push(
-                        {
-                            group: "nodes",
-                            data: {
-                                id: object.id,
-                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                group: "object_property"
-                            }
-                        },
-                    );
-                }
-
-                else if (triple.object === "http://www.w3.org/2002/07/owl#DatatypeProperty") {
-
-                    data.push(
-                        {
-                            group: "nodes",
-                            data: {
-                                id: object.id,
-                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                group: "datatype_property"
-                            }
-                        },
-                    );
-                }
-                else if (triple.object === "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") {
-                    console.log(object.id);
-                    data.push(
-                        {
-                            group: "nodes",
-                            data: {
-                                id: object.id,
-                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                group: "object_property"
-                            }
-                        },
-                    );
-                }
-
-                else if (triple.object === "http://www.w3.org/2002/07/owl#Restriction") {
-                    data.push(
-                        {
-                            group: "nodes",
-                            data: {
-                                id: object.id,
-                                label: "R",
-                                group: "restriction"
-                            }
-                        },
-                    );
-                }
-
-                else if (triple.object === "http://www.w3.org/2002/07/owl#Thing") {
-                    data.push(
-                        {
-                            group: "nodes",
-                            data: {
-                                id: object.id,
-                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                group: "thing"
-                            }
-                        },
-                    );
-                }
-
-
-                else {
-                    //pass
-                }
-
             }
         }
-        ; //Node Adding
-
         resolve("node adding completed");
     });
 }
@@ -570,14 +566,6 @@ function edgeAdd(data, triples) {
                     }
                     else {
                         data.push(
-                            // {
-                            //     group: "nodes", //TODO : incelenmeli
-                            //     data: {
-                            //         id: object.id,
-                            //         label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                            //         group: "object_property"
-                            //     }
-                            // },
                             {
                                 group: "edges",
                                 data: {id: Random.id(), source: object.id, target: triple.id, group: "subclass"}
@@ -607,7 +595,6 @@ function edgeAdd(data, triples) {
                     await get_collection_and_add(triple.id, data);
 
 
-                    //collection alınıp first ler eklenecek(node adding e gönderilecek)
                 }
 
                 else if (triple.predicate === "http://www.w3.org/2002/07/owl#unionOf") {
@@ -658,7 +645,50 @@ function edgeAdd(data, triples) {
                     }
 
                 }
-                else {
+
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#equivalentClass") {
+                    data.push(
+                        {
+                            group: "edges",
+                            data: {id: Random.id(), source: object.id, target: triple.id },
+                            style : { label: "equivalentClass"}
+                        }
+                    );
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#equivalentProperty") {
+                    data.push(
+                        {
+                            group: "edges",
+                            data: {id: Random.id(), source: object.id, target: triple.id},
+                            style : { label: "equivalentProperty" }
+                        }
+                    );
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#disjointWith") {
+                    data.push(
+                        {
+                            group: "edges",
+                            data: {id: Random.id(), source: object.id, target: triple.id, },
+                            style: { label: "disjointWith" }
+                        }
+                    );
+                }
+
+               else if (triple.predicate === "http://www.w3.org/2002/07/owl#complementOf") {
+                    data.push(
+                        {
+                            group: "edges",
+                            data: {id: Random.id(), source: object.id, target: triple.id} ,
+                            style : { label: "complementOf"}
+                        }
+                    );
+                }
+
+
+                    else
+                {
                     // pass
                 }
             }
@@ -732,7 +762,7 @@ function get_ind_num() {
                 console.log(res);
                 resolve(res);
             }
-            else{
+            else {
                 console.log(err);
             }
         });
