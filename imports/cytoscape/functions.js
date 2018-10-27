@@ -148,21 +148,27 @@ export function showRestrictions(id, cy) {
                     switch (triple.predicate) {
                         case "http://www.w3.org/2002/07/owl#hasValue":
                             restriction_helper(triple.subject, triple.object, "hasValue", cy);
+                            cy.getElementById(triple.subject).data('label', '∃r.{x}' );
                             break;
                         case "http://www.w3.org/2002/07/owl#allValuesFrom":
                             await restriction_helper(triple.subject, triple.object, "allValuesFrom", cy);
+                            cy.getElementById(triple.subject).data('label', '∀R.C' );
                             break;
                         case "http://www.w3.org/2002/07/owl#someValuesFrom":
                             restriction_helper(triple.subject, triple.object, "someValuesFrom", cy);
+                            cy.getElementById(triple.subject).data('label', '∃R.C' );
                             break;
                         case "http://www.w3.org/2002/07/owl#cardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            cy.getElementById(triple.subject).data('label', '= nR' );
                             break;
                         case "http://www.w3.org/2002/07/owl#maxCardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            cy.getElementById(triple.subject).data('label', '≥ nR' );
                             break;
                         case "http://www.w3.org/2002/07/owl#minCardinality":
                             restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            cy.getElementById(triple.subject).data('label', '≤ nR' );
                             break;
 
 
