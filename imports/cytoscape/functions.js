@@ -357,6 +357,50 @@ function nodeAdd(data, triples) {
                                 },
                             );
                             break;
+                        case "http://www.w3.org/2002/07/owl#SymmetricProperty":
+                            data.pop();
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   symmetric",
+                                        group: "object_property"
+                                    }
+                                },
+                            );
+                            break;
+
+                        case "http://www.w3.org/2002/07/owl#TransitiveProperty":
+                            data.pop();
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   transitive",
+                                        group: "object_property"
+                                    }
+                                },
+                            );
+                            break;
+
+                        case "http://www.w3.org/2002/07/owl#FunctionalProperty":
+                            data.pop();
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   functional",
+                                        group: "object_property"
+                                    }
+                                },
+                            );
+                            break;
+
+
+
 
                         case "http://www.w3.org/2002/07/owl#Restriction":
                             data.push(
@@ -650,8 +694,8 @@ function edgeAdd(data, triples) {
                     data.push(
                         {
                             group: "edges",
-                            data: {id: Random.id(), source: object.id, target: triple.id },
-                            style : { label: "equivalentClass"}
+                            data: {id: Random.id(), source: object.id, target: triple.id},
+                            style: {label: "equivalentClass"}
                         }
                     );
                 }
@@ -661,7 +705,7 @@ function edgeAdd(data, triples) {
                         {
                             group: "edges",
                             data: {id: Random.id(), source: object.id, target: triple.id},
-                            style : { label: "equivalentProperty" }
+                            style: {label: "equivalentProperty"}
                         }
                     );
                 }
@@ -670,27 +714,37 @@ function edgeAdd(data, triples) {
                     data.push(
                         {
                             group: "edges",
-                            data: {id: Random.id(), source: object.id, target: triple.id, },
-                            style: { label: "disjointWith" }
+                            data: {id: Random.id(), source: object.id, target: triple.id,},
+                            style: {label: "disjointWith"}
                         }
                     );
                 }
 
-               else if (triple.predicate === "http://www.w3.org/2002/07/owl#complementOf") {
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#complementOf") {
                     data.push(
                         {
                             group: "edges",
-                            data: {id: Random.id(), source: object.id, target: triple.id} ,
-                            style : { label: "complementOf"}
+                            data: {id: Random.id(), source: object.id, target: triple.id},
+                            style: {label: "complementOf"}
+                        }
+                    );
+                }
+
+                else if (triple.predicate === "http://www.w3.org/2002/07/owl#inverseOf") {
+                    data.push(
+                        {
+                            group: "edges",
+                            data: {id: Random.id(), source: object.id, target: triple.id},
+                            style: {label: "inverseOf"}
                         }
                     );
                 }
 
 
-                    else
-                {
+                else {
                     // pass
                 }
+
             }
             ;
         }

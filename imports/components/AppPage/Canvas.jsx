@@ -166,6 +166,9 @@ class CytoscapeRenderer extends Component {
                 console.log("ind number is" + res);
         })
 
+        Meteor.call('get_kce',function (err,res) {
+                console.log(err,res);
+        })
     }
 
     componentWillReceiveProps(nextProps) {  //TODO: UNSAFE method must change

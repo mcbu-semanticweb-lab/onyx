@@ -3,10 +3,13 @@ import {HTTP} from 'meteor/http'
 import {ontology_data} from "./data";
 import {check} from 'meteor/check'
 
+
 let Future = Npm.require('fibers/future');
+var exec = Npm.require("child_process").exec;
 
 var N3 = require('n3');
 var parser = N3.Parser();
+
 
 Meteor.methods({
     parse_and_send_to_cayley: function (url) {
@@ -54,6 +57,20 @@ Meteor.methods({
         return (1);
     },
 
+
+    get_kce: function () {
+        let future = new Future;
+
+        var command = "cd /home/alias/Projects/OntoMirror-Base/KCE/KCE-API && java -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test";
+        exec(command, function (error, stdout, stderr) {
+            if (error) {
+                console.log(error);
+                throw new Meteor.Error(500, command + " failed");
+            }
+            future.return(stdout);
+        });
+        return future.wait();
+    },
 
     get_triples: function () {
         let sync = Meteor.wrapAsync(HTTP.post);
@@ -108,7 +125,7 @@ Meteor.methods({
         return (JSON.parse(result.content).result[0]);
     },
 
-    find_attributes: function (id,type) {
+    find_attributes: function (id, type) {
         let triples = [];
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v2/query',
@@ -169,8 +186,8 @@ Meteor.methods({
                     '\t\t\n' +
                     '\n'
             });
-        if(JSON.parse(result.content).result[0]===0) {
-            return("zero");
+        if (JSON.parse(result.content).result[0] === 0) {
+            return ("zero");
         }
         else
             return (JSON.parse(result.content).result[0]);
@@ -183,11 +200,11 @@ Meteor.methods({
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
             {
-                content: 'var ind = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class").Is("'+id+'").Count() \n' +
+                content: 'var ind = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class").Is("' + id + '").Count() \n' +
                     '\n' +
                     'var sub_max = 0;\n' +
                     '\n' +
-                    'g.V().Has("http://www.w3.org/2000/01/rdf-schema#subClassOf","'+id+'").ForEach(function(res){\n' +
+                    'g.V().Has("http://www.w3.org/2000/01/rdf-schema#subClassOf","' + id + '").ForEach(function(res){\n' +
                     '      \n' +
                     '  var current = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Is(res.id).Count()  \n' +
                     '  if(current > sub_max){\n' +
@@ -201,16 +218,16 @@ Meteor.methods({
     },
 
 
-    get_list: function (id,restriction) {
+    get_list: function (id, restriction) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let query;
-        if(restriction){
+        if (restriction) {
             query = 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
-                    'g.V("' + id + '").Out("http://www.w3.org/2002/07/owl#oneOf").FollowRecursive(f_r).All()'
+                'g.V("' + id + '").Out("http://www.w3.org/2002/07/owl#oneOf").FollowRecursive(f_r).All()'
         }
-        else{
-             query = 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
-                    'g.V("' + id + '").FollowRecursive(f_r).All()'
+        else {
+            query = 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
+                'g.V("' + id + '").FollowRecursive(f_r).All()'
         }
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
             {
@@ -219,7 +236,7 @@ Meteor.methods({
         return (JSON.parse(result.content).result);
     },
 
-    get_namespace : function () {
+    get_namespace: function () {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
             {
