@@ -21,8 +21,10 @@ class FileUpload extends Component {
             var text = reader.result;
             Meteor.call('send_to_cayley',text,function (err,res) {
                 console.log(err,res);
-                if(res)
+                if(res){
+                    console.log("cayley send completed");
                     self.props.redirect('/AppPage');
+                }
             });
         };
         //this.props.draw(true);

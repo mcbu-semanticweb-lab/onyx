@@ -42,7 +42,6 @@ Meteor.methods({
 
     send_to_cayley: function (data) {
         let x = parser.parse(data);
-
         x.forEach(function (triple) {
             if (triple.object.includes('@')) // NamedNode İçin çözüm bul, eski parse tekniği?
                 triple.object = triple.object.slice(triple.object.lastIndexOf('@'));
@@ -58,16 +57,17 @@ Meteor.methods({
     },
 
 
-    get_kce: function () {
+    get_kce: function (ns) {
         let future = new Future;
-
-        var command = "cd /home/alias/Projects/OntoMirror-Base/KCE/KCE-API && java -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test";
+        var command = "cd /home/alias/Projects/OntoMirror-Base/KCE/API && java -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test " + ns;
         exec(command, function (error, stdout, stderr) {
             if (error) {
                 console.log(error);
                 throw new Meteor.Error(500, command + " failed");
             }
-            future.return(stdout);
+            future.return(
+                stdout.substring(stdout.lastIndexOf("[") + 1, stdout.lastIndexOf("]")).split(', ')
+            );
         });
         return future.wait();
     },

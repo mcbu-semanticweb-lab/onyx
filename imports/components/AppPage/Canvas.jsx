@@ -97,19 +97,19 @@ class CytoscapeRenderer extends Component {
 
     componentDidMount() {
         let self = this;
-        prepareData(function (res) {
-            if (res.length !== 0) {
-                console.log(res);
-                cytoscape.use( coseBilkent ); // register extension
+        prepareData(self.props.kce ,function (data) {
+            if (data.length !== 0) {
+                console.log(data);
+                cytoscape.use(coseBilkent); // register extension
                 cytoscape.use(popper);
                 undoRedo(cytoscape);
                 navigator(cytoscape);
                 panzoom(cytoscape);
-
+                
                 let cy = cytoscape({
                     container: document.getElementById('canvas'),
                     layout:defaults,
-                    elements: res,
+                    elements: data,
                     style: DEF_VISUAL_STYLE,
                     wheelSensitivity: 1,
                     //hideEdgesOnViewport : true
@@ -147,6 +147,8 @@ class CytoscapeRenderer extends Component {
                     self.props.addHistory(str);
                 });
 
+                cy.nodes('[.invisible]').neighborhood().addClass('pitfall');
+
                 cy.ready(function (event) {
                     if (event)
                         self.setState({loading: false})
@@ -158,17 +160,16 @@ class CytoscapeRenderer extends Component {
                     ur: ur
                 });
 
+
             }
         });
 
-        Meteor.call('get_individual_num',function (err,res) {
-            if(res)
+        Meteor.call('get_individual_num', function (err, res) {
+            if (res)
                 console.log("ind number is" + res);
-        })
+        });
 
-        Meteor.call('get_kce',function (err,res) {
-                console.log(err,res);
-        })
+
     }
 
     componentWillReceiveProps(nextProps) {  //TODO: UNSAFE method must change
@@ -279,6 +280,7 @@ const mapStateToProps = state => {
         canvasAnimation: state.RootReducer.canvasAnimations,
         canvasProperties: state.RootReducer.canvasProperties,
         pitfall_affected_elements: state.RootReducer.canvasAnimations.affected_elements,
+        kce: state.RootReducer.drawControl.apply_kce
     }
 };
 

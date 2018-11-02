@@ -7,12 +7,24 @@ export const selectedNode = (state = null, action) => {
     }
 };
 
-export const ontologyInfo = (state = null , action) => {
+export const ontologyInfo = (state = null, action) => {
     switch (action.type) {
         case 'namespace':
             return {
-                namespace : action.namespace
+                namespace: action.namespace
             };
+        default:
+            return state;
+    }
+};
+
+//controls before draw canvas
+
+export const drawControl = (state = { apply_kce : true}, action) => {
+    switch (action.type) {
+        case 'setKce':
+            state.apply_kce = !state.apply_kce;
+            return ({...state});
         default:
             return state;
     }
@@ -87,7 +99,7 @@ export const canvasAnimations = (state = false, action) => {
             };
 
         case 'Reset':
-            return{
+            return {
                 animation: "Reset"
             };
 
@@ -144,7 +156,7 @@ export const SearchReducer = (state = [], action) => {
                 result: action.search_result,
             };
         default:
-            return { result : [] };
+            return {result: []};
     }
 };
 

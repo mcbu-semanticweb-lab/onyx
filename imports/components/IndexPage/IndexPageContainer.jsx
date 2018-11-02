@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Grid,  Menu,} from 'semantic-ui-react';
+import {Checkbox, Grid, Menu,} from 'semantic-ui-react';
 
 
 import {push} from 'redux-little-router';
@@ -10,7 +10,7 @@ import {Random} from 'meteor/random';
 import AppPageContainer from "../AppPage/AppPageContainer";
 import UriUpload from "./UriUpload";
 import FileUpload from "./FileUpload";
-import {isLoggedIn} from "../../redux/actions/actioncreators";
+import {isLoggedIn, setKce} from "../../redux/actions/actioncreators";
 
 
 class IndexPageContainer extends Component {
@@ -56,6 +56,7 @@ class IndexPageContainer extends Component {
                 </Grid.Row>
                 <UriUpload/>
                 <FileUpload/>
+                <Checkbox slider checked={this.props.kce} name='Navigator' label='Navigator' position='left' onClick={ () => { this.props.setKce(!this.props.kce)} }/>
             </Grid>);
     }
 }
@@ -67,6 +68,9 @@ const mapDispatchToProps = dispatch => {
         },
         isLoggedIn: function (boole) {
             return dispatch(isLoggedIn(boole))
+        },
+        setKce: function (boole) {
+            return dispatch(setKce(boole))
         }
     };
 };
@@ -74,7 +78,8 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
     return {
         canvas: state.RootReducer.draw,
-        selectedNode: state.RootReducer.selectedNode
+        selectedNode: state.RootReducer.selectedNode,
+        kce: state.RootReducer.drawControl.apply_kce
     }
 };
 

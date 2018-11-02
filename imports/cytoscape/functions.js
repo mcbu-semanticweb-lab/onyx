@@ -260,27 +260,30 @@ export function hide(id, cy) {
     cy.getElementById(id).style("display", "none");
 }
 
-export async function prepareData(callback) {
+export async function prepareData(kce, callback) {
 
-    let data = [];
+    let nodes = [];
+    let edges = [];
 
     let triples = await get_triples();
-    console.log(triples);
-    let addNodes = nodeAdd(data, triples);
-    let addEdges = edgeAdd(data, triples);
-    Promise.all([addNodes, addEdges]).then(([res1, res2]) => {
 
-        console.log(res1, res2);
-        return callback(data)
+    let addNodes = nodeAdd(kce, nodes, triples);
+    let addEdges = edgeAdd(edges, triples);
+    Promise.all([addNodes, addEdges]).then(([nodes, edges]) => {
+
+        return callback(nodes.concat(edges));
 
 
     });
 }
 
 
-function nodeAdd(data, triples) {
+function nodeAdd(kce, data, triples) {
     return new Promise(async function (resolve, reject) {
-        let ind_num = await get_ind_num();
+        let kce_classes = [];
+        if (kce === true) {
+            kce_classes = await get_kce();
+        }
         for (let object of triples) {
             for (let triple of object.predicates) {
 
@@ -289,33 +292,47 @@ function nodeAdd(data, triples) {
                         case "http://www.w3.org/2002/07/owl#Class" :
                         case "http://www.w3.org/2000/01/rdf-schema#Class":
                             if (object.id.includes('_:')) {
-                                console.log("pass");
+                                //pass
                             }
                             else {
-                                let fc = await get_fullness(object.id); //TODO: KCE den hesaplanacak
-                                let color;
-                                if ((fc / ind_num) < 0.25)
-                                    color = "#E0F700";
-                                else if ((fc / ind_num) > 0.75)
-                                    color = "#F70500";
-                                else
-                                    color = "#F78C00";
-                                data.push(
-                                    {
-                                        group: "nodes",
-                                        data: {
-                                            id: object.id,
-                                            label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
-                                            group: "class"
+                                if (kce === true) {
+                                    if (kce_classes.includes(object.id)) {
+                                        data.push(
+                                            {
+                                                group: "nodes",
+                                                data: {
+                                                    id: object.id,
+                                                    label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                                    group: "class"
+                                                }
+                                            },
+                                        );
+                                    }
+                                    else {
+                                        data.push(
+                                            {
+                                                group: "nodes",
+                                                data: {
+                                                    id: object.id,
+                                                    label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                                    group: "invisible"
+                                                }
+                                            },
+                                        );
+                                    }
+                                }
+                                else {
+                                    data.push(
+                                        {
+                                            group: "nodes",
+                                            data: {
+                                                id: object.id,
+                                                label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0],
+                                                group: "class"
+                                            }
                                         },
-
-                                        style: {
-                                            'background-color': color
-                                        }
-
-
-                                    },
-                                );
+                                    );
+                                }
                             }
                             break;
 
@@ -400,8 +417,6 @@ function nodeAdd(data, triples) {
                             break;
 
 
-
-
                         case "http://www.w3.org/2002/07/owl#Restriction":
                             data.push(
                                 {
@@ -429,12 +444,14 @@ function nodeAdd(data, triples) {
                             break;
 
                         default:
-                            console.log("unexpected type");
+                        //console.log("unexpected type");
                     }
                 }
             }
         }
-        resolve("node adding completed");
+
+        resolve(data);
+
     });
 }
 
@@ -443,7 +460,6 @@ function edgeAdd(data, triples) {
     return new Promise(async function (resolve, reject) {
 
         for (let object of triples) {
-            console.log(object);
             for (let triple of object.predicates) {
 
                 if (triple.predicate === "http://www.w3.org/2000/01/rdf-schema#domain") {
@@ -746,10 +762,8 @@ function edgeAdd(data, triples) {
                 }
 
             }
-            ;
-        }
-        ; //Edge Adding*!/*/
-        resolve("edge adding completed");
+        } //Edge Adding*!/*/
+        resolve(data);
 
 
     });
@@ -871,6 +885,21 @@ export function ShowClassHierarchy(cy) {
         }
     }).play();
 
+}
+
+
+function get_kce() {
+    return new Promise(async function (resolve, reject) {
+        Meteor.call('get_namespace', function (err, res) {
+            if (res) {
+                Meteor.call('get_kce', res, function (err, res) {
+                    resolve(res);
+                })
+            }
+            else
+                reject(err);
+        })
+    });
 }
 
 export function MakeTippy(node, text) {

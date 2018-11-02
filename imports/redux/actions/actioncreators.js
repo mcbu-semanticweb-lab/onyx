@@ -6,6 +6,16 @@ export const isLoggedIn = function (boole) {
     }
 };
 
+
+//KCE control
+
+export const setKce = function (boolean) {
+    return {
+        type: "setKce",
+        kce: boolean
+    }
+};
+
 //Ontology Info
 
 export const select = function (id) {

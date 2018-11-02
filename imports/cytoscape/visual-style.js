@@ -21,6 +21,20 @@ export const DEF_VISUAL_STYLE = [
         }
     },
 
+    {
+        selector: 'node[group="invisible"]',
+        style: {
+            'shape' : 'ellipse',
+            'text-valign': 'center',
+            'border-style' : 'double',
+            'border-color' : 'black',
+            'border-width' : '6',
+            'width' : '160%',
+            'height' : '160%',
+            'display' : 'none'
+        }
+    },
+
 
     {
         selector: 'node[group="restriction"]',
