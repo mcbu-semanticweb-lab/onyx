@@ -416,6 +416,21 @@ function nodeAdd(kce, data, triples) {
                             );
                             break;
 
+                        case "http://www.w3.org/2002/07/owl#InverseFunctionalProperty":
+                            data.pop();
+                            data.push(
+                                {
+                                    group: "nodes",
+                                    data: {
+                                        id: object.id,
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   inverse functional",
+                                        group: "object_property"
+                                    }
+                                },
+                            );
+                            break;
+
+
 
                         case "http://www.w3.org/2002/07/owl#Restriction":
                             data.push(
