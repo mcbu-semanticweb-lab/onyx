@@ -140,14 +140,14 @@ export function showRestrictions(id, cy) {
             for (let triple of res) {
                 if (triple.predicate === "http://www.w3.org/2002/07/owl#onProperty") {
 
-                    restriction_helper(triple.subject, triple.object, "onProperty", cy);
+                    await restriction_helper(triple.subject, triple.object, "onProperty", cy);
 
                 }
 
                 else {
                     switch (triple.predicate) {
                         case "http://www.w3.org/2002/07/owl#hasValue":
-                            restriction_helper(triple.subject, triple.object, "hasValue", cy);
+                            await restriction_helper(triple.subject, triple.object, "hasValue", cy);
                             cy.getElementById(triple.subject).data('label', '∃r.{x}'); //TODO : formal gösterimler için unicode?
                             break;
                         case "http://www.w3.org/2002/07/owl#allValuesFrom":
@@ -155,19 +155,19 @@ export function showRestrictions(id, cy) {
                             cy.getElementById(triple.subject).data('label', '∀R.C');
                             break;
                         case "http://www.w3.org/2002/07/owl#someValuesFrom":
-                            restriction_helper(triple.subject, triple.object, "someValuesFrom", cy);
+                            await restriction_helper(triple.subject, triple.object, "someValuesFrom", cy);
                             cy.getElementById(triple.subject).data('label', '∃R.C');
                             break;
                         case "http://www.w3.org/2002/07/owl#cardinality":
-                            restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            await restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             cy.getElementById(triple.subject).data('label', '= nR');
                             break;
                         case "http://www.w3.org/2002/07/owl#maxCardinality":
-                            restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            await restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             cy.getElementById(triple.subject).data('label', '≥ nR');
                             break;
                         case "http://www.w3.org/2002/07/owl#minCardinality":
-                            restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            await restriction_helper(triple.subject, triple.object, "cardinality", cy);
                             cy.getElementById(triple.subject).data('label', '≤ nR');
                             break;
 
@@ -179,13 +179,12 @@ export function showRestrictions(id, cy) {
 
                 }
             }
-            ;
 
             let ele = cy.getElementById(id);
             let eles = ele.neighborhood();
-            let eles2 = eles.neighborhood();
-            cy.nodes().difference(eles, eles2).style("display", "none");
-            ele.style("display", "element");
+            console.log(eles.jsons());
+            cy.nodes().style("display", "none");
+            eles.union(ele).style("display", "element");
             //let ly = cy.layout(defaults);
             //ly.run();
             cy.animation({
