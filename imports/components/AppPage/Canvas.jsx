@@ -97,7 +97,7 @@ class CytoscapeRenderer extends Component {
 
     componentDidMount() {
         let self = this;
-        prepareData(self.props.kce ,function (data) {
+        prepareData(self.props.kce, function (data) {
             if (data.length !== 0) {
                 console.log(data);
                 cytoscape.use(coseBilkent); // register extension
@@ -105,10 +105,10 @@ class CytoscapeRenderer extends Component {
                 undoRedo(cytoscape);
                 navigator(cytoscape);
                 panzoom(cytoscape);
-                
+
                 let cy = cytoscape({
                     container: document.getElementById('canvas'),
-                    layout:defaults,
+                    layout: defaults,
                     elements: data,
                     style: DEF_VISUAL_STYLE,
                     wheelSensitivity: 1,
@@ -147,11 +147,16 @@ class CytoscapeRenderer extends Component {
                     self.props.addHistory(str);
                 });
 
-                cy.nodes('[.invisible]').neighborhood().addClass('pitfall');
-
                 cy.ready(function (event) {
-                    if (event)
+                    if (event) {
                         self.setState({loading: false})
+                        // let ele = cy.nodes('node[group="class"]');
+                        // let eles = ele.neighborhood();
+                        // cy.nodes().difference(eles).style("display", "none");
+                        // ele.style("display", "element");
+                        cy.nodes("[[degree=0]]").style("display","none");
+                    }
+
                 });
                 cy.zoom(0.3);
                 cy.center();
