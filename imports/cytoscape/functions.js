@@ -200,7 +200,9 @@ export function showRestrictions(id, cy) {
 }
 
 export function resetCanvas(cy) {
-    cy.nodes().style("display", "element");
+    let inv = cy.nodes('node[group="invisible"]');
+    console.log(inv);
+    cy.nodes().difference(inv).style("display", "element");
     cy.filter('.pitfall').forEach(function (node) {
         node.removeClass('pitfall');
     });

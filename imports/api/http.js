@@ -60,6 +60,7 @@ Meteor.methods({
     get_kce: function (ns) {
         let future = new Future;
         var command = "cd /home/alias/Projects/OntoMirror-Base/KCE/API && java -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test " + ns;
+        console.log(command);
         exec(command, function (error, stdout, stderr) {
             if (error) {
                 console.log(error);

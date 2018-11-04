@@ -151,7 +151,7 @@ class CytoscapeRenderer extends Component {
 
                 cy.ready(function (event) {
                     if (event) {
-                        self.setState({loading: false})
+                        self.setState({loading: false});
                         // let ele = cy.nodes('node[group="class"]');
                         // let eles = ele.neighborhood();
                         // cy.nodes().difference(eles).style("display", "none");

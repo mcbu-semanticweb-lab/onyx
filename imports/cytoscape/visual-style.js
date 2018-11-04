@@ -17,7 +17,8 @@ export const DEF_VISUAL_STYLE = [
             'border-color' : 'black',
             'border-width' : '6',
             'width' : '160%',
-            'height' : '160%'
+            'height' : '160%',
+            'background-color' : 'yellow'
         }
     },
 
