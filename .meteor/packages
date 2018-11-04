@@ -26,3 +26,4 @@ http@1.4.1
 underscore@1.0.10
 fortawesome:fontawesome
 meteortesting:mocha
+ostrio:cookies

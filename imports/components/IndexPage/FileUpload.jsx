@@ -2,7 +2,7 @@ import React,{ Component } from 'react';
 import {connect} from "react-redux";
 import {Grid} from 'semantic-ui-react';
 import {push} from "redux-little-router";
-
+import { cookies } from '../../../client/main';
 
 
 class FileUpload extends Component {
@@ -22,12 +22,12 @@ class FileUpload extends Component {
             Meteor.call('send_to_cayley',text,function (err,res) {
                 console.log(err,res);
                 if(res){
+                    cookies.set('kce', self.props.kce );
                     console.log("cayley send completed");
                     self.props.redirect('/AppPage');
                 }
             });
         };
-        //this.props.draw(true);
     }
 
     render(){

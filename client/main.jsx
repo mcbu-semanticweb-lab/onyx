@@ -12,6 +12,10 @@ import HomePage from "../imports/components/App";
 
 import { initializeCurrentLocation } from 'redux-little-router';
 import Dashboard from "../imports/components/IndexPage/IndexPageContainer";
+import { Cookies } from 'meteor/ostrio:cookies';
+
+
+export const cookies = new Cookies();
 
 const routes = {
     '/': {

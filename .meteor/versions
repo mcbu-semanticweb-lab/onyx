@@ -65,6 +65,7 @@ mongo-id@1.0.7
 npm-bcrypt@0.9.3
 npm-mongo@3.1.1
 ordered-dict@1.1.0
+ostrio:cookies@2.3.0
 promise@0.11.1
 random@1.1.0
 rate-limit@1.0.9

@@ -18,6 +18,8 @@ import {
 } from '../../redux/actions/actioncreators';
 import coseBilkent from 'cytoscape-cose-bilkent';
 
+import { cookies } from '../../../client/main';
+
 import {
     showNeighborhoods,
     resetCanvas,
@@ -33,7 +35,6 @@ import {
 } from "../../cytoscape/functions";
 import OPTIONS from "../../cytoscape/colajs-options";
 import {navigator_options, panzoom_options, undo_redo_options} from "../../cytoscape/extensions-options";
-
 var defaults = {
     name: 'cose-bilkent',
     // Called on `layoutready`
@@ -97,7 +98,8 @@ class CytoscapeRenderer extends Component {
 
     componentDidMount() {
         let self = this;
-        prepareData(self.props.kce, function (data) {
+        console.log("kce cookie : " + cookies.get('kce'));
+        prepareData(cookies.get('kce'), function (data) {
             if (data.length !== 0) {
                 console.log(data);
                 cytoscape.use(coseBilkent); // register extension
@@ -285,7 +287,6 @@ const mapStateToProps = state => {
         canvasAnimation: state.RootReducer.canvasAnimations,
         canvasProperties: state.RootReducer.canvasProperties,
         pitfall_affected_elements: state.RootReducer.canvasAnimations.affected_elements,
-        kce: state.RootReducer.drawControl.apply_kce
     }
 };
 

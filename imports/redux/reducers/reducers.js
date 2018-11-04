@@ -20,7 +20,7 @@ export const ontologyInfo = (state = null, action) => {
 
 //controls before draw canvas
 
-export const drawControl = (state = { apply_kce : true}, action) => {
+export const drawControl = (state = { apply_kce : false}, action) => {
     switch (action.type) {
         case 'setKce':
             state.apply_kce = !state.apply_kce;

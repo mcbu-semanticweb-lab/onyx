@@ -7,10 +7,9 @@ import {push} from 'redux-little-router';
 import {connect} from 'react-redux';
 import {Random} from 'meteor/random';
 
-import AppPageContainer from "../AppPage/AppPageContainer";
 import UriUpload from "./UriUpload";
 import FileUpload from "./FileUpload";
-import {isLoggedIn, setKce} from "../../redux/actions/actioncreators";
+import {isLoggedIn} from "../../redux/actions/actioncreators";
 
 
 class IndexPageContainer extends Component {
@@ -24,6 +23,7 @@ class IndexPageContainer extends Component {
             affected_element: null,
             selectedNode: null,
             loading: false,
+            kce :false
         };
         this.LogOut = this.LogOut.bind(this);
     }
@@ -54,9 +54,9 @@ class IndexPageContainer extends Component {
                         </Menu>
                     </Grid.Column>
                 </Grid.Row>
-                <UriUpload/>
-                <FileUpload/>
-                <Checkbox slider checked={this.props.kce} name='Navigator' label='Navigator' position='left' onClick={ () => { this.props.setKce(!this.props.kce)} }/>
+                <UriUpload kce={this.state.kce}/>
+                <FileUpload kce={this.state.kce}/>
+                <Checkbox slider checked={this.state.kce} name='Navigator' label='Navigator' position='left' onClick={ () => { this.setState({ kce : !this.state.kce}) } } />
             </Grid>);
     }
 }
@@ -68,9 +68,6 @@ const mapDispatchToProps = dispatch => {
         },
         isLoggedIn: function (boole) {
             return dispatch(isLoggedIn(boole))
-        },
-        setKce: function (boole) {
-            return dispatch(setKce(boole))
         }
     };
 };
@@ -79,7 +76,6 @@ const mapStateToProps = state => {
     return {
         canvas: state.RootReducer.draw,
         selectedNode: state.RootReducer.selectedNode,
-        kce: state.RootReducer.drawControl.apply_kce
     }
 };
 
