@@ -236,6 +236,15 @@ export const DEF_VISUAL_STYLE = [
             'border-style' : 'solid',
             'border-color' : 'red'
         }
+    },
+
+    {
+        selector: '.extra',
+        style: {
+            'border-width' : '10px',
+            'border-style' : 'solid',
+            'border-color' : 'blue'
+        }
     }
 
 

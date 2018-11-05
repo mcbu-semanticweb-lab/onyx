@@ -81,8 +81,9 @@ async function restriction_helper(source, target, type, cy) {
                         data: {
                             id: node.id,
                             label: node.id,
-                            group: type
-                        }
+                            group: type,
+                        },
+                        classes: 'extra',
                     },
                 ]);
 
@@ -97,7 +98,8 @@ async function restriction_helper(source, target, type, cy) {
                         },
                         style: {
                             label: type,
-                        }
+                        },
+                        classes: 'extra',
                     }
                 ]);
             }
@@ -110,8 +112,9 @@ async function restriction_helper(source, target, type, cy) {
                 data: {
                     id: target,
                     label: target,
-                    group: type
-                }
+                    group: type,
+                },
+                classes: 'extra',
             },
         ]);
 
@@ -126,7 +129,8 @@ async function restriction_helper(source, target, type, cy) {
                 },
                 style: {
                     label: type,
-                }
+                },
+                classes: 'extra',
             }
         ]);
     }
@@ -202,6 +206,9 @@ export function resetCanvas(cy) {
     let inv = cy.nodes('node[group="invisible"]');
     console.log(inv);
     cy.nodes().difference(inv).style("display", "element");
+     cy.filter('.extra').forEach(function (node) {
+        node.remove();
+    });
     cy.filter('.pitfall').forEach(function (node) {
         node.removeClass('pitfall');
     });
