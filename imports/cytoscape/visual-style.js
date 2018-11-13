@@ -144,7 +144,17 @@ export const DEF_VISUAL_STYLE = [
             'padding' : '50%',
         }
     },
-
+    {
+        selector: 'node[group="symmetric_property"]',
+        style: {
+            'shape' : 'rectangle',
+            'background-color' : '#acf',
+            'color': 'black',
+            'width' : '130%',
+            'font-size' : '9',
+            'padding' : '50%',
+        }
+    },
     {
         selector: 'node[group="datatype_property"]',
         style: {
@@ -182,15 +192,16 @@ export const DEF_VISUAL_STYLE = [
     {
         selector: 'edge[group="domain"]',
         style: {
-
+            'target-arrow-shape': 'triangle',
+            'label' : 'domain'
         }
     },
 
     {
         selector: 'edge[group="range"]',
-        style: {
+        style:{
+            'label': 'range',
             'target-arrow-shape': 'triangle',
-            'target-arrow-color': 'red',
         }
     },
 
@@ -207,7 +218,6 @@ export const DEF_VISUAL_STYLE = [
     {
         selector: 'edge[group="list"]',
         style: {
-            'label': 'List item',
             'target-arrow-shape': 'triangle',
             'target-arrow-color': 'black',
         }
