@@ -390,7 +390,7 @@ function nodeAdd(kce, data, triples) {
                                     data: {
                                         id: object.id,
                                         label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   symmetric",
-                                        group: "object_property"
+                                        group: "symmetric_property"
                                     }
                                 },
                             );
@@ -705,7 +705,7 @@ function edgeAdd(data, triples) {
                 else if (triple.predicate === "http://www.w3.org/2002/07/owl#oneOf") {
 
                     if (object.id.includes('_:')) {
-                        console.log("pass");
+                        //console.log("pass");
                     }
                     else {
 
@@ -723,7 +723,7 @@ function edgeAdd(data, triples) {
                                 data: {id: Random.id(), source: object.id, target: triple.id}
                             }
                         );
-                        console.log(triple.id, object.id);
+                        //console.log(triple.id, object.id);
                         await get_collection_and_add(triple.id, data);
                     }
 
@@ -900,8 +900,9 @@ export function filter(cy, filter_type, checked) {
 export function ShowClassHierarchy(cy) {
     let ele = cy.edges('edge[group="subclass"]');
     let eles = ele.connectedNodes();
+    cy.nodes('node[group="restriction"]').addClass('pitfall');
     cy.nodes().difference(eles).style("display", "none");
-    ele.style("display", "element");
+
     cy.animation({
         fit: {
             eles: eles
@@ -913,9 +914,11 @@ export function ShowClassHierarchy(cy) {
 
 function get_kce() {
     return new Promise(async function (resolve, reject) {
+        console.time("kce execution time");
         Meteor.call('get_namespace', function (err, res) {
             if (res) {
                 Meteor.call('get_kce', res, function (err, res) {
+                    console.timeEnd("kce execution time");
                     resolve(res);
                 })
             }
