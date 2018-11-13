@@ -99,9 +99,11 @@ class CytoscapeRenderer extends Component {
     componentDidMount() {
         let self = this;
         console.log("kce cookie : " + cookies.get('kce'));
+        console.time("prepareData time");
         prepareData(cookies.get('kce'), function (data) {
             if (data.length !== 0) {
-                console.log(data);
+                console.timeEnd("prepareData time");
+                console.time("canvasPrepare time");
                 cytoscape.use(coseBilkent); // register extension
                 cytoscape.use(popper);
                 undoRedo(cytoscape);
@@ -157,6 +159,7 @@ class CytoscapeRenderer extends Component {
                         // cy.nodes().difference(eles).style("display", "none");
                         // ele.style("display", "element");
                         cy.nodes("[[degree=0]]").style("display","none");
+                        console.timeEnd("canvasPrepare time");
                     }
 
                 });
