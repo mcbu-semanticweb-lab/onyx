@@ -175,23 +175,38 @@ Meteor.methods({
         return (JSON.parse(result.content).result);
     },
 
-    get_individual_num: function () {
+    get_individual_num: function (id) {
+        let sync = Meteor.wrapAsync(HTTP.post);
+        let result;
+        if (id) {
+            console.log(id);
+             result =sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
+                {
+                    content: 'var a = g.V("'+id+'").Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
+                        'g.Emit(a)\n' +
+                        '\t\t\n' +
+                        '\n'
+                });
+        }
+        else {
+            result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
+                {
+                    content: 'var a = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
+                        'g.Emit(a)\n' +
+                        '\t\t\n' +
+                        '\n'
+                });
+            if (JSON.parse(result.content).result[0] === 0)
+                return ("zero");
+
+        }
+
+
+
+        return (JSON.parse(result.content).result[0]);
         // get ind -> g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class").All()
         // TODO : query limit fix
         // TODO : rdf class control
-        let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
-            {
-                content: 'var a = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
-                    'g.Emit(a)\n' +
-                    '\t\t\n' +
-                    '\n'
-            });
-        if (JSON.parse(result.content).result[0] === 0) {
-            return ("zero");
-        }
-        else
-            return (JSON.parse(result.content).result[0]);
     },
 
     get_fullness: function (id) {

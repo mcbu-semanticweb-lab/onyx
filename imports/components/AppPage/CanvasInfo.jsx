@@ -26,6 +26,8 @@ class CytoscapeInfo extends Component {
 
         let self = this;
 
+        console.log("mount");
+        //TODO : infoları redux ta tutup sürekli call cagırma
         Meteor.call('class_number', function (err, res) {
             if (res)
                 self.setState({class_number: res});
@@ -70,6 +72,10 @@ class CytoscapeInfo extends Component {
             else
                 self.setState({triples: res})
         });
+
+        Meteor.call('get_individual_num', nextProps.selectedNode, function (err,res) {
+            console.log("ind number is " +res);
+        })
     }
 
     handleClick = (e, titleProps) => {

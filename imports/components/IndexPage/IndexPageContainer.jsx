@@ -56,7 +56,7 @@ class IndexPageContainer extends Component {
                 </Grid.Row>
                 <UriUpload kce={this.state.kce}/>
                 <FileUpload kce={this.state.kce}/>
-                <Checkbox slider checked={this.state.kce} name='Navigator' label='Navigator' position='left' onClick={ () => { this.setState({ kce : !this.state.kce}) } } />
+                <Checkbox slider checked={this.state.kce} name='Enable Kce' label='Enable Kce' position='left' onClick={ () => { this.setState({ kce : !this.state.kce}) } } />
             </Grid>);
     }
 }
