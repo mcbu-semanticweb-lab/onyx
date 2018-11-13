@@ -66,6 +66,12 @@ export class CanvasFunctions extends Component {
                 <br/><br/>
                 <Checkbox slider name='Filter-Restriction' label='Filter-restriction' position='left' onClick={(e,data) => this.props.filter('node[group="restriction"]',data.checked)}/>
                 <br/><br/>
+                <Checkbox slider name='Filter-Union' label='Filter-Union' position='left' onClick={(e,data) => this.props.filter('node[group="unionOf"]',data.checked)}/>
+                <br/><br/>
+                <Checkbox slider name='Filter-Intersection' label='Filter-Intersection' position='left' onClick={(e,data) => this.props.filter('node[group="intersectionOf"]',data.checked)}/>
+                <br/><br/>
+                <Checkbox slider name='Filter-Complement' label='Filter-Complement' position='left' onClick={(e,data) => this.props.filter('node[group="restriction"]',data.checked)}/>
+                <br/><br/>
                 <Pitfall/>
             </Menu>
         );
