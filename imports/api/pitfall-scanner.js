@@ -4,6 +4,7 @@ import {HTTP} from "meteor/http";
 
 Meteor.methods({
         pitfall_scanner : function (uri) {
+            console.log("pitfall");
             let sync = Meteor.wrapAsync(HTTP.post);
             let result = sync('http://oops-ws.oeg-upm.net/rest',
                 {

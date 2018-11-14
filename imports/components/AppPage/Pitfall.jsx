@@ -20,6 +20,7 @@ export class Pitfall extends Component {
             let self = this;
             console.log(this.props.namespace);
             Meteor.call('pitfall_scanner', this.props.namespace , function (err, res) {
+                console.log("pitfall");
                 if (res) {
                     Meteor.call('rdf_translator', null, res, function (err, res) {
                         if (res) {

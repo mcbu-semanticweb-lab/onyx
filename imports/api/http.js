@@ -45,6 +45,7 @@ Meteor.methods({
         x.forEach(function (triple) {
             if (triple.object.includes('@')) // NamedNode İçin çözüm bul, eski parse tekniği?
                 triple.object = triple.object.slice(triple.object.lastIndexOf('@'));
+            //if(triple.predicate === )
             HTTP.post('http://localhost:64210/api/v2/write', {
                 data: [{
                     "subject": triple.subject,

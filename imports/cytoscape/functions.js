@@ -70,9 +70,35 @@ export function showNeighborhoods(id, cy) {
 async function restriction_helper(source, target, type, cy) {
     console.log(source, target, type, cy);
 
-    if (type === "someValuesFrom" || type === "allValuesFrom") {
+    if (target.includes('_:')) {
         let collection = await get_collection(target);
+
         console.log(collection);
+
+        cy.add([
+            {
+                group: "nodes",
+                data: {
+                    id: target,
+                    label: "oneOf",
+                    group: "oneOf",
+                },
+                classes: 'extra',
+            },
+        ]);
+
+        cy.add([
+            {
+                group: "edges",
+                data: {
+                    id: Random.id(),
+                    source: source,
+                    target: target,
+                },
+                classes: 'extra',
+            }
+        ]);
+
         for (let node of collection) {
             if (node.type === "http://www.w3.org/1999/02/22-rdf-syntax-ns#first") {
                 cy.add([
@@ -81,7 +107,7 @@ async function restriction_helper(source, target, type, cy) {
                         data: {
                             id: node.id,
                             label: node.id,
-                            group: type,
+                            group: "item",
                         },
                         classes: 'extra',
                     },
@@ -93,7 +119,7 @@ async function restriction_helper(source, target, type, cy) {
                         group: "edges",
                         data: {
                             id: Random.id(),
-                            source: source,
+                            source: target,
                             target: node.id,
                         },
                         style: {
@@ -118,7 +144,6 @@ async function restriction_helper(source, target, type, cy) {
             },
         ]);
 
-
         cy.add([
             {
                 group: "edges",
@@ -134,6 +159,8 @@ async function restriction_helper(source, target, type, cy) {
             }
         ]);
     }
+
+
 }
 
 export function showRestrictions(id, cy) {
@@ -167,11 +194,11 @@ export function showRestrictions(id, cy) {
                             cy.getElementById(triple.subject).data('label', '= nR');
                             break;
                         case "http://www.w3.org/2002/07/owl#maxCardinality":
-                            await restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            await restriction_helper(triple.subject, triple.object, "maxCardinality", cy);
                             cy.getElementById(triple.subject).data('label', '≥ nR');
                             break;
                         case "http://www.w3.org/2002/07/owl#minCardinality":
-                            await restriction_helper(triple.subject, triple.object, "cardinality", cy);
+                            await restriction_helper(triple.subject, triple.object, "minCardinality", cy);
                             cy.getElementById(triple.subject).data('label', '≤ nR');
                             break;
 
@@ -186,9 +213,10 @@ export function showRestrictions(id, cy) {
 
             let ele = cy.getElementById(id);
             let eles = ele.neighborhood();
-            console.log(eles.jsons());
-            cy.nodes().style("display", "none");
-            eles.union(ele).style("display", "element");
+
+            let eles2 = cy.nodes('');
+            console.log(eles2.jsons());
+            cy.filter('.extra').union(ele).union(eles).style("display", "element");
             //let ly = cy.layout(defaults);
             //ly.run();
             cy.animation({
@@ -206,7 +234,7 @@ export function resetCanvas(cy) {
     let inv = cy.nodes('node[group="invisible"]');
     console.log(inv);
     cy.nodes().difference(inv).style("display", "element");
-     cy.filter('.extra').forEach(function (node) {
+    cy.filter('.extra').forEach(function (node) {
         node.remove();
     });
     cy.filter('.pitfall').forEach(function (node) {
@@ -389,7 +417,7 @@ function nodeAdd(kce, data, triples) {
                                     group: "nodes",
                                     data: {
                                         id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   symmetric",
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "(symmetric)",
                                         group: "symmetric_property"
                                     }
                                 },
@@ -403,7 +431,7 @@ function nodeAdd(kce, data, triples) {
                                     group: "nodes",
                                     data: {
                                         id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   transitive",
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "(transitive)",
                                         group: "object_property"
                                     }
                                 },
@@ -417,7 +445,7 @@ function nodeAdd(kce, data, triples) {
                                     group: "nodes",
                                     data: {
                                         id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   functional",
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "(functional)",
                                         group: "object_property"
                                     }
                                 },
@@ -431,13 +459,12 @@ function nodeAdd(kce, data, triples) {
                                     group: "nodes",
                                     data: {
                                         id: object.id,
-                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "   inverse functional",
+                                        label: object.id.slice(object.id.lastIndexOf('/') + 1).split('#').reverse()[0] + "(inverse functional)",
                                         group: "object_property"
                                     }
                                 },
                             );
                             break;
-
 
 
                         case "http://www.w3.org/2002/07/owl#Restriction":
