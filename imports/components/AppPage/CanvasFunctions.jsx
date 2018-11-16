@@ -60,6 +60,8 @@ export class CanvasFunctions extends Component {
                     <Button icon='undo' content='Undo'onClick={this.props.undo} />
                     <br/>
                     <Button icon='repeat' content='Redo' onClick={this.props.redo} />
+                    <br/>
+                    <Button icon='minus' content='Hide' onClick={this.props.hide} />
                 </Button.Group>
                 <br/><br/>
                 <Checkbox slider name='Filter-Subclass' label='Filter-Subclass' position='left' onClick={(e,data) => this.props.filter('edge[group="subclass"]',data.checked)}/>

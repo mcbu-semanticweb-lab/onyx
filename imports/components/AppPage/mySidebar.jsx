@@ -19,9 +19,9 @@ class mySidebar extends Component {
 
     render() {
         const panes = [
-            {menuItem: 'Node Info', render: () => <Tab.Pane attached={false} basic><CytoscapeInfo/></Tab.Pane>},
+            {menuItem: 'Metrics', render: () => <Tab.Pane attached={false} basic><CytoscapeInfo/></Tab.Pane>},
             {menuItem: 'Properties', render: () => <Tab.Pane attached={false} basic> <CanvasProperties/> </Tab.Pane>},
-            {menuItem: 'Functions', render: () => <Tab.Pane attached={false} basic> <CanvasFunctions/> </Tab.Pane>}
+            {menuItem: 'Filters', render: () => <Tab.Pane attached={false} basic> <CanvasFunctions/> </Tab.Pane>}
         ];
 
 

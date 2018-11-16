@@ -213,7 +213,7 @@ export const DEF_VISUAL_STYLE = [
         selector: 'node[group="object_property"]',
         style: {
             'shape': 'rectangle',
-            'background-color': '#2977A7',
+            'background-color': '#acf',
             'color': 'black',
             'width': '130%',
             'font-size': '9',

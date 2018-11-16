@@ -49,7 +49,7 @@ export class Pitfall extends Component {
         if (this.state.pitfall_res !== null && this.state.pitfall_res !== undefined) {
             console.log(this.state.pitfall_res);
             this.state.pitfall_res.map((data, index) => {
-                if (data["oops:hasAffectedElement"]) {
+                if (data["oops:hasAffectedElement"]&&data["oops:hasName"]) {
                     content.push(
                         <Table.Row key={index}>
                             <Table.Cell> {data["@type"]} </Table.Cell>
@@ -63,13 +63,13 @@ export class Pitfall extends Component {
                     );
                 }
                 else {
-                    content.push(
-                        <Table.Row key={index}>
-                            <Table.Cell> {data["@type"]} </Table.Cell>
-                            <Table.Cell> {data["oops:hasName"]} </Table.Cell>
-                            <Table.Cell> {data["oops:hasDescription"]} </Table.Cell>
-                        </Table.Row>
-                    );
+                    // content.push(
+                    //     <Table.Row key={index}>
+                    //         <Table.Cell> {data["@type"]} </Table.Cell>
+                    //         <Table.Cell> {data["oops:hasName"]} </Table.Cell>
+                    //         <Table.Cell> {data["oops:hasDescription"]} </Table.Cell>
+                    //     </Table.Row>
+                    // );
                 }
 
             })

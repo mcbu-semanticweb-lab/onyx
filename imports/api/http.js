@@ -143,18 +143,8 @@ Meteor.methods({
             let atts = JSON.parse(result.content).result;
             if (atts === null)
                 return null;
-            atts.forEach(function (res) {
-                if (res.predicate.includes('#')) {
-                    triples.push(
-                        {
-                            subject: res.subject,
-                            predicate: res.predicate.split("#")[1],
-                            object: res.object
-                        }
-                    )
-                }
-            });
-            return (triples);
+            else
+                return (atts);
         }
         else {
             return JSON.parse(result.content).result;
