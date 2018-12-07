@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 
 import {Random} from 'meteor/random'
 import {setNamespace} from "../../redux/actions/actioncreators";
+import {cookies} from "../../../client/main";
 
 class CytoscapeInfo extends Component {
 
@@ -29,38 +30,38 @@ class CytoscapeInfo extends Component {
     componentDidMount() {
 
         let self = this;
-
+        let ns = cookies.get('namespace');
         console.log("mount");
         //TODO : infoları redux ta tutup sürekli call cagırma
-        Meteor.call('class_number', function (err, res) {
+        Meteor.call('class_number', ns , function (err, res) {
             if (res)
                 self.setState({class_number: res});
             else
                 console.log(err);
         });
 
-        Meteor.call('class_utilization', function (err, res) {
+        Meteor.call('class_utilization', ns ,function (err, res) {
             if (res)
                 self.setState({class_utilization: res});
             else
                 console.log(err);
         });
 
-        Meteor.call('instance_number', function (err, res) {
+        Meteor.call('instance_number', null, ns , function (err, res) {
             if (res)
                 self.setState({instance_number: res});
             else
                 console.log(err);
         });
 
-        Meteor.call('deepness', function (err, res) {
+        Meteor.call('deepness', ns , function (err, res) {
             if (res)
                 self.setState({deepness: res});
             else
                 console.log(err);
         });
 
-        Meteor.call('relationship_diversity', function (err, res) {
+        Meteor.call('relationship_diversity', ns ,  function (err, res) {
             if (res)
                 self.setState({relationship_diversity: res});
             else
@@ -68,7 +69,7 @@ class CytoscapeInfo extends Component {
         });
 
 
-        Meteor.call('property_number', function (err, res) {
+        Meteor.call('property_number', null , ns , function (err, res) {
             if (res)
                 self.setState({property_number: res});
             else
@@ -76,7 +77,7 @@ class CytoscapeInfo extends Component {
         });
 
 
-        Meteor.call('get_namespace', function (err, res) {
+        Meteor.call('get_namespace', ns , function (err, res) {
             if (res)
                 self.props.setNamespace(res);
             else

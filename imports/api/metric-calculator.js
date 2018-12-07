@@ -44,13 +44,13 @@ g.Emit(m)
 */
 
 Meteor.methods({
-    class_number: function () {
+    class_number: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content: 'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
+                content: 'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
                     '\n' +
-                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
+                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
                     '\n' +
                     'var m = class1.Union(class2).Unique().Count()\n' +
                     '\n' +
@@ -59,12 +59,12 @@ Meteor.methods({
         return (JSON.parse(result.content).result[0]);
     },
 
-    class_name: function () {
+    class_name: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content: 'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
-                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
+                content: 'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").LabelContext("'+ ns +'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
+                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
                     '\n' +
                     'var m = class1.Union(class2).Unique().All()\n' +
                     '\n' +
@@ -73,28 +73,28 @@ Meteor.methods({
         return (JSON.parse(result.content).result);
     },
 
-    property_number: function (class_name) {
-        if (class_name === undefined) {
+    property_number: function (class_name,ns) {
+        if (class_name === null) {
             let sync = Meteor.wrapAsync(HTTP.post);
             let result = sync('http://localhost:64210/api/v1/query/gizmo',
                 {
-                    content: 'var p = g.V().Out("http://www.w3.org/2000/01/rdf-schema#range").Count()\n' +
+                    content: 'var p = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#range").Count()\n' +
                         '\n' +
-                        'var p1 = g.V().Out("http://www.w3.org/2000/01/rdf-schema#domain").Count()\n' +
+                        'var p1 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#domain").Count()\n' +
                         '\n' +
-                        'var p2 = g.V().Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()\n' +
+                        'var p2 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()\n' +
                         '\n' +
-                        'var p3 = g.V().Out("http://www.w3.org/2000/01/rdf-schema#subClassOf").Count()\n' +
+                        'var p3 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#subClassOf").Count()\n' +
                         '\n' +
-                        'var p4 = g.V().Out("http://www.w3.org/2000/01/rdf-schema#subPropertyOf").Count()\n' +
+                        'var p4 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#subPropertyOf").Count()\n' +
                         '\n' +
-                        'var p5 = g.V().Out("http://www.w3.org/2000/01/rdf-schema#label").Count()\n' +
+                        'var p5 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#label").Count()\n' +
                         '\n' +
-                        'var p6 = g.V().Out("http://www.w3.org/2000/01/rdf-schema#comment").Count()\n' +
+                        'var p6 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#comment").Count()\n' +
                         '\n' +
-                        'var p7 = g.V().Out("http://www.w3.org/2000/01/rdf-schema#seeAlso").Count()\n' +
+                        'var p7 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#seeAlso").Count()\n' +
                         '\n' +
-                        'var p8 = g.V().Out("http://www.w3.org/2000/01/rdf-schema#isDefinedBy").Count()\n' +
+                        'var p8 = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#isDefinedBy").Count()\n' +
                         '\n' +
                         'g.Emit(p+p1+p2+p3+p4+p5+p6+p7+p8)'
                 });
@@ -128,12 +128,12 @@ Meteor.methods({
         }
     },
 
-    instance_number: function (class_name) {
-        if (class_name === undefined) {
+    instance_number: function (class_name,ns) {
+        if (class_name === null) {
             let sync = Meteor.wrapAsync(HTTP.post);
             let result = sync('http://localhost:64210/api/v1/query/gizmo',
                 {
-                    content: 'var m = g.V().Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()\n' +
+                    content: 'var m = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()\n' +
                         '\n' +
                         'g.Emit(m);'
                 });
@@ -151,15 +151,15 @@ Meteor.methods({
         }
     },
 
-    class_utilization: function () {
+    class_utilization: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content: 'var n = g.V().Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Unique().Count();\n' +
+                content: 'var n = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Unique().Count();\n' +
                     '\n' +
-                    'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
+                    'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
                     '\n' +
-                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
+                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
                     '\n' +
                     'var m = class1.Union(class2).Unique().Count()\n' +
                     '\n' +
@@ -169,26 +169,26 @@ Meteor.methods({
     },
 
 
-    deepness: function () {
+    deepness: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content: 'var subclass =  g.V().Out("http://www.w3.org/2000/01/rdf-schema#subClassOf").Count()\n' +
-                    'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
-                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
+                content: 'var subclass =  g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#subClassOf").Count()\n' +
+                    'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
+                    'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
                     'var m = class1.Union(class2).Unique().Count()\n' +
                     'g.Emit(subclass/m)\n'
             });
         return (JSON.parse(result.content).result[0]);
     },
 
-    relationship_diversity: function () {
+    relationship_diversity: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo',
             {
-                content: 'var object =  g.V().Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#ObjectProperty").Count()\n' +
-                    'var data =  g.V().Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#DatatypeProperty").Count()\n' +
-                    'var subclass = g.V().Out("http://www.w3.org/2000/01/rdf-schema#subClassOf").Count()\n' +
+                content: 'var object =  g.V().LabelContext("'+ns+'").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#ObjectProperty").Count()\n' +
+                    'var data =  g.V().LabelContext("'+ns+'").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#DatatypeProperty").Count()\n' +
+                    'var subclass = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#subClassOf").Count()\n' +
                     'g.Emit(  (object+data) / (object+data+subclass)  )\n'
             });
         return (JSON.parse(result.content).result[0]);

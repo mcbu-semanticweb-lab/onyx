@@ -5,6 +5,7 @@ import Navbar from "./CanvasFunctions";
 import { showSidebar } from "../../redux/actions/actioncreators";
 import {connect} from "react-redux";
 import SidebarComp from './mySidebar';
+import {cookies} from "../../../client/main";
 
 
 class AppPageContainer extends Component {
@@ -17,7 +18,8 @@ class AppPageContainer extends Component {
     }
 
     componentDidMount() {
-        Meteor.call('get_individual_num', function (err, res) {
+        let ns = cookies.get('namespace');
+        Meteor.call('get_individual_num', null ,ns ,function (err, res) {
             if (res)
                 console.log(res);
             else

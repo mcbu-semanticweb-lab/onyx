@@ -185,10 +185,10 @@ Meteor.methods({
         return (JSON.parse(result.content).result);
     },
 
-    get_individual_num: function (id) {
+    get_individual_num: function (id,ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result;
-        if (id) {
+        if (id !== null) {
             console.log(id);
              result =sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
                 {
@@ -201,7 +201,7 @@ Meteor.methods({
         else {
             result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
                 {
-                    content: 'var a = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
+                    content: 'var a = g.V().Tag("ind").LabelContext("'+ns+'").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
                         'g.Emit(a)\n' +
                         '\t\t\n' +
                         '\n'
