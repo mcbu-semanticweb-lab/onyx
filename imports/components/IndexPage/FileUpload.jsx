@@ -18,11 +18,13 @@ class FileUpload extends Component {
         var reader = new FileReader();
         reader.readAsText(input.files[0]);
         reader.onload = function(){
+            cookies.set('namespace',null);
             var text = reader.result;
             Meteor.call('send_to_cayley',text,function (err,res) {
                 console.log(err,res);
                 if(res){
                     cookies.set('kce', self.props.kce );
+                    cookies.set('namespace', res );
                     console.log("cayley send completed");
                     self.props.redirect('/AppPage');
                 }

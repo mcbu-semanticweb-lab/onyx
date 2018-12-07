@@ -2,8 +2,7 @@ import {Meteor} from 'meteor/meteor';
 import {HTTP} from 'meteor/http'
 import {ontology_data} from "./data";
 import {check} from 'meteor/check'
-
-
+import { Session } from 'meteor/session'
 let Future = Npm.require('fibers/future');
 var exec = Npm.require("child_process").exec;
 
@@ -41,7 +40,23 @@ Meteor.methods({
     },
 
     send_to_cayley: function (data) {
+        console.time("data parse");
+        let ns;
         let x = parser.parse(data);
+        for(var i = 0; i < x.length; i++)
+        {
+            if(x[i].object == 'http://www.w3.org/2002/07/owl#Ontology')
+            {
+                ns = x[i].subject;
+            }
+        }
+        if(check_ns(ns)===true){
+            console.log("already added");
+            return (ns);
+        }
+
+        console.timeEnd("data parse");
+        console.time("send cayley");
         x.forEach(function (triple) {
             if (triple.object.includes('@')) // NamedNode İçin çözüm bul, eski parse tekniği?
                 triple.object = triple.object.slice(triple.object.lastIndexOf('@'));
@@ -50,17 +65,21 @@ Meteor.methods({
                 data: [{
                     "subject": triple.subject,
                     "predicate": triple.predicate,
-                    "object": triple.object
+                    "object": triple.object,
+                    "label" : ns
                 }]
             });
         });
-        return (1);
+        console.timeEnd("send cayley");
+        return (ns);
     },
+
+
 
 
     get_kce: function (ns) {
         let future = new Future;
-        var command = "cd /home/alias/Projects/OntoMirror-Base/KCE/API && java -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test " + ns;
+        var command = "cd /home/alias/Projects/OntoMirror-Base/KCE/API && java -Xmx12G -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test " + ns;
         console.log(command);
         exec(command, function (error, stdout, stderr) {
             if (error) {
@@ -151,11 +170,11 @@ Meteor.methods({
         }
     },
 
-    get_subjects_and_their_predicates: function () {
+    get_subjects_and_their_predicates: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
         let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
             {
-                content: 'g.V().In().Unique().ForEach( function(d) {\n' +
+                content: 'g.V().LabelContext("'+ns+'").In().Unique().ForEach( function(d) {\n' +
                     '\n' +
                     '    d.predicates = g.V(d.id).Out(null,"predicate").Tag("object").TagArray()\n' +
                     '\n' +
@@ -257,8 +276,18 @@ Meteor.methods({
 });
 
 
-
-
-
+function check_ns(ns) {
+    let sync = Meteor.wrapAsync(HTTP.post);
+    let result = sync('http://localhost:64210/api/v2/query',
+        {
+            params: {
+                "lang": "gizmo"
+            },
+            content: 'var num = g.V().LabelContext("'+ns+'").In().Count()\n' +
+                'g.Emit(num)'
+        });
+    console.log(JSON.parse(result.content).result[0] );
+    return JSON.parse(result.content).result[0] !== 0;
+}
 
 

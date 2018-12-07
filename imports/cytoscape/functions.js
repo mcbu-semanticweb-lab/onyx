@@ -1,6 +1,7 @@
 import OPTIONS from "./colajs-options";
 import {Random} from 'meteor/random';
 import tippy from 'tippy.js';
+import {cookies} from "../../client/main";
 
 var list = [];
 
@@ -301,7 +302,7 @@ export async function prepareData(kce, callback) {
     let nodes = [];
     let edges = [];
 
-    let triples = await get_triples();
+    let triples = await get_triples(cookies.get('namespace'));
 
     let addNodes = nodeAdd(kce, nodes, triples);
     let addEdges = edgeAdd(edges, triples);
@@ -820,9 +821,9 @@ function edgeAdd(data, triples) {
 }
 
 
-function get_triples() {
+function get_triples(ns) {
     return new Promise(function (resolve, reject) {
-        Meteor.call('get_subjects_and_their_predicates', function (err, res) {
+        Meteor.call('get_subjects_and_their_predicates', ns, function (err, res) {
             if (res) {
                 resolve(res);
             }

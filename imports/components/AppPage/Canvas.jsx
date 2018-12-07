@@ -112,7 +112,7 @@ class CytoscapeRenderer extends Component {
 
                 let cy = cytoscape({
                     container: document.getElementById('canvas'),
-                    layout: defaults,
+                    //layout: defaults,
                     elements: data,
                     style: DEF_VISUAL_STYLE,
                     wheelSensitivity: 1,
