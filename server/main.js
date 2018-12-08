@@ -5,6 +5,8 @@ import '../imports/api/data';
 import '../imports/api/pitfall-scanner';
 import '../imports/api/rdf-translator';
 
+export const CAYLEY_URL = "http://localhost:64210/";
+
 Meteor.startup(() => {
 
 });

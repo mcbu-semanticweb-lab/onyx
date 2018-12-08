@@ -1,6 +1,8 @@
 import {HTTP} from "meteor/http";
 import {Meteor} from "meteor/meteor";
 
+import { CAYLEY_URL } from '../../server/main';
+
 /*
 "http://www.w3.org/2000/01/rdf-schema#range"
 "http://www.w3.org/2000/01/rdf-schema#domain"
@@ -46,7 +48,7 @@ g.Emit(m)
 Meteor.methods({
     class_number: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
             {
                 content: 'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
                     '\n' +
@@ -61,7 +63,7 @@ Meteor.methods({
 
     class_name: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
             {
                 content: 'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").LabelContext("'+ ns +'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
                     'var class2 = g.V("http://www.w3.org/2002/07/owl#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")\n' +
@@ -76,7 +78,7 @@ Meteor.methods({
     property_number: function (class_name,ns) {
         if (class_name === null) {
             let sync = Meteor.wrapAsync(HTTP.post);
-            let result = sync('http://localhost:64210/api/v1/query/gizmo',
+            let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
                 {
                     content: 'var p = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#range").Count()\n' +
                         '\n' +
@@ -102,7 +104,7 @@ Meteor.methods({
         }
         else {
             let sync = Meteor.wrapAsync(HTTP.post);
-            let result = sync('http://localhost:64210/api/v1/query/gizmo',
+            let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
                 {
                     content: 'var p = g.V(' + class_name + ').Out("<http://www.w3.org/2000/01/rdf-schema#range").Count()\n' +
                         '\n' +
@@ -131,7 +133,7 @@ Meteor.methods({
     instance_number: function (class_name,ns) {
         if (class_name === null) {
             let sync = Meteor.wrapAsync(HTTP.post);
-            let result = sync('http://localhost:64210/api/v1/query/gizmo',
+            let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
                 {
                     content: 'var m = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()\n' +
                         '\n' +
@@ -141,7 +143,7 @@ Meteor.methods({
         }
         else {
             let sync = Meteor.wrapAsync(HTTP.post);
-            let result = sync('http://localhost:64210/api/v1/query/gizmo',
+            let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
                 {
                     content: 'var m = g.V().Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Is(' + class_name + ').Count()\n' +
                         '\n' +
@@ -153,7 +155,7 @@ Meteor.methods({
 
     class_utilization: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
             {
                 content: 'var n = g.V().LabelContext("'+ns+'").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Unique().Count();\n' +
                     '\n' +
@@ -171,7 +173,7 @@ Meteor.methods({
 
     deepness: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
             {
                 content: 'var subclass =  g.V().LabelContext("'+ns+'").Out("http://www.w3.org/2000/01/rdf-schema#subClassOf").Count()\n' +
                     'var class1 = g.V("http://www.w3.org/2000/01/rdf-schema#Class").LabelContext("'+ns+'").In("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","predicate")\n' +
@@ -184,7 +186,7 @@ Meteor.methods({
 
     relationship_diversity: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
             {
                 content: 'var object =  g.V().LabelContext("'+ns+'").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#ObjectProperty").Count()\n' +
                     'var data =  g.V().LabelContext("'+ns+'").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#DatatypeProperty").Count()\n' +
@@ -197,7 +199,7 @@ Meteor.methods({
 
     relationship_utilization: function (id) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
             {
                 content: 'var datatype = g.V().Has("http://www.w3.org/2000/01/rdf-schema#domain","' + id + '")\n' +
                     '.Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#DatatypeProperty").Count()\n' +
@@ -218,7 +220,7 @@ Meteor.methods({
 
     class_importance: function (id) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo',
             {
                 content: 'var total = g.V().Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Count()\n' +
                     '\n' +

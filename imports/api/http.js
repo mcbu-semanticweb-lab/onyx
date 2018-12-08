@@ -9,6 +9,7 @@ var exec = Npm.require("child_process").exec;
 var N3 = require('n3');
 var parser = N3.Parser();
 
+import  { CAYLEY_URL } from '../../server/main';
 
 Meteor.methods({
     parse_and_send_to_cayley: function (url) {
@@ -22,7 +23,7 @@ Meteor.methods({
                 x.forEach(function (triple) {
                     if (triple.object.contains('@'))
                         triple.object = triple.object.slice(triple.object.lastIndexOf('@'));
-                    HTTP.post('http://localhost:64210/api/v2/write', {
+                    HTTP.post(CAYLEY_URL + 'api/v2/write', {
                         data: [{
                             "subject": triple.subject,
                             "predicate": triple.predicate,
@@ -61,7 +62,7 @@ Meteor.methods({
             if (triple.object.includes('@')) // NamedNode İçin çözüm bul, eski parse tekniği?
                 triple.object = triple.object.slice(triple.object.lastIndexOf('@'));
             //if(triple.predicate === )
-            HTTP.post('http://localhost:64210/api/v2/write', {
+            HTTP.post(CAYLEY_URL + 'api/v2/write', {
                 data: [{
                     "subject": triple.subject,
                     "predicate": triple.predicate,
@@ -95,7 +96,7 @@ Meteor.methods({
 
     get_triples: function () {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v2/query',
+        let result = sync(CAYLEY_URL + 'api/v2/query',
             {
                 params: {
                     "lang": "gizmo"
@@ -109,7 +110,7 @@ Meteor.methods({
     remove_triples: function () {
         let future = new Future;
         ontology_data.remove({});
-        HTTP.post('http://localhost:64210/api/v2/query',
+        HTTP.post(CAYLEY_URL + 'api/v2/query',
             {
                 params: {
                     "lang": "gizmo"
@@ -118,7 +119,7 @@ Meteor.methods({
             }, function (err, res) {
                 let x = JSON.parse(res.content);
                 x.result.forEach(function (res) {
-                    HTTP.post('http://localhost:64210/api/v2/delete', {  //TODO: ttl silme işlemi arkasında triple bırakıyor
+                    HTTP.post(CAYLEY_URL + 'api/v2/delete', {  //TODO: ttl silme işlemi arkasında triple bırakıyor
                         data: [{
                             "subject": res.subject,
                             "predicate": res.predicate,
@@ -135,7 +136,7 @@ Meteor.methods({
 
     count_triples: function () {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v2/query',
+        let result = sync(CAYLEY_URL + 'api/v2/query',
             {
                 params: {
                     "lang": "gizmo"
@@ -149,7 +150,7 @@ Meteor.methods({
     find_attributes: function (id, type) {
         let triples = [];
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v2/query',
+        let result = sync(CAYLEY_URL + 'api/v2/query',
             {
                 params: {
                     "lang": "gizmo"
@@ -172,7 +173,7 @@ Meteor.methods({
 
     get_subjects_and_their_predicates: function (ns) {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo?limit=-1',
             {
                 content: 'g.V().LabelContext("'+ns+'").In().Unique().ForEach( function(d) {\n' +
                     '\n' +
@@ -190,7 +191,7 @@ Meteor.methods({
         let result;
         if (id !== null) {
             console.log(id);
-             result =sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
+             result =sync(CAYLEY_URL + 'api/v1/query/gizmo?limit=-1',
                 {
                     content: 'var a = g.V("'+id+'").Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
                         'g.Emit(a)\n' +
@@ -199,7 +200,7 @@ Meteor.methods({
                 });
         }
         else {
-            result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
+            result = sync(CAYLEY_URL + 'api/v1/query/gizmo?limit=-1',
                 {
                     content: 'var a = g.V().Tag("ind").LabelContext("'+ns+'").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class","http://www.w3.org/2000/01/rdf-schema#Class").Count()    \n' +
                         'g.Emit(a)\n' +
@@ -224,7 +225,7 @@ Meteor.methods({
         // TODO : query limit fix
         // TODO : rdf class control
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=100000000',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo?limit=100000000',
             {
                 content: 'var ind = g.V().Tag("ind").Out("http://www.w3.org/1999/02/22-rdf-syntax-ns#type").Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Class").Is("' + id + '").Count() \n' +
                     '\n' +
@@ -255,7 +256,7 @@ Meteor.methods({
             query = 'var f_r = g.M().Out(["http://www.w3.org/1999/02/22-rdf-syntax-ns#first","http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"],"type");\n' +
                 'g.V("' + id + '").FollowRecursive(f_r).All()'
         }
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=1000000',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo?limit=1000000',
             {
                 content: query
             });
@@ -264,7 +265,7 @@ Meteor.methods({
 
     get_namespace: function () {
         let sync = Meteor.wrapAsync(HTTP.post);
-        let result = sync('http://localhost:64210/api/v1/query/gizmo?limit=-1',
+        let result = sync(CAYLEY_URL + 'api/v1/query/gizmo?limit=-1',
             {
                 content: 'var ns = g.V().Has("http://www.w3.org/1999/02/22-rdf-syntax-ns#type","http://www.w3.org/2002/07/owl#Ontology").ToValue()\n' +
                     'g.Emit(ns)'
@@ -278,7 +279,7 @@ Meteor.methods({
 
 function check_ns(ns) {
     let sync = Meteor.wrapAsync(HTTP.post);
-    let result = sync('http://localhost:64210/api/v2/query',
+    let result = sync(CAYLEY_URL + 'api/v2/query',
         {
             params: {
                 "lang": "gizmo"
