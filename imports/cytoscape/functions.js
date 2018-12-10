@@ -943,15 +943,9 @@ export function ShowClassHierarchy(cy) {
 function get_kce() {
     return new Promise(async function (resolve, reject) {
         console.time("kce execution time");
-        Meteor.call('get_namespace', function (err, res) {
-            if (res) {
-                Meteor.call('get_kce', res, function (err, res) {
-                    console.timeEnd("kce execution time");
-                    resolve(res);
-                })
-            }
-            else
-                reject(err);
+        Meteor.call('get_kce', cookies.get('namespace'), function (err, res) {
+            console.timeEnd("kce execution time");
+            resolve(res);
         })
     });
 }

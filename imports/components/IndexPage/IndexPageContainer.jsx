@@ -57,6 +57,8 @@ class IndexPageContainer extends Component {
                 {/*<UriUpload kce={this.state.kce}/>*/}
                 <FileUpload kce={this.state.kce}/>
                 <Checkbox slider checked={this.state.kce} name='Enable Kce' label='Enable Kce' position='left' onClick={ () => { this.setState({ kce : !this.state.kce}) } } />
+                <br/><br/>
+                <a href="https://drive.google.com/open?id=103rIOAdt4APmkRwPVd_uEV_1_USDj0zZ">Example Ontologies</a>
             </Grid>);
     }
 }

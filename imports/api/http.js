@@ -51,6 +51,7 @@ Meteor.methods({
                 ns = x[i].subject;
             }
         }
+        console.log("namespace is " + ns);
         if(check_ns(ns)===true){
             console.log("already added");
             return (ns);
