@@ -320,6 +320,7 @@ function nodeAdd(kce, data, triples) {
         let kce_classes = [];
         if (kce === true) {
             kce_classes = await get_kce();
+            console.log(kce_classes)
         }
         for (let object of triples) {
             for (let triple of object.predicates) {
@@ -333,6 +334,7 @@ function nodeAdd(kce, data, triples) {
                             }
                             else {
                                 if (kce === true) {
+                                    console.log(object.id, kce_classes.includes(object.id));
                                     if (kce_classes.includes(object.id)) {
                                         data.push(
                                             {
@@ -944,8 +946,13 @@ function get_kce() {
     return new Promise(async function (resolve, reject) {
         console.time("kce execution time");
         Meteor.call('get_kce', cookies.get('namespace'), function (err, res) {
-            console.timeEnd("kce execution time");
-            resolve(res);
+            if(res){
+                console.timeEnd("kce execution time");
+                console.log("kce result" + res);
+                resolve(res);
+            }
+            else
+                console.log(err);
         })
     });
 }
