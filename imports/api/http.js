@@ -49,6 +49,7 @@ Meteor.methods({
             if(x[i].object == 'http://www.w3.org/2002/07/owl#Ontology')
             {
                 ns = x[i].subject;
+                break;
             }
         }
         console.log("namespace is " + ns);
