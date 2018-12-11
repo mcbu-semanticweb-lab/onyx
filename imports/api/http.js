@@ -81,7 +81,7 @@ Meteor.methods({
 
     get_kce: function (ns) {
         let future = new Future;
-        var command = "cd /kce && java -Xmx2G -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test " + ns;
+        var command = "cd kce && java -Xmx2G -cp .:facility.jar:kce.jar:owlapi-bin.jar:taxonomy.jar:taxonomy-makers.jar test " + ns;
         console.log(command);
         exec(command, function (error, stdout, stderr) {
             if (error) {
